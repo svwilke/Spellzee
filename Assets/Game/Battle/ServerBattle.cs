@@ -1,0 +1,76 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
+
+public class ServerBattle : Battle
+{
+
+	private Game game;
+
+	public ServerBattle(Game game) : base() {
+		this.game = game;
+	}
+
+	public void CmdSetDieCount(int count) {
+		SetDieCount(count);
+		//NetworkServer.SendToAll()
+	}
+
+	public void NextTurn() {
+
+		GetCurrentPawn().OnEndTurn.Invoke(this, GetCurrentPawn());
+		
+		int start = currentTurn;
+		currentTurn = (currentTurn + 1) % (MaxTurn + 1);
+		while(!GetCurrentPawn().IsAlive() && currentTurn != start) {
+			currentTurn = (currentTurn + 1) % (MaxTurn + 1);
+		}
+
+		SetupTurn();
+		
+		NetworkServer.SendToAll(GameMsg.NextTurn, new IntegerMessage(currentTurn));
+		if(GetCurrentPawn() is EnemyPawn && !AreAllAlliesDead()) {
+			game.StartCoroutine(DoAITurn(GetCurrentPawn() as EnemyPawn));
+		}
+	}
+
+	public void SetupTurn() {
+		Pawn pawn = GetCurrentPawn();
+		pawn.OnSetupTurn.Invoke(this, pawn);
+		if(pawn is PlayerPawn) {
+			PlayerPawn currentPlayer = pawn as PlayerPawn;
+			SetDieCount(Mathf.Max(1, (int)currentPlayer.DieCount.GetValue()));
+			SetRollCount(Mathf.Max(0, (int)currentPlayer.RollCount.GetValue()));
+		}
+		ResetLocks();
+		
+		NetworkServer.SendToAll(GameMsg.SetupTurn, new GameMsg.MsgIntegerArray(rolls.Length, rollsHad));
+		pawn.OnBeginTurn.Invoke(this, pawn);
+	}
+
+
+	public void CastSpell(int spellId, int targetPawnId = -1) {
+		GameMsg.MsgIntegerArray msg = new GameMsg.MsgIntegerArray(spellId, targetPawnId);
+		NetworkServer.SendToAll(GameMsg.CastSpell, msg);
+		DB.SpellList[spellId].Cast(BuildContext(targetPawnId));
+		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
+	}
+
+	public IEnumerator DoAITurn(EnemyPawn enemyPawn) {
+		yield return new WaitForSeconds(1.5F);
+		enemyPawn.DoTurn(this);
+	}
+
+	public bool AreAllAlliesDead() {
+		bool allAlliesDead = true;
+		for(int i = 0; i < allies.Length; i++) {
+			if(allies[i].IsAlive()) {
+				allAlliesDead = false;
+				break;
+			}
+		}
+		return allAlliesDead;
+	}
+}
