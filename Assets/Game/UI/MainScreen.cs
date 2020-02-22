@@ -56,5 +56,39 @@ public class MainScreen : Screen {
 			Game.volume = volumeValue / 200F;
 			text.SetText(volumeValue.ToString());
 		});
+
+		Text resText = new Text(new Vector2i(RB.DisplaySize.width - 60, top + 66), new Vector2i(20, 10), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "(960, 512)");
+		resText.SetPosition(resText.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+		AddUIObj(resText);
+		AddUIObj(btn = new TextButton(new Vector2i(RB.DisplaySize.width - 60, top + 54), "Toggle Fullscreen", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		btn.SetOnClick(() => {
+			bool full = !UnityEngine.Screen.fullScreen;
+			int width = Game.Widths[1];
+			int height = Game.Heights[1];
+			int scrWidth = 0;
+			int scrHeight = 0;
+			Resolution[] ress = UnityEngine.Screen.resolutions;
+			for(int i = 0; i < ress.Length; i++) {
+				if (scrWidth < ress[i].width) {
+					scrWidth = ress[i].width;
+				}
+				if(scrHeight < ress[i].height) {
+					scrHeight = ress[i].height;
+				}
+			}
+			if(full) {
+				int i = 1;
+				for(i = 0; i < Game.Widths.Length; i++) {
+					if (scrWidth < Game.Widths[i] || scrHeight < Game.Heights[i]) {
+						break;
+					}
+				}
+				width = Game.Widths[i - 1];
+				height = Game.Heights[i - 1];
+			}
+			resText.SetText("(" + width + ", " + height + ")");
+			UnityEngine.Screen.SetResolution(width, height, full);
+		});
+		
 	}
 }

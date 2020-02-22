@@ -7,6 +7,9 @@ using System.Collections;
 
 public class Game : RB.IRetroBlitGame
 {
+	public static int[] Widths = new int[] { 480, 960, 1440, 1920, 2400, 2880, 3360, 3840 };
+	public static int[] Heights = new int[] { 256, 512, 768, 1024, 1280, 1536, 1892, 2048 };
+
 	private ClientHandler clientHandler;
 	private ServerHandler serverHandler;
 
@@ -29,9 +32,6 @@ public class Game : RB.IRetroBlitGame
 
 		settings.DisplaySize = new Vector2i(480, 256);
 		//settings.DisplaySize = new Vector2i(480 + 240, 256 + 128);
-
-		settings.MapSize = new Vector2i(16, 16);
-		settings.MapLayers = 4;
 
 		return settings;
 	}
