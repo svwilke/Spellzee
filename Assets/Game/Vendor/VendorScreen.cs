@@ -6,7 +6,7 @@ using UnityEngine.Networking.NetworkSystem;
 public class VendorScreen : Screen
 {
 
-	private Button readyButton;
+	private TextButton readyButton;
 	private PlayerPawn pawn;
 
 	private TabbedPane infoPane;
@@ -26,7 +26,7 @@ public class VendorScreen : Screen
 	}
 
 	public override void OnConstruct() {
-		AddUIObj(readyButton = new Button(new Vector2i(size.width / 2, size.height - 76), "Ready?", UIObj.ALIGN_CENTER));
+		AddUIObj(readyButton = new TextButton(new Vector2i(size.width / 2, size.height - 76), "Ready?", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		readyButton.isVisible = true;
 		readyButton.SetOnClick(() => {
 			Game.client.Send(GameMsg.Ready, new EmptyMessage());

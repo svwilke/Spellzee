@@ -45,13 +45,13 @@ public class MessageBox : UIObj {
 			totalButtonWidth += 4;
 		}
 		totalButtonWidth += measure;
-		Button button = new Button(new Vector2i(0, 0), text, UIObj.ALIGN_LEFT);
+		TextButton button = new TextButton(new Vector2i(0, 0), text);
 		buttons.Add(button);
 		button.SetOnClick(onClick);
 		int x = pos.x + size.width / 2 - totalButtonWidth / 2;
 		for(int i = 0; i < buttons.Count; i++) {
-			Button b = buttons[i] as Button;
-			b.SetPosition(new Vector2i(x, buttonY), UIObj.ALIGN_LEFT);
+			TextButton b = buttons[i] as TextButton;
+			b.SetPosition(new Vector2i(x, buttonY));
 			x += b.size.width + 4;
 		}
 	}
@@ -88,7 +88,7 @@ public class MessageBox : UIObj {
 			}
 		}
 		RB.Print(rect, color, flags, text);
-		foreach(Button button in buttons) {
+		foreach(TextButton button in buttons) {
 			button.Render();
 		}
 	}

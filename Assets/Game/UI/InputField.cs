@@ -5,15 +5,14 @@ using UnityEngine;
 public class InputField : UIObj {
 
 	private FastString text;
-	private int align;
 	private bool hasFocus = false;
 	private Vector2i originalPos;
 
 	private System.Action<FastString> onCompleteEditAction;
 
-	public InputField(Vector2i pos, int align = ALIGN_LEFT) {
+	public InputField(Vector2i pos, int align = RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER) {
 		size = RB.PrintMeasure(text);
-		this.align = align;
+		alignment = align;
 		this.text = new FastString(32);
 		originalPos = pos;
 		SetPosition(pos, align);
@@ -41,31 +40,7 @@ public class InputField : UIObj {
 	private void Recalc() {
 		size = text.Length == 0 ? RB.PrintMeasure(" ") : RB.PrintMeasure(text);
 		size = new Vector2i(size.x + 6, size.y + 3);
-		if((align & ALIGN_CENTER) == ALIGN_CENTER) {
-			this.pos = originalPos - size / 2;
-		} else
-		if((align & ALIGN_LEFT) == ALIGN_LEFT) {
-			this.pos = new Vector2i(originalPos.x, originalPos.y - size.y / 2);
-		} else
-		if((align & ALIGN_RIGHT) == ALIGN_RIGHT) {
-			this.pos = new Vector2i(originalPos.x - size.x, originalPos.y - size.y / 2);
-		} else {
-			this.pos = originalPos;
-		}
-	}
-
-	public void SetPosition(Vector2i pos, int align) {
-		if((align & ALIGN_CENTER) == ALIGN_CENTER) {
-			this.pos = pos - size / 2;
-		} else
-		if((align & ALIGN_LEFT) == ALIGN_LEFT) {
-			this.pos = new Vector2i(pos.x, pos.y - size.y / 2);
-		} else
-		if((align & ALIGN_RIGHT) == ALIGN_RIGHT) {
-			this.pos = new Vector2i(pos.x - size.x, pos.y - size.y / 2);
-		} else {
-			this.pos = originalPos;
-		}
+        SetPosition(originalPos, alignment);
 	}
 
 	public override void Render() {
@@ -96,7 +71,7 @@ public class InputField : UIObj {
 				TickBackspaceDown = RB.Ticks;
 			}
 			if(RB.KeyDown(KeyCode.Backspace)) {
-				if((RB.Ticks - TickBackspaceDown) % 4 == 0) {
+				if((RB.Ticks - TickBackspaceDown) % 8 == 0) {
 					//if(text.EndsWith("|")) {
 					//	RemoveText(2);
 					//	text.Append('|');
@@ -123,9 +98,5 @@ public class InputField : UIObj {
 			}
 		}
 		hasFocus = false;
-	}
-
-	public override void OnClick() {
-		
 	}
 }

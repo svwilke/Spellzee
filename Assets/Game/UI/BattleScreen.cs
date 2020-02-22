@@ -9,7 +9,7 @@ public class BattleScreen : Screen {
 	public Battle battle;
 
 	private ImageButton rollButton;
-	private Button passButton;
+	private TextButton passButton;
 	private DieButton[] dieButtons;
 	private Vector2i[] lockPositions;
 	private Image[] viewPawnImages;
@@ -68,13 +68,13 @@ public class BattleScreen : Screen {
 	}
 
 	public override void OnConstruct() {
-		AddUIObj(rollButton = new ImageButton(new Vector2i(size.x / 5, size.y / 2 + 32), RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), UIObj.ALIGN_CENTER));
+		AddUIObj(rollButton = new ImageButton(new Vector2i(size.x / 5, size.y / 2 + 32), RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		rollButton.SetOnClick(() => {
 			if(battle.rollsLeft > 0) {
 				Game.client.Send(GameMsg.Roll, new EmptyMessage());
 			}
 		});
-		AddUIObj(passButton = new Button(new Vector2i(size.x / 5, size.y / 2 + 48), "Pass", UIObj.ALIGN_CENTER));
+		AddUIObj(passButton = new TextButton(new Vector2i(size.x / 5, size.y / 2 + 48), "Pass", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		passButton.SetOnClick(() => {
 			if(battle.rollsLeft == 0) {
 				Game.client.Send(GameMsg.Pass, new EmptyMessage());
@@ -131,7 +131,7 @@ public class BattleScreen : Screen {
 
 		pawnCards = new Dictionary<Pawn, UIObj>();
 
-		EnemyPawnCard epc = new EnemyPawnCard(new Vector2i(size.x / 2, 72), new Vector2i(128, 128), battle.enemy, battle, UIObj.ALIGN_CENTER);
+		EnemyPawnCard epc = new EnemyPawnCard(new Vector2i(size.x / 2, 72), new Vector2i(128, 128), battle.enemy, battle, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		AddUIObj(epc);
 		pawnCards.Add(battle.enemy, epc);
 
@@ -143,7 +143,7 @@ public class BattleScreen : Screen {
 		for(int i = 0; i < battle.allies.Length; i++) {
 			AddUIObj(ppc = new PlayerPawnCard(new Vector2i(8, 8 + 36 * i), new Vector2i(96, 32), battle.allies[i], battle));
 			pawnCards.Add(battle.allies[i], ppc);
-			AddUIObj(viewPawnImages[i] = new Image(new Vector2i(108, 24 + 36 * i), viewSprite, UIObj.ALIGN_LEFT));
+			AddUIObj(viewPawnImages[i] = new Image(new Vector2i(108, 24 + 36 * i), viewSprite));
 			if(i > 0) viewPawnImages[i].isVisible = false;
 			int x = i;
 			ppc.SetOnClick(() => {

@@ -10,11 +10,11 @@ public class LobbyScreen : Screen {
 	private int[] playerCardPos;
 	private int[] desiredPlayerCardPos;
 
-	private Button readyButton;
-	private Button startButton;
+	private TextButton readyButton;
+	private TextButton startButton;
 	private InputField nameInput;
-	private Button prevClassButton;
-	private Button nextClassButton;
+	private TextButton prevClassButton;
+	private TextButton nextClassButton;
 
 	private LobbyClientHandler lobby;
 
@@ -29,13 +29,13 @@ public class LobbyScreen : Screen {
 	}
 
 	public override void OnConstruct() {
-		Button btn;
-		AddUIObj(btn = new Button(new Vector2i(30, RB.DisplaySize.height - 30), "Back to menu", UIObj.ALIGN_LEFT));
+		TextButton btn;
+		AddUIObj(btn = new TextButton(new Vector2i(30, RB.DisplaySize.height - 30), "Back to menu"));
 		btn.SetOnClick(() => {
 			game.CancelConnection();
 			game.OpenScreen(new MainScreen(game, size));
 		});
-		AddUIObj(startButton = new Button(new Vector2i(RB.DisplaySize.width - 30, RB.DisplaySize.height - 30), "Start Game", UIObj.ALIGN_RIGHT));
+		AddUIObj(startButton = new TextButton(new Vector2i(RB.DisplaySize.width - 30, RB.DisplaySize.height - 30), "Start Game", RB.ALIGN_H_RIGHT | RB.ALIGN_V_CENTER));
 		startButton.currentState = UIObj.State.Disabled;
 		startButton.SetOnClick(() => {
 			game.StartGame(lobby.GetLobbyPlayers());
@@ -43,7 +43,7 @@ public class LobbyScreen : Screen {
 		if(!game.IsHost()) {
 			startButton.isVisible = false;
 		}
-		AddUIObj(readyButton = new Button(new Vector2i(30, RB.DisplaySize.height - 30), "Ready?", UIObj.ALIGN_LEFT));
+		AddUIObj(readyButton = new TextButton(new Vector2i(30, RB.DisplaySize.height - 30), "Ready?"));
 		readyButton.isVisible = false;
 		readyButton.SetOnClick(() => {
 			if(lobby.GetLobbyPlayer(Game.peerId).ready) {
@@ -52,7 +52,7 @@ public class LobbyScreen : Screen {
 				Game.client.Send(GameMsg.Ready, new EmptyMessage());
 			}
 		});
-		AddUIObj(nameInput = new InputField(new Vector2i(-100, 82), UIObj.ALIGN_CENTER));
+		AddUIObj(nameInput = new InputField(new Vector2i(-100, 82), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		nameInput.isVisible = false;
 		nameInput.SetOnCompleteEdit((name) => {
 			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
@@ -60,7 +60,7 @@ public class LobbyScreen : Screen {
 			Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
 		});
 
-		AddUIObj(prevClassButton = new Button(new Vector2i(0, 0), "<", UIObj.ALIGN_CENTER));
+		AddUIObj(prevClassButton = new TextButton(new Vector2i(0, 0), "<", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		prevClassButton.isVisible = false;
 		prevClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
@@ -71,7 +71,7 @@ public class LobbyScreen : Screen {
 			}
 		});
 
-		AddUIObj(nextClassButton = new Button(new Vector2i(0, 0), ">", UIObj.ALIGN_CENTER));
+		AddUIObj(nextClassButton = new TextButton(new Vector2i(0, 0), ">", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		nextClassButton.isVisible = false;
 		nextClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
@@ -128,8 +128,8 @@ public class LobbyScreen : Screen {
 				desiredPlayerCardPos[i] = spacing + (i * spacing);
 				if(Game.peerId == i) {
 					int top = 32;
-					nameInput.SetPosition(new Vector2i(playerCardPos[i], top + 50), UIObj.ALIGN_CENTER);
-					readyButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top - 2 + size.height - 110), UIObj.ALIGN_LEFT);
+					nameInput.SetPosition(new Vector2i(playerCardPos[i], top + 50), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+					readyButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top - 2 + size.height - 110));
 				}
 			}
 			for(int i = lastPlayerCount + 1; i < playerCount; i++) {
@@ -145,10 +145,10 @@ public class LobbyScreen : Screen {
 				}
 				if(Game.peerId == i) {
 					int top = 32;
-					nameInput.SetPosition(new Vector2i(playerCardPos[i], top + 50), UIObj.ALIGN_CENTER);
-					readyButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top - 2 + size.height - 110), UIObj.ALIGN_LEFT);
-					prevClassButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top + 80), UIObj.ALIGN_CENTER);
-					nextClassButton.SetPosition(new Vector2i(playerCardPos[i] + 30, top + 80), UIObj.ALIGN_CENTER);
+					nameInput.SetPosition(new Vector2i(playerCardPos[i], top + 50), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+					readyButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top - 2 + size.height - 110));
+					prevClassButton.SetPosition(new Vector2i(playerCardPos[i] - 30, top + 80), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+					nextClassButton.SetPosition(new Vector2i(playerCardPos[i] + 30, top + 80), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 				}
 			}
 			if(isHostAndAllReady && startButton.currentState == UIObj.State.Disabled) {

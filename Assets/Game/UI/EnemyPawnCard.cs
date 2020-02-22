@@ -9,27 +9,12 @@ public class EnemyPawnCard : UIObj {
 	private int align;
 	private Vector2i originalPos;
 
-	public EnemyPawnCard(Vector2i pos, Vector2i size, Pawn pawn, Battle battle, int align = ALIGN_LEFT) {
+	public EnemyPawnCard(Vector2i pos, Vector2i size, Pawn pawn, Battle battle, int align = RB.ALIGN_H_LEFT) {
 		this.battle = battle;
 		this.pawn = pawn;
 		this.size = size;
-		SetPosition(this.originalPos = pos, this.align = align);
+		SetPosition(this.originalPos = pos, alignment = align);
 	}
-
-	public void SetPosition(Vector2i pos, int align) {
-		if((align & ALIGN_CENTER) == ALIGN_CENTER) {
-			this.pos = pos - size / 2;
-		} else
-		if((align & ALIGN_LEFT) == ALIGN_LEFT) {
-			this.pos = new Vector2i(pos.x, pos.y - size.y / 2);
-		} else
-		if((align & ALIGN_RIGHT) == ALIGN_RIGHT) {
-			this.pos = new Vector2i(pos.x - size.x, pos.y - size.y / 2);
-		} else {
-			this.pos = pos;
-		}
-	}
-
 	public override void Render() {
 		if(!isVisible) {
 			return;
