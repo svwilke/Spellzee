@@ -13,6 +13,8 @@ public class VendorScreen : Screen
 	private Text spellName;
 	private Text description;
 
+	private Text vendorText;
+
 	private Text buyHeader;
 	private ItemButton[] buyButtons;
 	private Text sellHeader;
@@ -23,6 +25,7 @@ public class VendorScreen : Screen
 		buyButtons = new ItemButton[0];
 		sellButtons = new ItemButton[0];
 		UpdateSell(pawn.GetKnownSpellIds());
+		vendorText.SetText(vendorText.GetText() + "\n\nYou can currently know @FFFFFF" + pawn.SpellSlotCount.GetValue() + "@- spells.");
 	}
 
 	public override void OnConstruct() {
@@ -36,10 +39,10 @@ public class VendorScreen : Screen
 		int infoPaneWidth = (size.width - 102) - (size.width / 2 + 1);
 		AddUIObj(infoPane = new TabbedPane(new Vector2i(size.width / 2 - infoPaneWidth / 2, size.height - 62), new Vector2i(infoPaneWidth, 62), true));
 		infoPane.SetTabs(new string[] { "Shop Info", "Spell" });
-		description = new Text(new Vector2i(size.width / 2 - infoPaneWidth / 2 + 4, size.height - 58), new Vector2i(infoPaneWidth - 8, 54), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP | RB.TEXT_OVERFLOW_WRAP);
-		description.SetText("Yoda:\n\"I can teach you a new spell!\"");
-		AddUIObj(description);
-		infoPane.AddToTab(0, description);
+		vendorText = new Text(new Vector2i(size.width / 2 - infoPaneWidth / 2 + 4, size.height - 58), new Vector2i(infoPaneWidth - 8, 54), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP | RB.TEXT_OVERFLOW_WRAP);
+		vendorText.SetText("Yoda:\n\"I can teach you a new spell!\"");
+		AddUIObj(vendorText);
+		infoPane.AddToTab(0, vendorText);
 		// Infopane: Spell info
 		AddUIObj(spellName = new Text(new Vector2i(size.width / 2 - infoPaneWidth / 2 + 4, size.height - 58), new Vector2i(infoPaneWidth / 2, 10), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP));
 		spellName.SetEffect(Text.Outline);
@@ -84,10 +87,10 @@ public class VendorScreen : Screen
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < buyButtons.Length; i++) {
 			int spellId = buyableSpells[i];
-			buyButtons[i] = new ItemButton(DB.SpellList[spellId], new Vector2i(size.width / 4 - 46, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
+			buyButtons[i] = new ItemButton(DB.SpellList[spellId], new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
 			AddUIObj(buyButtons[i]);
 		}
-		buyHeader.pos = new Vector2i(size.width / 4 - 46, yStart - 20);
+		buyHeader.pos = new Vector2i(size.width / 4 - 48, yStart - 20);
 	}
 
 	public void UpdateSell(List<int> sellableSpells) {
@@ -102,10 +105,10 @@ public class VendorScreen : Screen
 		int height = 28 * sellableSpells.Count + (4 * (sellableSpells.Count - 1));
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < sellButtons.Length; i++) {
-			sellButtons[i] = new ItemButton(DB.SpellList[sellableSpells[i]], new Vector2i(3 * (size.width / 4) - 46, yStart + i * 32));
+			sellButtons[i] = new ItemButton(DB.SpellList[sellableSpells[i]], new Vector2i(3 * (size.width / 4), yStart + i * 32));
 			AddUIObj(sellButtons[i]);
 		}
-		sellHeader.pos = new Vector2i(3 * size.width / 4 - 46, yStart - 20);
+		sellHeader.pos = new Vector2i(3 * size.width / 4 - 48, yStart - 20);
 	}
 
 	public override void OnOpen() {

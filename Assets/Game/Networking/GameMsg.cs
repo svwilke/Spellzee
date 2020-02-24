@@ -17,7 +17,7 @@ public class GameMsg {
 	public static short Roll = MsgType.Highest + 14;
 	public static short ToggleDieLock = MsgType.Highest + 15;
 	public static short CastSpell = MsgType.Highest + 16;
-	public static short EndGame = MsgType.Highest + 17;
+	public static short EndBattle = MsgType.Highest + 17;
 	public static short TakeDamage = MsgType.Highest + 18;
 	public static short Heal = MsgType.Highest + 19;
 	public static short NextTurn = MsgType.Highest + 20;
@@ -25,6 +25,7 @@ public class GameMsg {
 	public static short CastSpellEnd = MsgType.Highest + 22;
 	public static short UpdateAilment = MsgType.Highest + 23;
 	public static short SetupTurn = MsgType.Highest + 24;
+	public static short EndGame = MsgType.Highest + 25;
 
 	public static short OpenVendor = MsgType.Highest + 30;
 	public static short ShopList = MsgType.Highest + 31;

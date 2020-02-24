@@ -14,7 +14,7 @@ public class ItemButton : UIObj
 	public ItemButton(Spell spell, Vector2i pos, bool toBuy = false, bool blocked = false) {
 		SetSpell(spell);
 		size = new Vector2i(92, 28);
-		SetPosition(pos);
+		SetPosition(pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_TOP);
 		this.toBuy = toBuy;
 		this.blocked = blocked;
 	}

@@ -40,7 +40,7 @@ public class MessageBox : UIObj {
 	}
 
 	public void AddButton(string text, System.Action onClick) {
-		int measure = RB.PrintMeasure(text).width;
+		int measure = RB.PrintMeasure(text).width + 8;
 		if(totalButtonWidth > 0) {
 			totalButtonWidth += 4;
 		}
@@ -53,6 +53,10 @@ public class MessageBox : UIObj {
 			TextButton b = buttons[i] as TextButton;
 			b.SetPosition(new Vector2i(x, buttonY));
 			x += b.size.width + 4;
+		}
+		if(totalButtonWidth + 8 > size.width) {
+			size.width = totalButtonWidth + 8;
+			pos = RB.DisplaySize / 2 - size / 2;
 		}
 	}
 

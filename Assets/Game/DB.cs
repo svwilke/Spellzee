@@ -11,13 +11,13 @@ public class DB {
 	public static int[] EnemySpells = new int[] { 7, 9, 7, 6, 10, 8 };
 
 	public static EnemyTemplate[] Enemies = new EnemyTemplate[] {
-		new EnemyTemplate("Sloth").SetMaxHp(1, 1).AddSpells(7).SetTurnWeights(1F, 0F, 4F)/*,
+		new EnemyTemplate("Sloth").SetMaxHp(4, 6).AddSpells(7).SetTurnWeights(1F, 0F, 6F),
 		new EnemyTemplate("Pixie").SetMaxHp(4).AddSpells(9),
 		new EnemyTemplate("Rat").SetMaxHp(4).AddSpells(7),
 		new EnemyTemplate("Bat").SetMaxHp(5).AddSpells(7),
 		new EnemyTemplate("Wolf").SetMaxHp(7).AddSpells(6),
 		new EnemyTemplate("Cutpursh").SetMaxHp(8).AddSpells(10),
-		new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(8)*/
+		new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(8)
 	};
 
 	public static PlayerTemplate[] Classes = new PlayerTemplate[] {

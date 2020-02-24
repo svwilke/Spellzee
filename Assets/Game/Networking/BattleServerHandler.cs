@@ -73,13 +73,12 @@ public class BattleServerHandler : ServerHandler {
 			
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
-				if(level % 3 == 0) {
+				if(level % 2 == 0) {
 					for(int i = 0; i < battle.allies.Length; i++) {
 						(battle.allies[i] as PlayerPawn).SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
-						Debug.Log("Added mod, new value: " + (battle.allies[i] as PlayerPawn).SpellSlotCount.GetValue());
 					}
 				}
-				NetworkServer.SendToAll(GameMsg.EndGame, new StringMessage("Congratulations! This area is cleared."));
+				NetworkServer.SendToAll(GameMsg.EndBattle, new StringMessage("Congratulations! This area is cleared."));
 				return;
 			}
 			Pawn enemy = game.CreateNextEnemy();

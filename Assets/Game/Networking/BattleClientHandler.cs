@@ -18,7 +18,7 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.CastSpell, OnCastSpell);
 		AddHandler(GameMsg.CastSpellEnd, OnCastSpellEnd);
 		AddHandler(GameMsg.Pass, OnPass);
-		AddHandler(GameMsg.EndGame, OnEndGame);
+		AddHandler(GameMsg.EndBattle, OnEndBattle);
 		AddHandler(GameMsg.TakeDamage, OnTakeDamage);
 		AddHandler(GameMsg.Heal, OnHeal);
 		AddHandler(GameMsg.NextTurn, OnNextTurn);
@@ -26,6 +26,7 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.UpdateAilment, OnAilmentUpdate);
 		AddHandler(GameMsg.SetupTurn, OnSetupTurn);
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
+		AddHandler(GameMsg.EndGame, OnEndGame);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -213,7 +214,7 @@ public class BattleClientHandler : ClientHandler {
 		screen.UpdateContext();
 	}
 
-	public void OnEndGame(NetworkMessage msg) {
+	public void OnEndBattle(NetworkMessage msg) {
 		MessageBox msgBox = new MessageBox(msg.ReadMessage<StringMessage>().value);
 		if(game.IsHost()) {
 			msgBox.AddButton("Continue", () => {
@@ -237,5 +238,14 @@ public class BattleClientHandler : ClientHandler {
 		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
 		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));
 		game.OpenScreen(screen);
+	}
+
+	public void OnEndGame(NetworkMessage msg) {
+		MessageBox msgBox = new MessageBox(msg.ReadMessage<StringMessage>().value);
+		msgBox.AddButton("Back to menu", () => {
+			game.CancelConnection();
+			game.OpenScreen(new MainScreen(game, RB.DisplaySize));
+		});
+		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 }

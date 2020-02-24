@@ -38,6 +38,10 @@ public class Text : UIObj
 		this.text = text;
 	}
 
+	public string GetText() {
+		return text;
+	}
+
 	public void SetTooltip(string text) {
 		tooltip = text;
 	}
