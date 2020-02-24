@@ -12,7 +12,7 @@ public class REX {
 		return items[Random.Range(0, items.Length)];
 	}
 
-	public static T[] Choice<T>(T[] items, int count) {
+	public static T[] Choice<T>(List<T> items, int count) {
 		List<T> itemList = new List<T>(items);
 		List<T> result = new List<T>(count);
 		while(result.Count < count && itemList.Count > 0) {
@@ -22,6 +22,10 @@ public class REX {
 			itemList.RemoveAt(index);
 		}
 		return result.ToArray();
+	}
+
+	public static T[] Choice<T>(T[] items, int count) {
+		return Choice(new List<T>(items), count);
 	}
 
 	public static int Weighted(double[] weights) {

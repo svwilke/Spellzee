@@ -59,10 +59,9 @@ public class VendorServerHandler : ServerHandler {
 		base.Open();
 		int shopAmount = 1;
 		for(int i = 0; i < pawns.Length; i++) {
-			int[] shop = new int[shopAmount];
-			for(int j = 0; j < shop.Length; j++) {
-				shop[j] = REX.Choice(DB.BuyableSpells);
-			}
+			List<int> buyableSpells = new List<int>(DB.BuyableSpells);
+			buyableSpells.RemoveAll(pawns[i].DoesKnowSpell);
+			int[] shop = REX.Choice(buyableSpells, shopAmount);
 			NetworkServer.SendToClient(i, GameMsg.ShopList, new GameMsg.MsgIntegerArray(shop));
 		}
 	}
