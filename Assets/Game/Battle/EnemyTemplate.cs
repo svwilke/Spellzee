@@ -40,7 +40,7 @@ public class EnemyTemplate {
 	}
 
 	public EnemyPawn Create(int playerCount, int level) {
-		EnemyPawn enemy = new EnemyPawn(this.name, (int)(Random.Range(minMaxHp, maxMaxHp + 1) * playerCount * (1 + (level * 0.15))));
+		EnemyPawn enemy = new EnemyPawn(this.name, (int)(Random.Range(minMaxHp, maxMaxHp + 1) * playerCount * (1 + (level * 0.10))));
 		foreach(int spellId in knownSpells) {
 			enemy.AddSpell(spellId);
 		}

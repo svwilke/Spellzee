@@ -24,6 +24,8 @@ public class Pawn {
 
 	private int[] ailments = new int[DB.Ailments.Length];
 
+	public Attribute MissChance = new Attribute().SetBaseValue(0);
+
 	public Pawn(string name, int maxHp) {
 		this.name = name;
 		this.MaxHp = CurrentHp = maxHp;
@@ -186,6 +188,7 @@ public class Pawn {
 		MaxHp = pawn.MaxHp;
 		isDead = pawn.isDead;
 		knownSpells = pawn.knownSpells;
+		ailments = pawn.ailments;
 	}
 
 	public virtual void Serialize(NetworkWriter writer) {
@@ -199,6 +202,9 @@ public class Pawn {
 		for(int i = 0; i < knownSpells.Count; i++) {
 			writer.Write(knownSpells[i]);
 		}
+		for(int i = 0; i < ailments.Length; i++) {
+			writer.Write(ailments[i]);
+		}
 	}
 
 	public virtual void Deserialize(NetworkReader reader) {
@@ -211,6 +217,9 @@ public class Pawn {
 		knownSpells = new List<int>(knownSpellCount);
 		for(int i = 0; i < knownSpellCount; i++) {
 			knownSpells.Add(reader.ReadInt32());
+		}
+		for(int i = 0; i < ailments.Length; i++) {
+			SetAilment(i, reader.ReadInt32());
 		}
 	}
 
@@ -250,6 +259,7 @@ public class Pawn {
 		foreach(int spellId in other.knownSpells) {
 			clone.knownSpells.Add(spellId);
 		}
+		clone.ailments = other.ailments;
 		return clone;
 	}
 }

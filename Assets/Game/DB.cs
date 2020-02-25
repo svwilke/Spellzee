@@ -22,10 +22,10 @@ public class DB {
 
 	public static PlayerTemplate[] Classes = new PlayerTemplate[] {
 		new PlayerTemplate("Wizard").SetMaxHp(16).AddSpells(0, 1, 2, 3).SetAffinities(15, 15, 15, 15, 0, 0, 0),
-		new PlayerTemplate("Sorcerer").SetMaxHp(16).AddSpells(0, 3, 12, 13)
+		new PlayerTemplate("Sorcerer").SetMaxHp(16).AddSpells(1, 2, 12, 17)
 	};
 
-	public static int[] BuyableSpells = new int[] { 0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 16 };
+	public static int[] BuyableSpells = new int[] { 0, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 16, 17 };
 
 	public static class Spells
 	{
@@ -40,7 +40,7 @@ public class DB {
 		Spells.Root = new SimpleSpell(2, "Root", "Restore 2 life to yourself.", Element.Earth, 2, false, (ctx) => ctx.GetCaster().CmdHeal(2)),
 		new SimpleSpell(3, "Revitalize", "Restore 5 life.", Element.Water, 4, true, (ctx) => ctx.GetTarget().CmdHeal(5)),
 		new SimpleSpell(4, "Incinerate", "Deal 9 damage.", Element.Fire, 5, true, (ctx) => ctx.GetTarget().CmdDamage(9)),
-		new SimpleSpell(5, "Cure of the Woods", "Restore 3 life to all allies.", Element.Earth, 4, false, (ctx) => ctx.ForEachAlly((p) => p.CmdHeal(3))),
+		new SimpleSpell(5, "Cure of the Woods", "Restore 5 life to all allies.", Element.Earth, 5, false, (ctx) => ctx.ForEachAlly((p) => p.CmdHeal(5))),
 		// Enemy Spells
 		new SimpleSpell(6, "Claw", "Deal 2 damage.", Element.None, 4, false, (ctx) => ctx.ForEachEnemy((p) => p.CmdDamage(2))),
 		new SimpleSpell(7, "Bite", "Deal 1 damage.", Element.None, 4, false, (ctx) => ctx.ForEachEnemy((p) => p.CmdDamage(1))),
@@ -58,9 +58,14 @@ public class DB {
 			new ComplexSpell.ElemMatch() { elem = Element.Fire, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Fire, optional = false },
 			new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }),
 		new SimpleSpell(14, "Healing Rays", "Restore 2 life to all allies.", Element.Light, 3, false, (ctx) => ctx.ForEachAlly((p) => p.CmdHeal(2))),
-		new SimpleSpell(15, "Ignite", "Inflict 2 Burn.", Element.Fire, 3, false, (ctx) => ctx.ForEachEnemy((p) => p.CmdApplyAilment(0, 2))),
-		new ExtendingSpell(16, "Tsunami", "Deal 1 base damage. Deal 2 additional damage for each additional Water.", "Deal {0} damage.", true, Element.Water, 2, 1, 2, (ctx, val) => ctx.GetTarget().CmdDamage(val))
+		new SimpleSpell(15, "Ignite", "Apply 2 Burn.", Element.Fire, 3, true, (ctx) => ctx.GetTarget().CmdApplyAilment(0, 2)),
+		new ExtendingSpell(16, "Tsunami", "Deal 1 base damage. Deal 2 additional damage for each additional Water.", "Deal {0} damage.", true, Element.Water, 2, 1, 2, (ctx, val) => ctx.GetTarget().CmdDamage(val)),
+		new SimpleSpell(17, "Flash", "Apply 1 Blind.", Element.Light, 2, true, (ctx) => ctx.GetTarget().CmdApplyAilment(1, 1)),
+		new SimpleSpell(18, "Consuming Darkness", "Apply 3 Blind.", Element.Dark, 4, true, (ctx) => ctx.GetTarget().CmdApplyAilment(1, 3))
 	};
 
-	public static Ailment[] Ailments = new Ailment[] { new BurnAilment(0, "Burn", "Brn", Color.red) };
+	public static Ailment[] Ailments = new Ailment[] {
+		new BurnAilment(0, "Burn", "Brn", Color.red),
+		new BlindAilment(1, "Blind", "Bld", Element.Light.GetColor())
+	};
 }

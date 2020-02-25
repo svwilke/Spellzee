@@ -73,7 +73,7 @@ public class BattleServerHandler : ServerHandler {
 			
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
-				if(level % 2 == 0) {
+				if(level % 2 == 1) {
 					for(int i = 0; i < battle.allies.Length; i++) {
 						(battle.allies[i] as PlayerPawn).SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
 					}

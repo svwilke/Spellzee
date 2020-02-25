@@ -53,6 +53,14 @@ public class ServerBattle : Battle
 
 	public void CastSpell(int spellId, int targetPawnId = -1) {
 		GameMsg.MsgIntegerArray msg = new GameMsg.MsgIntegerArray(spellId, targetPawnId);
+
+		Pawn pawn = GetCurrentPawn();
+		if(Random.value < pawn.MissChance.GetValue()) {
+			NetworkServer.SendToAll(GameMsg.Miss, msg);
+			NextTurn();
+			return;
+		}
+		
 		NetworkServer.SendToAll(GameMsg.CastSpell, msg);
 		DB.SpellList[spellId].Cast(BuildContext(targetPawnId));
 		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);

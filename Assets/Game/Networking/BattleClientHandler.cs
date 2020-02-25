@@ -27,6 +27,7 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.SetupTurn, OnSetupTurn);
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
 		AddHandler(GameMsg.EndGame, OnEndGame);
+		AddHandler(GameMsg.Miss, OnMiss);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -197,21 +198,10 @@ public class BattleClientHandler : ClientHandler {
 		screen.UpdateContext();
 	}
 
-	private void NextTurn(Battle battle, BattleScreen screen) {
-		int start = battle.currentTurn;
-		battle.currentTurn = (battle.currentTurn + 1) % (battle.MaxTurn + 1);
-		while(!battle.GetCurrentPawn().IsAlive() && battle.currentTurn != start) {
-			battle.currentTurn = (battle.currentTurn + 1) % (battle.MaxTurn + 1);
-		}
-		battle.rollsLeft = 3;
-		for(int i = 0; i < battle.rolls.Length; i++) {
-			battle.rolls[i] = Element.None;
-			battle.locks[i] = false;
-		}
-		if(battle.currentTurn < battle.allies.Length) {
-			screen.spellPane.OpenTab(battle.currentTurn);
-		}
-		screen.UpdateContext();
+	public void OnMiss(NetworkMessage msg) {
+		GameMsg.MsgIntegerArray msgInts = msg.ReadMessage<GameMsg.MsgIntegerArray>();
+		Spell spell = DB.SpellList[msgInts.array[0]];
+		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to cast " + spell.GetName() + " but misses...");
 	}
 
 	public void OnEndBattle(NetworkMessage msg) {
