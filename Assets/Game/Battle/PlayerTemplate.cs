@@ -47,7 +47,7 @@ public class PlayerTemplate {
 			player.AddSpell(spellId);
 		}
 		for(int i = 0; i < player.Affinities.Length; i++) {
-			player.Affinities[i].AddModifier(new AttributeModifier("From Class", AttributeModifier.Operation.AddBase, affinityModifiers[i]));
+			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));
 		}
 		return player;
 	}

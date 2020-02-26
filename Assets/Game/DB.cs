@@ -68,4 +68,12 @@ public class DB {
 		new BurnAilment(0, "Burn", "Brn", Color.red),
 		new BlindAilment(1, "Blind", "Bld", Element.Light.GetColor())
 	};
+
+	public static Equipment[] Equipments = new Equipment[] {
+		new PerfectionCharm(0, "Charm of Perfection"),
+		new AffinityEquipment(1, "Solar Orb", AttributeModifier.Operation.AddBase, 0, 0, 0, 0, 5, 0, 0),
+		new AffinityEquipment(2, "Lunar Orb", AttributeModifier.Operation.AddBase, 0, 0, 0, 0, 0, 5, 0),
+		new AffinityEquipment(3, "Elemental Focus", AttributeModifier.Operation.AddBase, 2, 2, 2, 2, 0, 0, 0),
+		new DieTalisman(4, "Flaying Talisman")
+	};
 }

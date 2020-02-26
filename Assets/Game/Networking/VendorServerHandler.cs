@@ -30,6 +30,7 @@ public class VendorServerHandler : ServerHandler {
 		ServerBattle battle = new ServerBattle(game);
 		battle.allies = pawns;
 		for(int i = 0; i < battle.allies.Length; i++) {
+			battle.allies[i].OnSpellsChange.Invoke(null, battle.allies[i]);
 			battle.allies[i].Heal(battle.allies[i].MaxHp);
 		}
 		battle.enemy = game.CreateNextEnemy();

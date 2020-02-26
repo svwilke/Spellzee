@@ -78,7 +78,7 @@ public abstract class Screen {
 	}
 
 	public virtual void Update(bool hasFocus = true) {
-		Vector2i mousePos = RB.PointerPos();
+		Vector2i mousePos = RB.PointerPos() + new Vector2i(0, 1); // + 0, 1 is workaround for weird hovering behaviour?!
 		UIObj on = null;
 		List<UIObj> objsNoLongerUnderMouse = new List<UIObj>();
 		foreach(UIObj obj in objUnderMouse) {

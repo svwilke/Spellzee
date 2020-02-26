@@ -27,6 +27,7 @@ public class GameMsg {
 	public static short SetupTurn = MsgType.Highest + 24;
 	public static short EndGame = MsgType.Highest + 25;
 	public static short Miss = MsgType.Highest + 26;
+	public static short ShowMessage = MsgType.Highest + 27;
 
 	public static short OpenVendor = MsgType.Highest + 30;
 	public static short ShopList = MsgType.Highest + 31;

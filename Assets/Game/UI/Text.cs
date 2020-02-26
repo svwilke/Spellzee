@@ -38,6 +38,14 @@ public class Text : UIObj
 		this.text = text;
 	}
 
+	public void FitSizeToText(int expand = 0) {
+		size = RB.PrintMeasure(text);
+		if(expand != 0) {
+			size += new Vector2i(expand * 2, expand * 2);
+			pos -= new Vector2i(expand, expand);
+		}
+	}
+
 	public string GetText() {
 		return text;
 	}
@@ -63,40 +71,13 @@ public class Text : UIObj
 			}
 		}
 		RB.Print(rect, color, flags, text);
-		if(renderTooltip) {
-			string ttt = tooltip;
-			Vector2i tooltipSize = RB.PrintMeasure(ttt) + new Vector2i(6, 6);
-			Vector2i topRightPos = RB.PointerPos() - new Vector2i(0, tooltipSize.y);
-			if(topRightPos.y >= 0) {
-				if(topRightPos.x + tooltipSize.width < RB.DisplaySize.width) {
-					RenderTooltip(new Rect2i(topRightPos, tooltipSize), ttt);
-				} else {
-					RenderTooltip(new Rect2i(RB.PointerPos() - tooltipSize, tooltipSize), ttt);
-				}
-			} else {
-				if(topRightPos.x + tooltipSize.width < RB.DisplaySize.width) {
-					RenderTooltip(new Rect2i(RB.PointerPos(), tooltipSize), ttt);
-				} else {
-					RenderTooltip(new Rect2i(RB.PointerPos() - new Vector2i(tooltipSize.x, 0), tooltipSize), ttt);
-				}
-			}
-		}
 	}
 
-	private void RenderTooltip(Rect2i rect, string text) {
-		RB.DrawRectFill(rect, Color.white);
-		RB.DrawRect(rect, Color.black);
-		RB.Print(rect.Expand(-2), Color.black, RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, text);
+	public override void OnMouseEnter() {
+		screen.SetTooltip(tooltip);
 	}
 
-	public override void Update() {
-		base.Update();
-		if(tooltip.Length > 0) {
-			if(new Rect2i(pos, size).Contains(RB.PointerPos())) {
-				renderTooltip = true;
-			} else {
-				renderTooltip = false;
-			}
-		}
+	public override void OnMouseExit() {
+		screen.SetTooltip("");
 	}
 }

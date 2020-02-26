@@ -12,6 +12,8 @@ public class Element {
 	public static Element Dark;
 	public static Element Chaos;
 
+	public const int Count = 7;
+
 	public static Element None = new Element(7, "None", Color.white, "FFFFFF");
 
 	public static Element[] All = new Element[] {
@@ -47,6 +49,10 @@ public class Element {
 
 	public string GetColorHex() {
 		return "@" + colorHex;
+	}
+
+	public string GetColoredName() {
+		return GetColorHex() + GetName() + "@-";
 	}
 
 	public int GetId() {

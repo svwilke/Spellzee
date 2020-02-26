@@ -12,6 +12,10 @@ public class Pawn {
 	public EventBus.EvtPawn OnSetupTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnBeginTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnEndTurn = new EventBus.EvtPawn();
+	public EventBus.EvtPawn OnSpellsChange = new EventBus.EvtPawn();
+	public EventBus.EvtPawnInteger OnItemEquipped = new EventBus.EvtPawnInteger();
+	public EventBus.EvtPawnInteger OnItemUnequipped = new EventBus.EvtPawnInteger();
+	public EventBus.EvtPawnInteger OnItemUsed = new EventBus.EvtPawnInteger();
 
 	private int id;
 	private string name;
@@ -23,6 +27,8 @@ public class Pawn {
 	private bool isDead = false;
 
 	private int[] ailments = new int[DB.Ailments.Length];
+
+	private List<int> equipped = new List<int>();
 
 	public Attribute MissChance = new Attribute().SetBaseValue(0);
 
@@ -37,6 +43,38 @@ public class Pawn {
 
 	public int GetId() {
 		return id;
+	}
+
+	public void Equip(Equipment eq) {
+		Equip(eq.GetId());
+	}
+
+	public void Equip(int eqId) {
+		equipped.Add(eqId);
+		DB.Equipments[eqId].OnEquipped(this);
+		OnItemEquipped.Invoke(null, this, eqId);
+	}
+
+	public void Unequip(Equipment eq) {
+		Unequip(eq.GetId());
+	}
+
+	public bool HasEquipped(Equipment eq) {
+		return HasEquipped(eq.GetId());
+	}
+
+	public bool HasEquipped(int eqId) {
+		return equipped.Contains(eqId);
+	}
+
+	public void Unequip(int eqId) {
+		equipped.Remove(eqId);
+		DB.Equipments[eqId].OnUnequipped(this);
+		OnItemUnequipped.Invoke(null, this, eqId);
+	}
+
+	public int[] GetEquipment() {
+		return equipped.ToArray();
 	}
 
 	public void ApplyAilment(int ailmentId, int intensity) {
@@ -189,6 +227,7 @@ public class Pawn {
 		isDead = pawn.isDead;
 		knownSpells = pawn.knownSpells;
 		ailments = pawn.ailments;
+		equipped = pawn.equipped;
 	}
 
 	public virtual void Serialize(NetworkWriter writer) {
@@ -205,6 +244,10 @@ public class Pawn {
 		for(int i = 0; i < ailments.Length; i++) {
 			writer.Write(ailments[i]);
 		}
+		writer.Write(equipped.Count);
+		foreach(int eqId in equipped) {
+			writer.Write(eqId);
+		}
 	}
 
 	public virtual void Deserialize(NetworkReader reader) {
@@ -220,6 +263,11 @@ public class Pawn {
 		}
 		for(int i = 0; i < ailments.Length; i++) {
 			SetAilment(i, reader.ReadInt32());
+		}
+		equipped.Clear();
+		int eqCount = reader.ReadInt32();
+		for(int i = 0; i < eqCount; i++) {
+			equipped.Add(reader.ReadInt32());
 		}
 	}
 
@@ -260,6 +308,10 @@ public class Pawn {
 			clone.knownSpells.Add(spellId);
 		}
 		clone.ailments = other.ailments;
+		clone.equipped = new List<int>(other.equipped.Count);
+		foreach(int eqId in other.equipped) {
+			clone.equipped.Add(eqId);
+		}
 		return clone;
 	}
 }

@@ -56,6 +56,9 @@ public class ExtendingSpell : Spell
 	}
 
 	public int GetExtensionAmount(RollContext context) {
+		if(context == null) {
+			return -requiredCount;
+		}
 		return context.GetElementCount(element, true) - requiredCount;
 	}
 

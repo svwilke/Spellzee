@@ -5,8 +5,9 @@ using static AttributeModifier;
 
 public class PlayerPawn : Pawn {
 
-	public Attribute[] Affinities = new Attribute[7];
+	public Attribute[] Affinities = new Attribute[Element.Count];
 	public Attribute DieCount = new Attribute().SetBaseValue(5);
+	public Attribute LockCount = new Attribute();
 	public Attribute RollCount = new Attribute().SetBaseValue(3);
 	public Attribute SpellSlotCount = new Attribute().SetBaseValue(4);
 	public Attribute SpellHealBonus = new Attribute();

@@ -50,7 +50,6 @@ public class ServerBattle : Battle
 		pawn.OnBeginTurn.Invoke(this, pawn);
 	}
 
-
 	public void CastSpell(int spellId, int targetPawnId = -1) {
 		GameMsg.MsgIntegerArray msg = new GameMsg.MsgIntegerArray(spellId, targetPawnId);
 

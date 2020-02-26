@@ -28,6 +28,7 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
 		AddHandler(GameMsg.EndGame, OnEndGame);
 		AddHandler(GameMsg.Miss, OnMiss);
+		AddHandler(GameMsg.ShowMessage, OnShowMessage);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -42,6 +43,13 @@ public class BattleClientHandler : ClientHandler {
 		battle.SetDieCount(setup.array[0]);
 		battle.SetRollCount(setup.array[1]);
 		(game.GetOpenScreen() as BattleScreen).UpdateDieButtons();
+	}
+
+	public void OnShowMessage(NetworkMessage msg) {
+		string text = msg.ReadMessage<StringMessage>().value;
+		MessageBox msgBox = new MessageBox(text);
+		msgBox.AddButton("Got it", () => game.GetOpenScreen().CloseMessageBox());
+		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 
 	public void OnRoll(NetworkMessage msg) {
@@ -186,7 +194,6 @@ public class BattleClientHandler : ClientHandler {
 	public void OnNextTurn(NetworkMessage msg) {
 		int turn = msg.ReadMessage<IntegerMessage>().value;
 		battle.currentTurn = turn;
-		battle.rollsLeft = 3;
 		for(int i = 0; i < battle.rolls.Length; i++) {
 			battle.rolls[i] = Element.None;
 			battle.locks[i] = false;

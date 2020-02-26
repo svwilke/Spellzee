@@ -46,6 +46,24 @@ public class BattleServerHandler : ServerHandler {
 		if(msg.conn.connectionId == battle.currentTurn) {
 			IntegerMessage actualMsg = msg.ReadMessage<IntegerMessage>();
 			int die = actualMsg.value;
+			bool newLockState = !battle.locks[die];
+			if(newLockState) {
+				int currentlyLocked = 0;
+				for(int i = 0; i < battle.locks.Length; i++) {
+					if(battle.locks[die]) {
+						currentlyLocked++;
+					}
+				}
+				int possibleLocks = (int)(battle.GetCurrentPawn() as PlayerPawn).LockCount.GetValue(battle.locks.Length);
+				if(currentlyLocked >= possibleLocks) {
+					string dieText = "more than @FFFFFF" + possibleLocks + ((possibleLocks == 1) ? " die" : " dice");
+					if(possibleLocks == 0) {
+						dieText = "any dice";
+					}
+					NetworkServer.SendToClient(msg.conn.connectionId, GameMsg.ShowMessage, new StringMessage("You can't lock " + dieText + " at the moment."));
+					return;
+				}
+			}
 			battle.locks[die] = !battle.locks[die];
 			NetworkServer.SendToAll(GameMsg.ToggleDieLock, actualMsg);
 		}
