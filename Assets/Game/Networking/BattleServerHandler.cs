@@ -92,16 +92,16 @@ public class BattleServerHandler : ServerHandler {
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
 				if(level % 2 == 1) {
-					for(int i = 0; i < battle.allies.Length; i++) {
-						(battle.allies[i] as PlayerPawn).SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
-					}
+					OpenChoice(level);
+				} else {
+					OpenVendor();
 				}
-				NetworkServer.SendToAll(GameMsg.EndBattle, new StringMessage("Congratulations! This area is cleared."));
 				return;
 			}
 			Pawn enemy = game.CreateNextEnemy();
 			enemy.SetId(battle.allies.Length);
-			this.battle.enemy.Update(enemy);
+			//this.battle.enemy.Update(enemy);
+			battle.enemy = enemy;
 			GameMsg.MsgPawn enemyUpdate = new GameMsg.MsgPawn() { pawn = enemy };
 			NetworkServer.SendToAll(GameMsg.UpdatePawn, enemyUpdate);
 			/*
@@ -146,6 +146,14 @@ public class BattleServerHandler : ServerHandler {
 			NetworkServer.SendToAll(GameMsg.Pass, new EmptyMessage());
 			battle.NextTurn();
 		}
+	}
+
+	public void OpenChoice(int level) {
+		for(int i = 0; i < battle.allies.Length; i++) {
+			GameMsg.MsgPawn openChoiceMsg = new GameMsg.MsgPawn() { pawn = battle.allies[i] };
+			NetworkServer.SendToClient(i, GameMsg.OpenChoice, openChoiceMsg);
+		}
+		game.OpenServerHandler(new ChoiceServerHandler(game, battle.allies, level));
 	}
 
 	public void OpenVendor() {

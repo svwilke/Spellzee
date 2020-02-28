@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyPawnCard : UIObj {
 
 	private Battle battle;
-	private Pawn pawn;
+	public Pawn pawn;
 	private int align;
 	private Vector2i originalPos;
 

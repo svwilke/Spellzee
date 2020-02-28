@@ -335,6 +335,7 @@ public class BattleScreen : Screen {
 			text.SetTooltip(e.GetDescription());
 			currentY += text.size.height + 2;
 			AddUIObj(text);
+			currentItemTexts.Add(text);
 			bottomPane.AddToTab(1, text);
 		}
 	}
@@ -419,12 +420,28 @@ public class BattleScreen : Screen {
 		}
 	}
 
+	public void OnPawnUpdate(Battle battle, Pawn newPawn) {
+		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
+		if(oldPawn.GetId() == battle.allies.Length) {
+			EnemyPawnCard epc = pawnCards[oldPawn] as EnemyPawnCard;
+			pawnCards.Remove(oldPawn);
+			epc.pawn = newPawn;
+			pawnCards.Add(newPawn, epc);
+		} else {
+			PlayerPawnCard ppc = pawnCards[oldPawn] as PlayerPawnCard;
+			pawnCards.Remove(oldPawn);
+			ppc.pawn = newPawn;
+			pawnCards.Add(newPawn, ppc);
+		}
+	}
+
 	public override void OnOpen() {
 		EventBus.UIMouseEnter.AddListener(SetInformation);
 		EventBus.UIMouseExit.AddListener(ResetInformation);
 		EventBus.PawnDamage.AddListener(OnPawnDamage);
 		EventBus.PawnHeal.AddListener(OnPawnHeal);
 		EventBus.CastSpellPre.AddListener(OnBeforeCast);
+		EventBus.PawnUpdate.AddListener(OnPawnUpdate);
 	}
 
 	public override void OnClose() {
@@ -433,5 +450,6 @@ public class BattleScreen : Screen {
 		EventBus.PawnDamage.RemoveListener(OnPawnDamage);
 		EventBus.PawnHeal.RemoveListener(OnPawnHeal);
 		EventBus.CastSpellPre.RemoveListener(OnBeforeCast);
+		EventBus.PawnUpdate.RemoveListener(OnPawnUpdate);
 	}
 }

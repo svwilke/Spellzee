@@ -13,7 +13,7 @@ public class EventBus {
 
 	public static EvtPawnInteger PawnDamage = new EvtPawnInteger();
 	public static EvtPawnInteger PawnHeal = new EvtPawnInteger();
-	public static EvtPawn NewEnemy = new EvtPawn();
+	public static EvtPawn PawnUpdate = new EvtPawn();
 	public static EvtPawn PawnDied = new EvtPawn();
 
 	public static EvtPawnPawnInteger CastSpellPre = new EvtPawnPawnInteger();

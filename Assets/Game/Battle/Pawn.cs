@@ -31,6 +31,8 @@ public class Pawn {
 	private List<int> equipped = new List<int>();
 
 	public Attribute MissChance = new Attribute().SetBaseValue(0);
+	public Attribute SpellHealBonus = new Attribute();
+	public Attribute SpellDamageBonus = new Attribute();
 
 	public Pawn(string name, int maxHp) {
 		this.name = name;
@@ -71,6 +73,11 @@ public class Pawn {
 		equipped.Remove(eqId);
 		DB.Equipments[eqId].OnUnequipped(this);
 		OnItemUnequipped.Invoke(null, this, eqId);
+	}
+
+	public int GetHealAmount(int amount, RollContext context) {
+		int heal = (int)SpellHealBonus.GetValue(amount);
+		return heal;
 	}
 
 	public int[] GetEquipment() {
@@ -248,6 +255,8 @@ public class Pawn {
 		foreach(int eqId in equipped) {
 			writer.Write(eqId);
 		}
+		MissChance.Serialize(writer);
+		SpellHealBonus.Serialize(writer);
 	}
 
 	public virtual void Deserialize(NetworkReader reader) {
@@ -269,6 +278,8 @@ public class Pawn {
 		for(int i = 0; i < eqCount; i++) {
 			equipped.Add(reader.ReadInt32());
 		}
+		MissChance.Deserialize(reader);
+		SpellHealBonus.Deserialize(reader);
 	}
 
 	public static Pawn DeserializeNew(NetworkReader reader) {
@@ -284,18 +295,6 @@ public class Pawn {
 
 	public static Pawn CreatePlayer(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		return DB.Classes[lobbyPlayer.charClass].Create(lobbyPlayer);
-		/*Pawn pawn = new Pawn(lobbyPlayer.charName, 16);
-		pawn.id = lobbyPlayer.id;
-		pawn.knownSpells.Add(0);
-		pawn.knownSpells.Add(1);
-		pawn.knownSpells.Add(2);
-		pawn.knownSpells.Add(3);
-		pawn.knownSpells.Add(4 + lobbyPlayer.id);
-		pawn.knownSpells.Add(11);*/
-		//for(int i = 0; i < 3; i++) {
-		//	pawn.knownSpells.Add(UnityEngine.Random.Range(0, DB.SpellList.Length));
-		//}
-		//return pawn;
 	}
 
 	public static Pawn Clone(Pawn other) {
@@ -312,6 +311,7 @@ public class Pawn {
 		foreach(int eqId in other.equipped) {
 			clone.equipped.Add(eqId);
 		}
+		clone.SpellHealBonus = Attribute.Clone(other.SpellHealBonus);
 		return clone;
 	}
 }

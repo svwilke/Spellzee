@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerPawnCard : UIObj
 {
 	private Battle battle;
-	private Pawn pawn;
+	public Pawn pawn;
 
 	private System.Action onClick;
 

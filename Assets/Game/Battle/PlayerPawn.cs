@@ -10,7 +10,6 @@ public class PlayerPawn : Pawn {
 	public Attribute LockCount = new Attribute();
 	public Attribute RollCount = new Attribute().SetBaseValue(3);
 	public Attribute SpellSlotCount = new Attribute().SetBaseValue(4);
-	public Attribute SpellHealBonus = new Attribute();
 	public Attribute EndOfBattleRestoration = new Attribute(new AttributeModifier("Base Value", Operation.MultiplyTotal, 0.125));
 
 	public PlayerPawn(string name, int maxHp) : base(name, maxHp) {
@@ -40,7 +39,6 @@ public class PlayerPawn : Pawn {
 		if(pawn is PlayerPawn) {
 			PlayerPawn other = pawn as PlayerPawn;
 			DieCount = Attribute.Clone(other.DieCount);
-			SpellHealBonus = Attribute.Clone(other.SpellHealBonus);
 			EndOfBattleRestoration = Attribute.Clone(other.EndOfBattleRestoration);
 		}
 	}
@@ -53,9 +51,7 @@ public class PlayerPawn : Pawn {
 		DieCount.Deserialize(reader);
 		RollCount.Deserialize(reader);
 		SpellSlotCount.Deserialize(reader);
-		SpellHealBonus.Deserialize(reader);
 		EndOfBattleRestoration.Deserialize(reader);
-		
 	}
 
 	public override void Serialize(NetworkWriter writer) {
@@ -66,7 +62,6 @@ public class PlayerPawn : Pawn {
 		DieCount.Serialize(writer);
 		RollCount.Serialize(writer);
 		SpellSlotCount.Serialize(writer);
-		SpellHealBonus.Serialize(writer);
 		EndOfBattleRestoration.Serialize(writer);
 	}
 }

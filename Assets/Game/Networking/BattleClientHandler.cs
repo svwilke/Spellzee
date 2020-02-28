@@ -26,6 +26,7 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.UpdateAilment, OnAilmentUpdate);
 		AddHandler(GameMsg.SetupTurn, OnSetupTurn);
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
+		AddHandler(GameMsg.OpenChoice, OnOpenChoice);
 		AddHandler(GameMsg.EndGame, OnEndGame);
 		AddHandler(GameMsg.Miss, OnMiss);
 		AddHandler(GameMsg.ShowMessage, OnShowMessage);
@@ -157,10 +158,11 @@ public class BattleClientHandler : ClientHandler {
 		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
 		Pawn newPawn = pawnMsg.pawn;
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-		if(battle.allies.Length == newPawn.GetId()) {
-			EventBus.NewEnemy.Invoke(battle, oldPawn);
-		}
-		oldPawn.Update(newPawn);
+		//if(battle.allies.Length == newPawn.GetId()) {
+			EventBus.PawnUpdate.Invoke(battle, newPawn);
+		//}
+		//oldPawn.Update(newPawn);
+		battle.SetPawn(newPawn.GetId(), newPawn);
 		/*
 			GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
 			Pawn newPawn = pawnMsg.pawn;
@@ -230,11 +232,26 @@ public class BattleClientHandler : ClientHandler {
 		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 
+	public void OnOpenChoice(NetworkMessage msg) {
+		PlayerPawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn as PlayerPawn;
+		ChoiceScreen screen = new ChoiceScreen(game, RB.DisplaySize, pawn);
+		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
+		game.OpenClientHandler(new ChoiceClientHandler(game, pawn, screen));
+		msgBox.AddButton("Continue", () => {
+			game.OpenScreen(screen);
+		});
+		game.GetOpenScreen().ShowMessageBox(msgBox);
+	}
+
 	public void OnOpenVendor(NetworkMessage msg) {
 		PlayerPawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn as PlayerPawn;
 		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
+		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
 		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));
-		game.OpenScreen(screen);
+		msgBox.AddButton("Continue", () => {
+			game.OpenScreen(screen);
+		});
+		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 
 	public void OnEndGame(NetworkMessage msg) {
