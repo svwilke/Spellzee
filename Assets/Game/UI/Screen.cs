@@ -96,6 +96,12 @@ public abstract class Screen {
 			uiObjsToUpdate = currentMsgBox.GetUIObjs();
 		}
 		foreach(UIObj obj in uiObjsToUpdate) {
+			if(obj.HasKeybind() && RB.KeyPressed(obj.GetKeybind())) {
+				if(obj.IsInteractable) {
+					EventBus.UIClick.Invoke(obj);
+					obj.OnClick();
+				}
+			}
 			if(obj.IsInBounds(mousePos) && obj.isVisible) {
 				if(!objUnderMouse.Contains(obj)) {
 					objUnderMouse.Add(obj);

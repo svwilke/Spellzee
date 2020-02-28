@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public abstract class UIObj {
 
 	public Screen screen;
+    private KeyCode keyBind = KeyCode.None;
 
 	public enum State {
 		Enabled, Hovered, Pressed, Disabled
@@ -60,6 +61,18 @@ public abstract class UIObj {
             onClick.Invoke();
             RB.SoundPlay(Game.AUDIO_BUTTON, Game.volume);
         }
+    }
+
+    public void SetKeybind(KeyCode keyCode) {
+        keyBind = keyCode;
+    }
+
+    public bool HasKeybind() {
+        return keyBind != KeyCode.None;
+    }
+
+    public KeyCode GetKeybind() {
+        return keyBind;
     }
 
 	public virtual void OnMouseEnter() { }

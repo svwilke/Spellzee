@@ -8,11 +8,16 @@ public class DieButton : UIObj
 	private int id;
 	private Battle battle;
 
+	private static KeyCode[] keyCodes = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T, KeyCode.Z, KeyCode.U };
+
 	public DieButton(Battle battle, int id, Vector2i pos) {
 		this.id = id;
 		this.battle = battle;
 		size = new Vector2i(32, 32);
 		SetPosition(pos);
+		if(id >= 0 && id < keyCodes.Length) {
+			SetKeybind(keyCodes[id]);
+		}
 	}
 
 	public void SetPosition(Vector2i pos) {

@@ -41,6 +41,7 @@ public class BattleScreen : Screen {
 	private Vector2i targetPoint;
 	private Rect2i targetRect;
 	private Pawn targetPawn;
+	private int pawnSelectedByKey;
 
 	public BattleScreen(Game game, Vector2i size, Battle battle) : base(game, size) {
 		this.battle = battle;
@@ -76,6 +77,7 @@ public class BattleScreen : Screen {
 				Game.client.Send(GameMsg.Roll, new EmptyMessage());
 			}
 		});
+		rollButton.SetKeybind(KeyCode.Space);
 		AddUIObj(passButton = new TextButton(new Vector2i(size.x / 5, size.y / 2 + 48), "Pass", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		passButton.SetOnClick(() => {
 			if(battle.rollsLeft == 0) {
@@ -84,6 +86,7 @@ public class BattleScreen : Screen {
 			}
 		});
 		passButton.isVisible = false;
+		passButton.SetKeybind(KeyCode.Return);
 		AddUIObj(bottomPane = new TabbedPane(new Vector2i(0, size.height - 72), new Vector2i(size.width / 2 + 1, 72)));
 		bottomPane.SetTabs(new string[] { "Battle Log", "Inventory", "Bestiary" });
 		AddUIObj(battleLog = new Text(new Vector2i(4, size.height - 64), new Vector2i(size.width / 3 * 2, 60), RB.ALIGN_H_LEFT | RB.ALIGN_V_BOTTOM | RB.TEXT_OVERFLOW_CLIP));
@@ -214,6 +217,9 @@ public class BattleScreen : Screen {
 		Spell[] knownSpells = battle.allies[index].GetSpells();
 		for(int i = 0; i < knownSpells.Length; i++) {
 			SpellButton sb = new SpellButton(this, battle, knownSpells[i], new Vector2i(size.width - 97, 5 + i * 31), index != Game.peerId);
+			if(index == Game.peerId) {
+				sb.SetKeybind(KeyCode.Alpha1 + i);
+			}
 			spellButtons[i + buttonIndexStart] = sb;
 			spellButtonOwnership[i + buttonIndexStart] = index;
 			AddUIObj(sb);
@@ -262,12 +268,34 @@ public class BattleScreen : Screen {
 		}
 	}
 
+	private Vector2i lastMousePos;
+
 	public override void Update(bool hasFocus = true) {
 		if(renderTargeting) {
 			Rect2i onRect = new Rect2i(0, 0, 0, 0);
 			UIObj on = null;
 			Pawn pawnTarget = null;
 			Vector2i mouse = RB.PointerPos();
+			if((mouse - lastMousePos).SqrMagnitude() > 2) {
+				pawnSelectedByKey = -1;
+			}
+			for(int i = 0; i <= battle.allies.Length; i++) {
+				if(RB.KeyPressed(KeyCode.Alpha1 + i)) {
+					lastMousePos = mouse;
+					pawnSelectedByKey = i;
+				}
+			}
+			if(RB.KeyPressed(KeyCode.Escape) || RB.KeyPressed(KeyCode.Backspace)) {
+				pawnSelectedByKey = -1;
+			}
+			if(pawnSelectedByKey >= 0) {
+				Pawn p = battle.GetPawn(pawnSelectedByKey);
+				UIObj card = pawnCards[p];
+				mouse = card.pos + card.size / 2;
+				on = card;
+				pawnTarget = p;
+				onRect = new Rect2i(on.pos, on.size);
+			}
 			foreach(KeyValuePair<Pawn, UIObj> cardPair in pawnCards) {
 				onRect = new Rect2i(cardPair.Value.pos, cardPair.Value.size);
 				if(onRect.Contains(mouse)) {
@@ -283,10 +311,11 @@ public class BattleScreen : Screen {
 				targetPawn = pawnTarget;
 				targetPoint = new Vector2i(onRect.x + onRect.width, onRect.y + onRect.height / 2);
 				targetRect = new Rect2i(onRect.x - 1, onRect.y - 1, onRect.width + 1, onRect.height + 1);
-				if(RB.ButtonPressed(RB.BTN_POINTER_A)) {
+				if(RB.ButtonPressed(RB.BTN_POINTER_A) || RB.KeyPressed(KeyCode.Return)) {
 					Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgIntegerArray(targetSpell.GetId(), targetPawn.GetId()));
 					renderTargeting = false;
 					targetSpell = null;
+					SetTooltip("");
 				}
 			} else {
 				targetPawn = null;
