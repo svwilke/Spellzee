@@ -31,6 +31,7 @@ public class ChoiceClientHandler : ClientHandler {
 		screen.newItem.SetText("To buy: " + eq.GetName());
 		screen.newItem.SetTooltip(eq.GetDescription());
 		screen.newItem.FitSizeToText();
+		screen.newItem.SetPosition(screen.newItem.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		screen.eqToBuy = eqId;
 	}
 

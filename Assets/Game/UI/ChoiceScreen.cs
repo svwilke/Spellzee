@@ -32,6 +32,7 @@ public class ChoiceScreen : Screen {
 			eq = -1;
 		}
 		currentItem.FitSizeToText();
+		currentItem.SetPosition(currentItem.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 	}
 
 	public override void OnConstruct() {
@@ -64,8 +65,8 @@ public class ChoiceScreen : Screen {
 			ShowMessageBox(waitForPlayersMsg);
 		});
 
-		newItem = new Text(new Vector2i(size.width / 2 - 160, size.height / 2), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
-		currentItem = new Text(new Vector2i(size.width / 2 - 160, size.height / 2 + 20), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+		newItem = new Text(new Vector2i(size.width / 2 - 100, size.height / 2), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+		currentItem = new Text(new Vector2i(size.width / 2 - 100, size.height / 2 + 20), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		newItem.SetColor(Color.black);
 		currentItem.SetColor(Color.black);
 		AddUIObj(newItem);
@@ -73,6 +74,7 @@ public class ChoiceScreen : Screen {
 
 		header = new Text(new Vector2i(size.width / 2, 80), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Choose");
 		header.FitSizeToText();
+		header.SetPosition(header.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		header.SetEffect(Text.Outline);
 		header.SetColor(Color.white);
 		AddUIObj(header);
