@@ -4,23 +4,14 @@ using UnityEngine;
 
 public class PerfectionCharm : Equipment {
 
-	public PerfectionCharm(int id, string name) : base(id, name, "Your Affinities are perfect.") {
+	public PerfectionCharm(int id, string name) : base(id, name, "Additional total Affinities based on your needs.") {
 
 	}
 
 	public override void OnEquipped(Pawn pawn) {
 		PlayerPawn player = pawn as PlayerPawn;
 		if(player != null) {
-			int[] elementCount = new int[Element.Count];
-			foreach(Spell spell in player.GetSpells()) {
-				ElementDisplay[] displays = spell.GetElementDisplays(RollContext.Null);
-				foreach(ElementDisplay display in displays) {
-					elementCount[display.element.GetId()] += 1;
-				}
-			}
-			for(int i = 0; i < elementCount.Length; i++) {
-				player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.Set, elementCount[i]));
-			}
+			UpdateAffinityModifiers(player);
 			player.OnSpellsChange.AddListener(UpdateAffinities);
 		}
 		
@@ -52,7 +43,7 @@ public class PerfectionCharm : Equipment {
 		}
 		for(int i = 0; i < elementCount.Length; i++) {
 			player.Affinities[i].RemoveModifier(GetName());
-			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.Set, elementCount[i]));
+			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddTotal, elementCount[i]));
 		}
 	}
 }
