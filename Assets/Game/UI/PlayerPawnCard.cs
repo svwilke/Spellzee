@@ -72,7 +72,7 @@ public class PlayerPawnCard : UIObj
 		RB.Print(new Vector2i(hpX - hpSize.x + off, pos.y + 17 + off), Color.black, "HP:");
 		RB.DrawRectFill(healthBar, Color.red);
 		int fill = (int)(healthBar.width * ((float)pawn.CurrentHp / (float)pawn.MaxHp));
-		RB.DrawRectFill(new Rect2i(healthBar.x, healthBar.y, fill, healthBar.height), Color.green);
+		RB.DrawRectFill(new Rect2i(healthBar.x, healthBar.y, fill, healthBar.height), pawn.IsAlive() ? Color.green : Color.gray);
 		RB.Print(healthBar, Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, pawn.CurrentHp + "/" + pawn.MaxHp);
 		RB.DrawRect(healthBar.Expand(1), Color.black);
 	}

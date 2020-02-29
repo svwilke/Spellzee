@@ -75,11 +75,6 @@ public class Pawn {
 		OnItemUnequipped.Invoke(null, this, eqId);
 	}
 
-	public int GetHealAmount(int amount, RollContext context) {
-		int heal = (int)SpellHealBonus.GetValue(amount);
-		return heal;
-	}
-
 	public int[] GetEquipment() {
 		return equipped.ToArray();
 	}
@@ -180,6 +175,17 @@ public class Pawn {
 
 	public void Die() {
 		isDead = true;
+	}
+
+	public void Revive() {
+		if(isDead && CurrentHp > 0) {
+			isDead = false;
+		}
+	}
+
+	public void CmdRevive() {
+		Revive();
+		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
 	public bool IsAlive() {

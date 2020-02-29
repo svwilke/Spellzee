@@ -38,6 +38,7 @@ public class BattleServerHandler : ServerHandler {
 				}
 				battle.rolls[i] = Element.All[rolls[i]];
 			}
+			battle.rollsLeft -= 1;
 			NetworkServer.SendToAll(GameMsg.Roll, new GameMsg.MsgIntegerArray() { array = rolls });
 		}
 	}

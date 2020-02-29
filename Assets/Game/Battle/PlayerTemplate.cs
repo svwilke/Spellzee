@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerTemplate {
 
-	private string className;
-	private int maxHp = 16;
-	private List<int> knownSpells;
-	private double[] affinityModifiers;
+	protected string className;
+	protected int maxHp = 16;
+	protected List<int> knownSpells;
+	protected double[] affinityModifiers;
 
 	public PlayerTemplate(string name) {
 		className = name;
@@ -40,7 +40,7 @@ public class PlayerTemplate {
 		return this;
 	}
 
-	public PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
+	public virtual PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
 		player.SetId(lobbyPlayer.id);
 		foreach(int spellId in knownSpells) {
