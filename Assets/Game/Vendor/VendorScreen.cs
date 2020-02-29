@@ -52,13 +52,17 @@ public class VendorScreen : Screen
 		description.SetColor(Color.white);
 		infoPane.AddToTab(1, description);
 
-		buyHeader = new Text(new Vector2i(size.width / 4 - 46, -10), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Learn");
+		buyHeader = new Text(new Vector2i(size.width / 4, -10), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Learn");
 		buyHeader.SetEffect(Text.Outline);
 		buyHeader.SetColor(Color.white);
+		buyHeader.FitSizeToText();
+		buyHeader.alignment = RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER;
 		AddUIObj(buyHeader);
-		sellHeader = new Text(new Vector2i(3 * size.width / 4 - 46, -10), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Forget");
+		sellHeader = new Text(new Vector2i(3 * size.width / 4, -10), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Forget");
 		sellHeader.SetEffect(Text.Outline);
 		sellHeader.SetColor(Color.white);
+		sellHeader.FitSizeToText();
+		sellHeader.alignment = RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER;
 		AddUIObj(sellHeader);
 	}
 
@@ -90,7 +94,7 @@ public class VendorScreen : Screen
 			buyButtons[i] = new ItemButton(DB.SpellList[spellId], new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
 			AddUIObj(buyButtons[i]);
 		}
-		buyHeader.pos = new Vector2i(size.width / 4 - 48, yStart - 20);
+		buyHeader.SetPosition(new Vector2i(size.width / 4, yStart - 20));
 	}
 
 	public void UpdateSell(List<int> sellableSpells) {
@@ -108,7 +112,7 @@ public class VendorScreen : Screen
 			sellButtons[i] = new ItemButton(DB.SpellList[sellableSpells[i]], new Vector2i(3 * (size.width / 4), yStart + i * 32));
 			AddUIObj(sellButtons[i]);
 		}
-		sellHeader.pos = new Vector2i(3 * size.width / 4 - 48, yStart - 20);
+		sellHeader.SetPosition(new Vector2i(3 * size.width / 4, yStart - 20));
 	}
 
 	public override void OnOpen() {
