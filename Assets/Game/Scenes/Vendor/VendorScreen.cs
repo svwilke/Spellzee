@@ -34,13 +34,15 @@ public class VendorScreen : Screen
 		readyButton.SetOnClick(() => {
 			Game.client.Send(GameMsg.Ready, new EmptyMessage());
 			readyButton.currentState = UIObj.State.Disabled;
+			MessageBox waitingMsg = new MessageBox("Waiting for other players...");
+			ShowMessageBox(waitingMsg);
 		});
 
 		int infoPaneWidth = (size.width - 102) - (size.width / 2 + 1);
 		AddUIObj(infoPane = new TabbedPane(new Vector2i(size.width / 2 - infoPaneWidth / 2, size.height - 62), new Vector2i(infoPaneWidth, 62), true));
 		infoPane.SetTabs(new string[] { "Shop Info", "Spell" });
 		vendorText = new Text(new Vector2i(size.width / 2 - infoPaneWidth / 2 + 4, size.height - 58), new Vector2i(infoPaneWidth - 8, 54), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP | RB.TEXT_OVERFLOW_WRAP);
-		vendorText.SetText("Yoda:\n\"I can teach you a new spell!\"");
+		vendorText.SetText("Yoda:\n\"A new spell I can teach.\"");
 		AddUIObj(vendorText);
 		infoPane.AddToTab(0, vendorText);
 		// Infopane: Spell info

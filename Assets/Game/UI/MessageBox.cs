@@ -28,9 +28,7 @@ public class MessageBox : UIObj {
 			size = RB.PrintMeasure(text);
 		}
 		size += new Vector2i(8, 8);
-		size += new Vector2i(0, 20);
-		pos = RB.DisplaySize / 2 - size / 2;
-		buttonY = pos.y + size.height - 12;
+		UpdatePos();
 		this.flags = flags;
 		this.text = text;
 		color = Color.black;
@@ -43,6 +41,9 @@ public class MessageBox : UIObj {
 		int measure = RB.PrintMeasure(text).width + 8;
 		if(totalButtonWidth > 0) {
 			totalButtonWidth += 4;
+		} else {
+			size += new Vector2i(0, 20);
+			UpdatePos();
 		}
 		totalButtonWidth += measure;
 		TextButton button = new TextButton(new Vector2i(0, 0), text);
@@ -56,8 +57,13 @@ public class MessageBox : UIObj {
 		}
 		if(totalButtonWidth + 8 > size.width) {
 			size.width = totalButtonWidth + 8;
-			pos = RB.DisplaySize / 2 - size / 2;
+			UpdatePos();
 		}
+	}
+
+	private void UpdatePos() {
+		pos = RB.DisplaySize / 2 - size / 2;
+		buttonY = pos.y + size.height - 12;
 	}
 
 	public void SetEffect(int effect) {
