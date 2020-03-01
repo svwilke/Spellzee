@@ -9,8 +9,8 @@ public class SimpleActivatableSpell : ActivatableSpell
 	private int count;
 	private System.Predicate<RollContext> activation;
 
-	public SimpleActivatableSpell(int id, string name, string longDescription, string shortDescriptionInactive, string shortDescriptionActive, Element elem, int count,
-			bool requiresTarget, System.Predicate<RollContext> activation, System.Action<RollContext, bool> cast) : base(id, name, longDescription, shortDescriptionInactive, shortDescriptionActive, requiresTarget, cast) {
+	public SimpleActivatableSpell(string name, string longDescription, string shortDescriptionInactive, string shortDescriptionActive, Element elem, int count,
+			bool requiresTarget, System.Predicate<RollContext> activation, System.Action<RollContext, bool> cast) : base(name, longDescription, shortDescriptionInactive, shortDescriptionActive, requiresTarget, cast) {
 		element = elem;
 		this.count = count;
 		displays = new ElementDisplay[count];

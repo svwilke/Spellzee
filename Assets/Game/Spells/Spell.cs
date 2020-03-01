@@ -1,19 +1,13 @@
-﻿public abstract class Spell {
+﻿public abstract class Spell : RegistryEntry<Spell> {
 
-	private int id;
 	private string name;
 	private string desc;
 	private bool requiresTarget;
 
-	public Spell(int id, string name, string description, bool requiresTarget) {
-		this.id = id;
+	public Spell(string name, string description, bool requiresTarget) {
 		this.name = name;
 		this.desc = description;
 		this.requiresTarget = requiresTarget;
-	}
-
-	public int GetId() {
-		return id;
 	}
 
 	public string GetName() {

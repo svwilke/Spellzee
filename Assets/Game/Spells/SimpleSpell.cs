@@ -9,7 +9,7 @@ public class SimpleSpell : Spell
 	private int count;
 	private System.Action<RollContext> cast;
 
-	public SimpleSpell(int id, string name, string desc, Element elem, int count, bool requiresTarget, System.Action<RollContext> cast) : base(id, name, desc, requiresTarget) {
+	public SimpleSpell(string name, string desc, Element elem, int count, bool requiresTarget, System.Action<RollContext> cast) : base(name, desc, requiresTarget) {
 		element = elem;
 		this.count = count;
 		displays = new ElementDisplay[count];

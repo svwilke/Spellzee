@@ -9,8 +9,8 @@ public abstract class ActivatableSpell : Spell
 	private string shortDescriptionInactive = "";
 	private string shortDescriptionActive = "";
 
-	public ActivatableSpell(int id, string name, string longDescription, string shortDescriptionInactive, string shortDescriptionActive,
-			bool requiresTarget, System.Action<RollContext, bool> cast) : base(id, name, longDescription, requiresTarget) {
+	public ActivatableSpell(string name, string longDescription, string shortDescriptionInactive, string shortDescriptionActive,
+			bool requiresTarget, System.Action<RollContext, bool> cast) : base(name, longDescription, requiresTarget) {
 		this.cast = cast;
 		this.shortDescriptionInactive = shortDescriptionInactive;
 		this.shortDescriptionActive = shortDescriptionActive;

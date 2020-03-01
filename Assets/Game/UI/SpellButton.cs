@@ -30,7 +30,7 @@ public class SpellButton : UIObj
 			if(spell.DoesRequireTarget()) {
 				screen.BeginTargeting(spell, this);
 			} else {
-				Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgIntegerArray(spell.GetId()));
+				Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = spell.GetId() });
 			}
 		}
 	}

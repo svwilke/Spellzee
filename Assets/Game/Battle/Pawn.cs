@@ -23,7 +23,7 @@ public class Pawn {
 	public int CurrentHp { get; private set; }
 	public int MaxHp { get; private set; }
 
-	private List<int> knownSpells = new List<int>();
+	private List<string> knownSpells = new List<string>();
 	private bool isDead = false;
 
 	private int[] ailments = new int[DB.Ailments.Length];
@@ -196,7 +196,7 @@ public class Pawn {
 		return name;
 	}
 
-	public void AddSpell(int spellId) {
+	public void AddSpell(string spellId) {
 		if(!knownSpells.Contains(spellId)) {
 			knownSpells.Add(spellId);
 		}
@@ -206,25 +206,25 @@ public class Pawn {
 		AddSpell(spell.GetId());
 	}
 
-	public void RemoveSpell(int spellId) {
+	public void RemoveSpell(string spellId) {
 		if(knownSpells.Contains(spellId)) {
 			knownSpells.Remove(spellId);
 		}
 	}
 
 	public Spell[] GetSpells() {
-		return knownSpells.Select((id) => DB.SpellList[id]).ToArray();
+		return knownSpells.Select((id) => Spells.Registry.Get(id)).ToArray();
 	}
 
-	public List<int> GetKnownSpellIds() {
-		return new List<int>(knownSpells);
+	public List<string> GetKnownSpellIds() {
+		return new List<string>(knownSpells);
 	}
 
 	public bool DoesKnowSpell(Spell spell) {
 		return DoesKnowSpell(spell.GetId());
 	}
 
-	public bool DoesKnowSpell(int spellId) {
+	public bool DoesKnowSpell(string spellId) {
 		return knownSpells.Contains(spellId);
 	}
 
@@ -272,9 +272,9 @@ public class Pawn {
 		MaxHp = reader.ReadInt32();
 		isDead = reader.ReadBoolean();
 		int knownSpellCount = reader.ReadInt32();
-		knownSpells = new List<int>(knownSpellCount);
+		knownSpells = new List<string>(knownSpellCount);
 		for(int i = 0; i < knownSpellCount; i++) {
-			knownSpells.Add(reader.ReadInt32());
+			knownSpells.Add(reader.ReadString());
 		}
 		for(int i = 0; i < ailments.Length; i++) {
 			SetAilment(i, reader.ReadInt32());
@@ -308,8 +308,8 @@ public class Pawn {
 		clone.CurrentHp = other.CurrentHp;
 		clone.id = other.id;
 		clone.isDead = other.isDead;
-		clone.knownSpells = new List<int>(other.knownSpells.Count);
-		foreach(int spellId in other.knownSpells) {
+		clone.knownSpells = new List<string>(other.knownSpells.Count);
+		foreach(string spellId in other.knownSpells) {
 			clone.knownSpells.Add(spellId);
 		}
 		clone.ailments = other.ailments;

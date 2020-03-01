@@ -16,8 +16,8 @@ public class EventBus {
 	public static EvtPawn PawnUpdate = new EvtPawn();
 	public static EvtPawn PawnDied = new EvtPawn();
 
-	public static EvtPawnPawnInteger CastSpellPre = new EvtPawnPawnInteger();
-	public static EvtPawnPawnInteger CastSpellPost = new EvtPawnPawnInteger();
+	public static EvtPawnPawnString CastSpellPre = new EvtPawnPawnString();
+	public static EvtPawnPawnString CastSpellPost = new EvtPawnPawnString();
 
 	[System.Serializable]
 	public class EvtUIObj : UnityEvent<UIObj> { }
@@ -29,5 +29,5 @@ public class EventBus {
 	public class EvtPawnInteger : UnityEvent<Battle, Pawn, int> { }
 
 	[System.Serializable]
-	public class EvtPawnPawnInteger : UnityEvent<Battle, Pawn, Pawn, int> { }
+	public class EvtPawnPawnString : UnityEvent<Battle, Pawn, Pawn, string> { }
 }

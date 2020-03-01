@@ -72,8 +72,8 @@ public class BattleServerHandler : ServerHandler {
 
 	public void OnCastSpell(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn) {
-			GameMsg.MsgIntegerArray actualMsg = msg.ReadMessage<GameMsg.MsgIntegerArray>();
-			battle.CastSpell(actualMsg.array[0], actualMsg.array.Length > 1 ? actualMsg.array[1] : -1);
+			GameMsg.MsgCastSpell actualMsg = msg.ReadMessage<GameMsg.MsgCastSpell>();
+			battle.CastSpell(actualMsg.spellId, actualMsg.targetId);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class BattleServerHandler : ServerHandler {
 		}
 	}
 
-	public void AfterCastSpell(Battle battle, Pawn pawn, Pawn target, int spellId) {
+	public void AfterCastSpell(Battle battle, Pawn pawn, Pawn target, string spellId) {
 		this.battle.NextTurn();
 	}
 	/*

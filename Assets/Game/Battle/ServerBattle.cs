@@ -50,8 +50,8 @@ public class ServerBattle : Battle
 		pawn.OnBeginTurn.Invoke(this, pawn);
 	}
 
-	public void CastSpell(int spellId, int targetPawnId = -1) {
-		GameMsg.MsgIntegerArray msg = new GameMsg.MsgIntegerArray(spellId, targetPawnId);
+	public void CastSpell(string spellId, int targetPawnId = -1) {
+		GameMsg.MsgCastSpell msg = new GameMsg.MsgCastSpell() { spellId = spellId, targetId = targetPawnId };
 
 		Pawn pawn = GetCurrentPawn();
 		if(Random.value < pawn.MissChance.GetValue()) {
@@ -61,7 +61,7 @@ public class ServerBattle : Battle
 		}
 		
 		NetworkServer.SendToAll(GameMsg.CastSpell, msg);
-		DB.SpellList[spellId].Cast(BuildContext(targetPawnId));
+		Spells.Registry.Get(spellId).Cast(BuildContext(targetPawnId));
 		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
 	}
 

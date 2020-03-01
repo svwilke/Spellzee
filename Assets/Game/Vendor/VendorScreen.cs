@@ -81,7 +81,7 @@ public class VendorScreen : Screen
 		}
 	}
 
-	public void UpdateBuy(List<int> buyableSpells) {
+	public void UpdateBuy(List<string> buyableSpells) {
 		foreach(ItemButton ib in buyButtons) {
 			RemoveUIObj(ib);
 		}
@@ -90,14 +90,14 @@ public class VendorScreen : Screen
 		int height = 28 * buyableSpells.Count + (4 * (buyableSpells.Count - 1));
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < buyButtons.Length; i++) {
-			int spellId = buyableSpells[i];
-			buyButtons[i] = new ItemButton(DB.SpellList[spellId], new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
+			string spellId = buyableSpells[i];
+			buyButtons[i] = new ItemButton(Spells.Registry.Get(spellId), new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
 			AddUIObj(buyButtons[i]);
 		}
 		buyHeader.SetPosition(new Vector2i(size.width / 4, yStart - 20));
 	}
 
-	public void UpdateSell(List<int> sellableSpells) {
+	public void UpdateSell(List<string> sellableSpells) {
 		foreach(ItemButton ib in sellButtons) {
 			RemoveUIObj(ib);
 		}
@@ -109,7 +109,7 @@ public class VendorScreen : Screen
 		int height = 28 * sellableSpells.Count + (4 * (sellableSpells.Count - 1));
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < sellButtons.Length; i++) {
-			sellButtons[i] = new ItemButton(DB.SpellList[sellableSpells[i]], new Vector2i(3 * (size.width / 4), yStart + i * 32));
+			sellButtons[i] = new ItemButton(Spells.Registry.Get(sellableSpells[i]), new Vector2i(3 * (size.width / 4), yStart + i * 32));
 			AddUIObj(sellButtons[i]);
 		}
 		sellHeader.SetPosition(new Vector2i(3 * size.width / 4, yStart - 20));

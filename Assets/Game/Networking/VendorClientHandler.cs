@@ -27,17 +27,17 @@ public class VendorClientHandler : ClientHandler {
 	}
 
 	public void OnShopList(NetworkMessage msg) {
-		List<int> buyList = new List<int>(msg.ReadMessage<GameMsg.MsgIntegerArray>().array);
+		List<string> buyList = new List<string>(msg.ReadMessage<GameMsg.MsgStringArray>().array);
 		screen.UpdateBuy(buyList);
 	}
 
 	public void OnBuySpell(NetworkMessage msg) {
-		pawn.AddSpell(msg.ReadMessage<IntegerMessage>().value);
-		screen.UpdateSell(new List<int>(pawn.GetKnownSpellIds()));
+		pawn.AddSpell(msg.ReadMessage<StringMessage>().value);
+		screen.UpdateSell(new List<string>(pawn.GetKnownSpellIds()));
 	}
 
 	public void OnDropSpell(NetworkMessage msg) {
-		pawn.RemoveSpell(msg.ReadMessage<IntegerMessage>().value);
-		screen.UpdateSell(new List<int>(pawn.GetKnownSpellIds()));
+		pawn.RemoveSpell(msg.ReadMessage<StringMessage>().value);
+		screen.UpdateSell(new List<string>(pawn.GetKnownSpellIds()));
 	}
 }

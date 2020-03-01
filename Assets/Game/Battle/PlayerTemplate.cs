@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,12 +6,12 @@ public class PlayerTemplate {
 
 	protected string className;
 	protected int maxHp = 16;
-	protected List<int> knownSpells;
+	protected List<string> knownSpells;
 	protected double[] affinityModifiers;
 
 	public PlayerTemplate(string name) {
 		className = name;
-		knownSpells = new List<int>();
+		knownSpells = new List<string>();
 		affinityModifiers = new double[7];
 	}
 
@@ -35,17 +35,15 @@ public class PlayerTemplate {
 		return this;
 	}
 
-	public PlayerTemplate AddSpells(params int[] spellIds) {
-		knownSpells.AddRange(spellIds);
+	public PlayerTemplate AddSpells(params Spell[] spells) {
+		knownSpells.AddRange(spells.Select(spell => spell.GetId()));
 		return this;
 	}
 
 	public virtual PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
 		player.SetId(lobbyPlayer.id);
-		foreach(int spellId in knownSpells) {
-			player.AddSpell(spellId);
-		}
+		knownSpells.ForEach(player.AddSpell);
 		for(int i = 0; i < player.Affinities.Length; i++) {
 			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));
 		}

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
@@ -42,16 +42,16 @@ public class VendorServerHandler : ServerHandler {
 
 	public void OnBuySpell(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
-		IntegerMessage message = msg.ReadMessage<IntegerMessage>();
-		int spellId = message.value;
+		StringMessage message = msg.ReadMessage<StringMessage>();
+		string spellId = message.value;
 		pawns[pawnId].AddSpell(spellId);
 		msg.conn.Send(GameMsg.BuySpell, message);
 	}
 
 	public void OnDropSpell(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
-		IntegerMessage message = msg.ReadMessage<IntegerMessage>();
-		int spellId = message.value;
+		StringMessage message = msg.ReadMessage<StringMessage>();
+		string spellId = message.value;
 		pawns[pawnId].RemoveSpell(spellId);
 		msg.conn.Send(GameMsg.DropSpell, message);
 	}
@@ -60,10 +60,10 @@ public class VendorServerHandler : ServerHandler {
 		base.Open();
 		int shopAmount = 1;
 		for(int i = 0; i < pawns.Length; i++) {
-			List<int> buyableSpells = new List<int>(DB.BuyableSpells);
+			List<string> buyableSpells = DB.BuyableSpells.Select(spell => spell.GetId()).ToList();
 			buyableSpells.RemoveAll(pawns[i].DoesKnowSpell);
-			int[] shop = REX.Choice(buyableSpells, shopAmount);
-			NetworkServer.SendToClient(i, GameMsg.ShopList, new GameMsg.MsgIntegerArray(shop));
+			string[] shop = REX.Choice(buyableSpells, shopAmount);
+			NetworkServer.SendToClient(i, GameMsg.ShopList, new GameMsg.MsgStringArray(shop));
 		}
 	}
 }

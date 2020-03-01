@@ -13,7 +13,7 @@ public class ComplexSpell : Spell
 	private string shortDescriptionRequired = "";
 	private string shortDescriptionOptional = "";
 
-	public ComplexSpell(int id, string name, string desc, bool requiresTarget, System.Action<RollContext, int> cast, bool activateOnAll = false, params ElemMatch[] elemMatches) : base(id, name, desc, requiresTarget) {
+	public ComplexSpell(string name, string desc, bool requiresTarget, System.Action<RollContext, int> cast, bool activateOnAll = false, params ElemMatch[] elemMatches) : base(name, desc, requiresTarget) {
 		this.elemMatches = elemMatches;
 		this.cast = cast;
 		this.activateOnAll = activateOnAll;

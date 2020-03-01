@@ -29,7 +29,7 @@ public class ItemButton : UIObj
 			if(toBuy) {
 				box = new MessageBox("Do you really want to learn " + spell.GetName() + "?");
 				box.AddButton("Yes", () => {
-					Game.client.Send(GameMsg.BuySpell, new IntegerMessage(spell.GetId()));
+					Game.client.Send(GameMsg.BuySpell, new StringMessage(spell.GetId()));
 					screen.ShowMessageBox(null);
 					currentState = State.Disabled;
 				});
@@ -37,7 +37,7 @@ public class ItemButton : UIObj
 			} else {
 				box = new MessageBox("Do you really want to forget " + spell.GetName() + "?");
 				box.AddButton("Yes", () => {
-					Game.client.Send(GameMsg.DropSpell, new IntegerMessage(spell.GetId()));
+					Game.client.Send(GameMsg.DropSpell, new StringMessage(spell.GetId()));
 					screen.ShowMessageBox(null);
 				});
 				box.AddButton("No", () => screen.ShowMessageBox(null));

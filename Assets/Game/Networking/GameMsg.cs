@@ -77,4 +77,19 @@ public class GameMsg {
 			array = values;
 		}
 	}
+
+	public class MsgStringArray : MessageBase {
+		public string[] array;
+
+		public MsgStringArray() { }
+
+		public MsgStringArray(params string[] values) {
+			array = values;
+		}
+	}
+
+	public class MsgCastSpell : MessageBase {
+		public string spellId;
+		public int targetId = -1;
+	}
 }

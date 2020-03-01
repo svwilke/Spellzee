@@ -14,8 +14,8 @@ public class ExtendingSpell : Spell
 
 	private string shortDescription = "";
 
-	public ExtendingSpell(int id, string name, string longDescription, string shortDescription, bool requiresTarget,
-			Element elem, int requiredCount, int baseValue, double valueIncrease, System.Action<RollContext, int> cast) : base(id, name, longDescription, requiresTarget) {
+	public ExtendingSpell(string name, string longDescription, string shortDescription, bool requiresTarget,
+			Element elem, int requiredCount, int baseValue, double valueIncrease, System.Action<RollContext, int> cast) : base(name, longDescription, requiresTarget) {
 		element = elem;
 		this.requiredCount = requiredCount;
 		this.baseValue = baseValue;

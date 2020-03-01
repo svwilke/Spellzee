@@ -45,7 +45,7 @@ public class EnemyPawn : Pawn {
 
 	private void CastSpell(ServerBattle battle) {
 		Spell spell = REX.Choice(GetSpells());
-		int spellId = spell.GetId();
+		string spellId = spell.GetId();
 		int targetId = -1;
 		if(spell.DoesRequireTarget()) {
 			List<int> possibleTargets = new List<int>();

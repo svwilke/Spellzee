@@ -61,8 +61,8 @@ public class BattleScreen : Screen {
 		battle.log.Add(pawn.GetName() + " heals for @00FF00" + heal + "@- health.");
 	}
 
-	public void OnBeforeCast(Battle battle, Pawn pawn, Pawn target, int spellId) {
-		Spell spell = DB.SpellList[spellId];
+	public void OnBeforeCast(Battle battle, Pawn pawn, Pawn target, string spellId) {
+		Spell spell = Spells.Registry.Get(spellId);
 		string end = ".";
 		if(target != null) {
 			end = " on " + target.GetName() + end;
@@ -312,7 +312,7 @@ public class BattleScreen : Screen {
 				targetPoint = new Vector2i(onRect.x + onRect.width, onRect.y + onRect.height / 2);
 				targetRect = new Rect2i(onRect.x - 1, onRect.y - 1, onRect.width + 1, onRect.height + 1);
 				if(RB.ButtonPressed(RB.BTN_POINTER_A) || RB.KeyPressed(KeyCode.Return)) {
-					Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgIntegerArray(targetSpell.GetId(), targetPawn.GetId()));
+					Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = targetSpell.GetId(), targetId = targetPawn.GetId() });
 					renderTargeting = false;
 					targetSpell = null;
 					SetTooltip("");

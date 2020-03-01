@@ -97,90 +97,36 @@ public class BattleClientHandler : ClientHandler {
 		BattleScreen screen = (game.GetOpenScreen() as BattleScreen);
 		Battle b = screen.battle;
 		Pawn caster = b.GetCurrentPawn();
-		GameMsg.MsgIntegerArray actualMsg = msg.ReadMessage<GameMsg.MsgIntegerArray>();
+		GameMsg.MsgCastSpell actualMsg = msg.ReadMessage<GameMsg.MsgCastSpell>();
 		Pawn target = null;
-		if(actualMsg.array.Length > 1 && actualMsg.array[1] >= 0) {
-			target = b.GetPawn(actualMsg.array[1]);
+		if(actualMsg.targetId >= 0) {
+			target = b.GetPawn(actualMsg.targetId);
 		}
-		EventBus.CastSpellPre.Invoke(b, caster, target, actualMsg.array[0]);
-		/*spell.Cast(b.BuildContext());
-		bool allAlliesDead = true;
-		for(int i = 0; i < b.allies.Length; i++) {
-			if(b.allies[i].IsAlive()) {
-				allAlliesDead = false;
-				break;
-			}
-		}
-		if(allAlliesDead) {
-			game.ShowMessage("You all died.", () => {
-				game.OpenScreen(new MainScreen(game, RB.DisplaySize));
-			});
-			return;
-		}
-		if(!b.enemy.IsAlive()) {
-			if(game.IsHost()) {
-				Battle battle = new Battle();
-				battle.allies = b.allies;
-				for(int i = 0; i < battle.allies.Length; i++) {
-					battle.allies[i].Restore();
-				}
-				if(Game.enemy == DB.EnemyNames.Length - 1) {
-					NetworkServer.SendToAll(GameMsg.EndGame, new EmptyMessage());
-					return;
-				}
-				battle.enemy = game.CreateNextEnemy();
-				battle.enemy.SetId(battle.allies.Length);
-				GameMsg.MsgStartBattle startBattleMsg = new GameMsg.MsgStartBattle() { battle = battle };
-				NetworkServer.SendToAll(GameMsg.StartBattle, startBattleMsg);
-			}
-			return;
-		}*/
-		//NextTurn(b, screen);
+		EventBus.CastSpellPre.Invoke(b, caster, target, actualMsg.spellId);
 	}
 
 	public void OnCastSpellEnd(NetworkMessage msg) {
-		GameMsg.MsgIntegerArray actualMsg = msg.ReadMessage<GameMsg.MsgIntegerArray>();
+		GameMsg.MsgCastSpell actualMsg = msg.ReadMessage<GameMsg.MsgCastSpell>();
 		Pawn target = null;
-		if(actualMsg.array.Length > 1 && actualMsg.array[1] >= 0) {
-			target = battle.GetPawn(actualMsg.array[1]);
+		if(actualMsg.targetId >= 0) {
+			target = battle.GetPawn(actualMsg.targetId);
 		}
-		EventBus.CastSpellPost.Invoke(battle, battle.GetCurrentPawn(), target, actualMsg.array[0]);
+		EventBus.CastSpellPost.Invoke(battle, battle.GetCurrentPawn(), target, actualMsg.spellId);
 	}
 
 	public void OnPass(NetworkMessage msg) {
 		BattleScreen screen = (game.GetOpenScreen() as BattleScreen);
 		Battle b = screen.battle;
 		b.log.Add(b.GetCurrentPawn().GetName() + " passes...");
-		//NextTurn(b, screen);
 	}
 	
 	public void OnPawnUpdate(NetworkMessage msg) {
 		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
 		Pawn newPawn = pawnMsg.pawn;
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-		//if(battle.allies.Length == newPawn.GetId()) {
-			EventBus.PawnUpdate.Invoke(battle, newPawn);
-		//}
-		//oldPawn.Update(newPawn);
+		EventBus.PawnUpdate.Invoke(battle, newPawn);
 		battle.SetPawn(newPawn.GetId(), newPawn);
-		/*
-			GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
-			Pawn newPawn = pawnMsg.pawn;
-			Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-			Debug.Log("updating pawn...");
-			int hpDiff = newPawn.CurrentHp - oldPawn.CurrentHp;
-			if(hpDiff < 0) {
-				Debug.Log("invoking dmg event");
-				EventBus.PawnDamage.Invoke(battle, oldPawn, -hpDiff);
-			} else
-			if(hpDiff > 0) {
-				EventBus.PawnHeal.Invoke(battle, oldPawn, hpDiff);
-			}
-			if(oldPawn.IsAlive() && !newPawn.IsAlive()) {
-				EventBus.PawnDied.Invoke(battle, oldPawn);
-			}
-			oldPawn.Update(newPawn);
-			*/
+
 	}
 
 	public void OnAilmentUpdate(NetworkMessage msg) {
@@ -208,8 +154,8 @@ public class BattleClientHandler : ClientHandler {
 	}
 
 	public void OnMiss(NetworkMessage msg) {
-		GameMsg.MsgIntegerArray msgInts = msg.ReadMessage<GameMsg.MsgIntegerArray>();
-		Spell spell = DB.SpellList[msgInts.array[0]];
+		StringMessage actualMsg = msg.ReadMessage<StringMessage>();
+		Spell spell = Spells.Registry.Get(actualMsg.value);
 		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to cast " + spell.GetName() + " but misses...");
 	}
 
