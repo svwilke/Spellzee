@@ -62,7 +62,7 @@ public class BattleScreen : Screen {
 	}
 
 	public void OnBeforeCast(Battle battle, Pawn pawn, Pawn target, string spellId) {
-		Spell spell = Spells.Registry.Get(spellId);
+		Spell spell = Spells.Get(spellId);
 		string end = ".";
 		if(target != null) {
 			end = " on " + target.GetName() + end;

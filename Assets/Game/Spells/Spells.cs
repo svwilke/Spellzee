@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spells {
 
-	public static Registry<Spell> Registry = new Registry<Spell>();
+	private static Registry<Spell> Registry = new Registry<Spell>();
 
 	public static Spell Fireball = Register("fireball", new SimpleSpell("Fireball", "Deal 5 damage.", Element.Fire, 4, true, (ctx) => ctx.GetTarget().CmdDamage(5)));
 	public static Spell Whirlwind = Register("whirlwind", new SimpleSpell("Whirlwind", "Deal 3 damage.", Element.Air, 3, true, (ctx) => ctx.GetTarget().CmdDamage(3)));
@@ -81,5 +81,9 @@ public class Spells {
 		spell.SetId(id);
 		Registry.Register(spell);
 		return spell;
+	}
+
+	public static Spell Get(string id) {
+		return Registry.Get(id);
 	}
 }

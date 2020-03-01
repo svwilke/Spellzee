@@ -61,7 +61,7 @@ public class ServerBattle : Battle
 		}
 		
 		NetworkServer.SendToAll(GameMsg.CastSpell, msg);
-		Spells.Registry.Get(spellId).Cast(BuildContext(targetPawnId));
+		Spells.Get(spellId).Cast(BuildContext(targetPawnId));
 		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
 	}
 

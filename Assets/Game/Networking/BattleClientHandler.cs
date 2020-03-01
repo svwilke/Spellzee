@@ -155,7 +155,7 @@ public class BattleClientHandler : ClientHandler {
 
 	public void OnMiss(NetworkMessage msg) {
 		StringMessage actualMsg = msg.ReadMessage<StringMessage>();
-		Spell spell = Spells.Registry.Get(actualMsg.value);
+		Spell spell = Spells.Get(actualMsg.value);
 		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to cast " + spell.GetName() + " but misses...");
 	}
 

@@ -233,7 +233,7 @@ public class Pawn {
 	}
 
 	public Spell[] GetSpells() {
-		return knownSpells.Select((id) => Spells.Registry.Get(id)).ToArray();
+		return knownSpells.Select((id) => Spells.Get(id)).ToArray();
 	}
 
 	public List<string> GetKnownSpellIds() {
