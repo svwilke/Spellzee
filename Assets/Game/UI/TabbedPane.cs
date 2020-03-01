@@ -99,7 +99,7 @@ public class TabbedPane : UIObj
 			for(int i = 0; i < tabs.Length; i++) {
 				if(pos.x >= tabTitleX[i] && pos.x < tabTitleX[i + 1]) {
 					OpenTab(i);
-					RB.SoundPlay(Game.AUDIO_BUTTON, Game.volume);
+					Game.PlaySound(Game.AUDIO_BUTTON);
 					return;
 				}
 			}
