@@ -37,6 +37,7 @@ public class Game : RB.IRetroBlitGame
 	}
 
 	public const int SPRITEPACK_BATTLE = 0;
+	public const int SPRITEPACK_UI = 1;
 
 	public const int AUDIO_BUTTON = 0;
 	public const int AUDIO_ROLL = 1;
@@ -54,6 +55,7 @@ public class Game : RB.IRetroBlitGame
 		
 		RB.SpriteSheetSetup(SPRITEPACK_BATTLE, "Sprites/Battle", new Vector2i(12, 12));
 		RB.SpriteSheetSet(SPRITEPACK_BATTLE);
+		RB.SpriteSheetSetup(SPRITEPACK_UI, "Sprites/UI", new Vector2i(12, 12));
 
 		RB.SoundSetup(AUDIO_BUTTON, "Audio/Select");
 		RB.SoundSetup(AUDIO_ROLL, "Audio/Roll");

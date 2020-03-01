@@ -17,6 +17,7 @@ public class VendorServerHandler : ServerHandler {
 		AddHandler(GameMsg.Ready, OnReady);
 		AddHandler(GameMsg.BuySpell, OnBuySpell);
 		AddHandler(GameMsg.DropSpell, OnDropSpell);
+		AddHandler(GameMsg.SwapSpells, OnSwapSpells);
 	}
 
 	public void OnReady(NetworkMessage msg) {
@@ -54,6 +55,18 @@ public class VendorServerHandler : ServerHandler {
 		string spellId = message.value;
 		pawns[pawnId].RemoveSpell(spellId);
 		msg.conn.Send(GameMsg.DropSpell, message);
+	}
+
+	public void OnSwapSpells(NetworkMessage msg) {
+		GameMsg.MsgIntegerArray msgArray = msg.ReadMessage<GameMsg.MsgIntegerArray>();
+		int id0 = msgArray.array[0];
+		int id1 = msgArray.array[1];
+		int pawnId = msg.conn.connectionId;
+		Pawn pawn = pawns[pawnId];
+		List<string> spells = pawn.GetKnownSpellIdsMutable();
+		string temp = spells[id0];
+		spells[id0] = spells[id1];
+		spells[id1] = temp;
 	}
 
 	public override void Open() {

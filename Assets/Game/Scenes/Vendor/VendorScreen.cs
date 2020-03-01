@@ -16,14 +16,15 @@ public class VendorScreen : Screen
 	private Text vendorText;
 
 	private Text buyHeader;
-	private ItemButton[] buyButtons;
+	private VendorButton[] buyButtons;
 	private Text sellHeader;
-	private ItemButton[] sellButtons;
+	private VendorButton[] sellButtons;
+	private List<ImageButton> swapButtons = new List<ImageButton>();
 
 	public VendorScreen(Game game, Vector2i size, PlayerPawn pawn) : base(game, size) {
 		this.pawn = pawn;
-		buyButtons = new ItemButton[0];
-		sellButtons = new ItemButton[0];
+		buyButtons = new VendorButton[0];
+		sellButtons = new VendorButton[0];
 		UpdateSell(pawn.GetKnownSpellIds());
 		vendorText.SetText(vendorText.GetText() + "\n\nYou can currently know @FFFFFF" + pawn.SpellSlotCount.GetValue() + "@- spells.");
 	}
@@ -69,8 +70,8 @@ public class VendorScreen : Screen
 	}
 
 	public void SetInformation(UIObj hovered) {
-		if(hovered is ItemButton) {
-			Spell viewedSpell = ((ItemButton)hovered).spell;
+		if(hovered is VendorButton) {
+			Spell viewedSpell = ((VendorButton)hovered).spell;
 			spellName.SetText(viewedSpell.GetName());
 			description.SetText(viewedSpell.GetLongDescription());
 			infoPane.OpenTab(1);
@@ -78,32 +79,35 @@ public class VendorScreen : Screen
 	}
 
 	public void ResetInformation(UIObj unhovered) {
-		if(unhovered is ItemButton) {
+		if(unhovered is VendorButton) {
 			infoPane.OpenTab(0);
 		}
 	}
 
 	public void UpdateBuy(List<string> buyableSpells) {
-		foreach(ItemButton ib in buyButtons) {
+		foreach(VendorButton ib in buyButtons) {
 			RemoveUIObj(ib);
 		}
-		buyButtons = new ItemButton[buyableSpells.Count];
+		buyButtons = new VendorButton[buyableSpells.Count];
 		bool buyPossible = pawn.GetSpells().Length < pawn.SpellSlotCount.GetValue();
 		int height = 28 * buyableSpells.Count + (4 * (buyableSpells.Count - 1));
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < buyButtons.Length; i++) {
 			string spellId = buyableSpells[i];
-			buyButtons[i] = new ItemButton(Spells.Get(spellId), new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
+			buyButtons[i] = new VendorButton(Spells.Get(spellId), new Vector2i(size.width / 4, yStart + i * 32), true, !buyPossible || pawn.DoesKnowSpell(spellId));
 			AddUIObj(buyButtons[i]);
 		}
-		buyHeader.SetPosition(new Vector2i(size.width / 4, yStart - 20));
+		buyHeader.SetPosition(new Vector2i(size.width / 4, yStart - 10));
 	}
 
 	public void UpdateSell(List<string> sellableSpells) {
-		foreach(ItemButton ib in sellButtons) {
+		foreach(VendorButton ib in sellButtons) {
 			RemoveUIObj(ib);
 		}
-		sellButtons = new ItemButton[sellableSpells.Count];
+		foreach(ImageButton ib in swapButtons) {
+			RemoveUIObj(ib);
+		}
+		sellButtons = new VendorButton[sellableSpells.Count];
 		bool buyPossible = pawn.GetSpells().Length < pawn.SpellSlotCount.GetValue();
 		for(int i = 0; i < buyButtons.Length; i++) {
 			buyButtons[i].blocked = !buyPossible || pawn.DoesKnowSpell(buyButtons[i].spell);
@@ -111,10 +115,35 @@ public class VendorScreen : Screen
 		int height = 28 * sellableSpells.Count + (4 * (sellableSpells.Count - 1));
 		int yStart = size.height / 2 - height / 2;
 		for(int i = 0; i < sellButtons.Length; i++) {
-			sellButtons[i] = new ItemButton(Spells.Get(sellableSpells[i]), new Vector2i(3 * (size.width / 4), yStart + i * 32));
+			sellButtons[i] = new VendorButton(Spells.Get(sellableSpells[i]), new Vector2i(3 * (size.width / 4), yStart + i * 32));
 			AddUIObj(sellButtons[i]);
+			int x = i;
+			if(i > 0) {
+				ImageButton up = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 7 + i * 32), RB.PackedSpriteGet("ButtonUp", Game.SPRITEPACK_BATTLE));
+				swapButtons.Add(up);
+				AddUIObj(up);
+				up.SetOnClick(() => {
+					Game.client.Send(GameMsg.SwapSpells, new GameMsg.MsgIntegerArray(x - 1, x));
+					Spell temp = sellButtons[x - 1].spell;
+					sellButtons[x - 1].spell = sellButtons[x].spell;
+					sellButtons[x].spell = temp;
+				});
+			}
+			if(i < sellButtons.Length - 1) {
+				ImageButton down = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 19 + i * 32), RB.PackedSpriteGet("ButtonDown", Game.SPRITEPACK_BATTLE));
+				swapButtons.Add(down);
+				AddUIObj(down);
+				down.SetOnClick(() => {
+					Game.client.Send(GameMsg.SwapSpells, new GameMsg.MsgIntegerArray(x, x + 1));
+					Spell temp = sellButtons[x].spell;
+					sellButtons[x].spell = sellButtons[x + 1].spell;
+					sellButtons[x + 1].spell = temp;
+				});
+			}
+			
+
 		}
-		sellHeader.SetPosition(new Vector2i(3 * size.width / 4, yStart - 20));
+		sellHeader.SetPosition(new Vector2i(3 * size.width / 4, yStart - 10));
 	}
 
 	public override void OnOpen() {

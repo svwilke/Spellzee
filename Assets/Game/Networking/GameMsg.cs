@@ -34,6 +34,7 @@ public class GameMsg {
 	public static short ShopList = MsgType.Highest + 31;
 	public static short DropSpell = MsgType.Highest + 32;
 	public static short BuySpell = MsgType.Highest + 33;
+	public static short SwapSpells = MsgType.Highest + 34;
 
 	public class MsgPawn : MessageBase {
 		public Pawn pawn;

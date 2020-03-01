@@ -240,6 +240,10 @@ public class Pawn {
 		return new List<string>(knownSpells);
 	}
 
+	public List<string> GetKnownSpellIdsMutable() {
+		return knownSpells;
+	}
+
 	public bool DoesKnowSpell(Spell spell) {
 		return DoesKnowSpell(spell.GetId());
 	}

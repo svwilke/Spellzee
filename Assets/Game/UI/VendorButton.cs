@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 
-public class ItemButton : UIObj
+public class VendorButton : UIObj
 {
 	public Spell spell;
 
@@ -11,7 +11,7 @@ public class ItemButton : UIObj
 	public bool blocked = false;
 	private bool toBuy = false;
 
-	public ItemButton(Spell spell, Vector2i pos, bool toBuy = false, bool blocked = false) {
+	public VendorButton(Spell spell, Vector2i pos, bool toBuy = false, bool blocked = false) {
 		SetSpell(spell);
 		size = new Vector2i(92, 28);
 		SetPosition(pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_TOP);

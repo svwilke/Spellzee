@@ -469,6 +469,7 @@ public class BattleScreen : Screen {
 	}
 
 	public override void OnOpen() {
+		RB.SpriteSheetSet(Game.SPRITEPACK_BATTLE);
 		EventBus.UIMouseEnter.AddListener(SetInformation);
 		EventBus.UIMouseExit.AddListener(ResetInformation);
 		EventBus.PawnDamage.AddListener(OnPawnDamage);
