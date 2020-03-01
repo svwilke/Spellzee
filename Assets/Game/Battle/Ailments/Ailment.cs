@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Ailment {
+public abstract class Ailment : RegistryEntry<Ailment> {
 
-	private int id;
 	private string fullName;
 	private string shortName;
 
@@ -12,16 +11,11 @@ public abstract class Ailment {
 
 	protected GainType gainType;
 
-	public Ailment(int id, string fullName, string shortName, Color color) {
-		this.id = id;
+	public Ailment(string fullName, string shortName, Color color) {
 		this.fullName = fullName;
 		this.shortName = shortName;
 		this.color = color;
 		gainType = GainType.Stacking;
-	}
-
-	public int GetId() {
-		return id;
 	}
 
 	public string GetFullName() {
@@ -52,11 +46,11 @@ public abstract class Ailment {
 	}
 
 	public virtual void ApplyToPawn(Pawn pawn, int intensity) {
-		pawn.SetAilment(id, intensity);
+		pawn.SetAilment(this, intensity);
 	}
 
 	public void RemoveFromPawn(Pawn pawn) {
-		pawn.SetAilment(id, 0);
+		pawn.SetAilment(this, 0);
 	}
 
 	public abstract void OnGain(Pawn pawn, int intensity);

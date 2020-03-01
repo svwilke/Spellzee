@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlindAilment : Ailment
 {
 
-	public BlindAilment(int id, string fullName, string shortName, Color color) : base(id, fullName, shortName, color) {
+	public BlindAilment(string fullName, string shortName, Color color) : base(fullName, shortName, color) {
 		this.gainType = GainType.Once;
 	}
 

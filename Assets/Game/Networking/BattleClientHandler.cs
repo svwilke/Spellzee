@@ -130,12 +130,12 @@ public class BattleClientHandler : ClientHandler {
 	}
 
 	public void OnAilmentUpdate(NetworkMessage msg) {
-		GameMsg.MsgIntegerArray msgIntegerArray = msg.ReadMessage<GameMsg.MsgIntegerArray>();
-		Pawn pawn = battle.GetPawn(msgIntegerArray.array[1]);
-		if(msgIntegerArray.array[0] == 0) {
-			pawn.SetAilment(msgIntegerArray.array[2], msgIntegerArray.array[3]);
+		GameMsg.MsgUpdateAilment actualMsg = msg.ReadMessage<GameMsg.MsgUpdateAilment>();
+		Pawn pawn = battle.GetPawn(actualMsg.pawnId);
+		if(actualMsg.updateType == GameMsg.MsgUpdateAilment.UpdateType.Set) {
+			pawn.SetAilment(actualMsg.ailmentId, actualMsg.intensity);
 		} else {
-			pawn.ApplyAilment(msgIntegerArray.array[2], msgIntegerArray.array[3]);
+			pawn.ApplyAilment(actualMsg.ailmentId, actualMsg.intensity);
 		}
 	}
 

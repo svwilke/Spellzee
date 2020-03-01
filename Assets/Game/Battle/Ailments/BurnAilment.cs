@@ -5,7 +5,7 @@ using UnityEngine;
 public class BurnAilment : Ailment
 {
 
-	public BurnAilment(int id, string fullName, string shortName, Color color) : base(id, fullName, shortName, color) {
+	public BurnAilment(string fullName, string shortName, Color color) : base(fullName, shortName, color) {
 		this.gainType = GainType.Once;
 	}
 

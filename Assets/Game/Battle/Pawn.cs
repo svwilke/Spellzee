@@ -26,7 +26,7 @@ public class Pawn {
 	private List<string> knownSpells = new List<string>();
 	private bool isDead = false;
 
-	private int[] ailments = new int[DB.Ailments.Length];
+	private Dictionary<string, int> ailments = new Dictionary<string, int>();
 
 	private List<int> equipped = new List<int>();
 
@@ -79,43 +79,63 @@ public class Pawn {
 		return equipped.ToArray();
 	}
 
-	public void ApplyAilment(int ailmentId, int intensity) {
-		ApplyAilment(DB.Ailments[ailmentId], intensity);
+	public IEnumerable<KeyValuePair<string, int>> GetAilments() {
+		return ailments;
+	}
+
+	public void ApplyAilment(string ailmentId, int intensity) {
+		ApplyAilment(Ailments.Get(ailmentId), intensity);
 	}
 
 	public void ApplyAilment(Ailment ailment, int intensity) {
 		ailment.ApplyToPawn(this, intensity);
 	}
 
-	public void CmdApplyAilment(int ailmentId, int intensity) {
-		CmdApplyAilment(DB.Ailments[ailmentId], intensity);
+	public void CmdApplyAilment(string ailmentId, int intensity) {
+		CmdApplyAilment(Ailments.Get(ailmentId), intensity);
 	}
 
 	public void CmdApplyAilment(Ailment ailment, int intensity) {
 		ApplyAilment(ailment, intensity);
-		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgIntegerArray(1, id, ailment.GetId(), intensity));
+		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgUpdateAilment() {
+			updateType = GameMsg.MsgUpdateAilment.UpdateType.Apply,
+			pawnId = id,
+			ailmentId = ailment.GetId(),
+			intensity = intensity
+		});
 	}
 
-	public void SetAilment(int ailmentId, int intensity) {
-		int oldIntensity = ailments[ailmentId];
+	public void SetAilment(string ailmentId, int intensity) {
+		int oldIntensity = 0;
+		if(ailments.ContainsKey(ailmentId)) {
+			oldIntensity = ailments[ailmentId];
+		}
 		ailments[ailmentId] = intensity;
-		DB.Ailments[ailmentId].OnIntensityChange(this, oldIntensity, intensity);
+		Ailments.Get(ailmentId).OnIntensityChange(this, oldIntensity, intensity);
 	}
 
 	public void SetAilment(Ailment ailment, int intensity) {
 		SetAilment(ailment.GetId(), intensity);
 	}
 
-	public void CmdSetAilment(int ailmentId, int intensity) {
+	public void CmdSetAilment(string ailmentId, int intensity) {
 		SetAilment(ailmentId, intensity);
-		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgIntegerArray(0, id, ailmentId, intensity));
+		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgUpdateAilment() {
+			updateType = GameMsg.MsgUpdateAilment.UpdateType.Set,
+			pawnId = id,
+			ailmentId = ailmentId,
+			intensity = intensity
+		});
 	}
 
 	public void CmdSetAilment(Ailment ailment, int intensity) {
 		CmdSetAilment(ailment.GetId(), intensity);
 	}
 
-	public int GetAilment(int ailmentId) {
+	public int GetAilment(string ailmentId) {
+		if(!ailments.ContainsKey(ailmentId)) {
+			return 0;
+		}
 		return ailments[ailmentId];
 	}
 
@@ -123,8 +143,8 @@ public class Pawn {
 		return GetAilment(ailment.GetId());
 	}
 
-	public bool HasAilment(int ailmentId) {
-		return ailments[ailmentId] > 0;
+	public bool HasAilment(string ailmentId) {
+		return GetAilment(ailmentId) > 0;
 	}
 
 	public bool HasAilment(Ailment ailment) {
@@ -254,8 +274,10 @@ public class Pawn {
 		for(int i = 0; i < knownSpells.Count; i++) {
 			writer.Write(knownSpells[i]);
 		}
-		for(int i = 0; i < ailments.Length; i++) {
-			writer.Write(ailments[i]);
+		writer.Write(ailments.Count);
+		foreach(KeyValuePair<string, int> ailment in ailments) {
+			writer.Write(ailment.Key);
+			writer.Write(ailment.Value);
 		}
 		writer.Write(equipped.Count);
 		foreach(int eqId in equipped) {
@@ -276,8 +298,10 @@ public class Pawn {
 		for(int i = 0; i < knownSpellCount; i++) {
 			knownSpells.Add(reader.ReadString());
 		}
-		for(int i = 0; i < ailments.Length; i++) {
-			SetAilment(i, reader.ReadInt32());
+		int ailmentCount = reader.ReadInt32();
+		ailments = new Dictionary<string, int>(ailmentCount);
+		for(int i = 0; i < ailmentCount; i++) {
+			SetAilment(reader.ReadString(), reader.ReadInt32());
 		}
 		equipped.Clear();
 		int eqCount = reader.ReadInt32();
@@ -312,7 +336,7 @@ public class Pawn {
 		foreach(string spellId in other.knownSpells) {
 			clone.knownSpells.Add(spellId);
 		}
-		clone.ailments = other.ailments;
+		clone.ailments = new Dictionary<string, int>(other.ailments);
 		clone.equipped = new List<int>(other.equipped.Count);
 		foreach(int eqId in other.equipped) {
 			clone.equipped.Add(eqId);

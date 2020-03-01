@@ -92,4 +92,12 @@ public class GameMsg {
 		public string spellId;
 		public int targetId = -1;
 	}
+
+	public class MsgUpdateAilment : MessageBase {
+		public enum UpdateType { Set, Apply }
+		public UpdateType updateType;
+		public int pawnId;
+		public string ailmentId;
+		public int intensity;
+	}
 }

@@ -22,10 +22,10 @@ public class Spells {
 		new ComplexSpell.ElemMatch() { elem = Element.Fire, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Fire, optional = false },
 		new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }));
 	public static Spell HealingRays = Register("healing_rays", new SimpleSpell("Healing Rays", "Restore 2 life to all allies.", Element.Light, 3, false, (ctx) => ctx.ForEachAlly((p) => p.CmdHeal(2))));
-	public static Spell Ignite = Register("ignite", new SimpleSpell("Ignite", "Apply 2 Burn.", Element.Fire, 3, true, (ctx) => ctx.GetTarget().CmdApplyAilment(0, 2)));
+	public static Spell Ignite = Register("ignite", new SimpleSpell("Ignite", "Apply 2 Burn.", Element.Fire, 3, true, (ctx) => ctx.GetTarget().CmdApplyAilment(Ailments.Burn, 2)));
 	public static Spell Tsunami = Register("tsunami", new ExtendingSpell("Tsunami", "Deal 1 base damage. Deal 2 additional damage for each additional Water.", "Deal {0} damage.", true, Element.Water, 2, 1, 2, (ctx, val) => ctx.GetTarget().CmdDamage(val)));
-	public static Spell Flash = Register("flash", new SimpleSpell("Flash", "Apply 1 Blind.", Element.Light, 2, true, (ctx) => ctx.GetTarget().CmdApplyAilment(1, 1)));
-	public static Spell ConsumingDarkness = Register("consuming_darkness", new SimpleSpell("Consuming Darkness", "Apply 3 Blind.", Element.Dark, 4, true, (ctx) => ctx.GetTarget().CmdApplyAilment(1, 3)));
+	public static Spell Flash = Register("flash", new SimpleSpell("Flash", "Apply 1 Blind.", Element.Light, 2, true, (ctx) => ctx.GetTarget().CmdApplyAilment(Ailments.Blind, 1)));
+	public static Spell ConsumingDarkness = Register("consuming_darkness", new SimpleSpell("Consuming Darkness", "Apply 3 Blind.", Element.Dark, 4, true, (ctx) => ctx.GetTarget().CmdApplyAilment(Ailments.Blind, 3)));
 	public static Spell Earthquake = Register("earthquake", new SimpleSpell("Earthquake", "Deal 8 damage randomly split among all allies and enemies.", Element.Earth, 4, false, (ctx) => {
 			Pawn[] pawns = ctx.GetPawns();
 			int[] dmgSplits = new int[pawns.Length];
@@ -43,11 +43,11 @@ public class Spells {
 		(ctx) => ctx.GetRollsDone() == 1, (ctx, actv) => ctx.GetTarget().CmdDamage(actv ? 5 : 2)));
 	public static Spell Rockblast = Register("rockblast", new SimpleSpell("Rockblast", "Deal 6 damage", Element.Earth, 4, true, (ctx) => ctx.GetTarget().CmdDamage(6)));
 	public static Spell ThrowStone = Register("throw_stone", new SimpleSpell("Throw a stone", "Deal 2 damage.", Element.Earth, 2, true, (ctx) => ctx.GetTarget().CmdDamage(2)));
-	public static Spell MendingHerbs = Register("mending_herbs", new SimpleSpell("Mending Herbs", "Restore 1 life and apply 2 Regenerate.", Element.Earth, 3, true, (ctx) => { ctx.GetTarget().CmdHeal(1); ctx.GetTarget().CmdApplyAilment(2, 2); }));
+	public static Spell MendingHerbs = Register("mending_herbs", new SimpleSpell("Mending Herbs", "Restore 1 life and apply 2 Regenerate.", Element.Earth, 3, true, (ctx) => { ctx.GetTarget().CmdHeal(1); ctx.GetTarget().CmdApplyAilment(Ailments.Regen, 2); }));
 	public static Spell Sandstorm = Register("sandstorm", new ComplexSpell("Sandstorm", "Deal 2 damage. Apply 1 Blind with an additional Earth and Air.", true, (ctx, opt) => {
 			ctx.GetTarget().CmdDamage(2);
 			if(opt == 2) {
-				ctx.GetTarget().CmdApplyAilment(1, 1);
+				ctx.GetTarget().CmdApplyAilment(Ailments.Blind, 1);
 			}
 		}, true, new ComplexSpell.ElemMatch() { elem = Element.Earth, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Air, optional = false },
 		new ComplexSpell.ElemMatch() { elem = Element.Earth, optional = true }, new ComplexSpell.ElemMatch() { elem = Element.Air, optional = true }));
@@ -58,7 +58,7 @@ public class Spells {
 	public static Spell Eclipse = Register("eclipse", new ComplexSpell("Eclipse", "Restore 2 life to all allies and deal 2 damage to all enemies.", false, (ctx, opt) => { ctx.ForEachAlly(p => p.CmdHeal(2)); ctx.ForEachEnemy(p => p.CmdDamage(2)); }, true,
 		new ComplexSpell.ElemMatch() { elem = Element.Dark, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Dark, optional = false },
 		new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }));
-	public static Spell Synthesis = Register("synthesis", new ComplexSpell("Synthesis", "Restore a target to full life and apply 2 Blind.", true, (ctx, opt) => { ctx.GetTarget().CmdHeal(ctx.GetTarget().MaxHp - ctx.GetTarget().CurrentHp); ctx.GetTarget().CmdApplyAilment(1, 2); }, true,
+	public static Spell Synthesis = Register("synthesis", new ComplexSpell("Synthesis", "Restore a target to full life and apply 2 Blind.", true, (ctx, opt) => { ctx.GetTarget().CmdHeal(ctx.GetTarget().MaxHp - ctx.GetTarget().CurrentHp); ctx.GetTarget().CmdApplyAilment(Ailments.Blind, 2); }, true,
 		new ComplexSpell.ElemMatch() { elem = Element.Earth, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Earth, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Earth, optional = false },
 		new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }, new ComplexSpell.ElemMatch() { elem = Element.Light, optional = false }));
 	public static Spell HollowShell = Register("hollow_shell", new SimpleSpell("Hollow Shell", "Revive a dead target if it has more than 0 life.", Element.Dark, 3, true, (ctx) => {

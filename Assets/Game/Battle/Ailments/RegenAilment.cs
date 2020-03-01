@@ -5,7 +5,7 @@ using UnityEngine;
 public class RegenAilment : Ailment
 {
 
-	public RegenAilment(int id, string fullName, string shortName, Color color) : base(id, fullName, shortName, color) {
+	public RegenAilment(string fullName, string shortName, Color color) : base(fullName, shortName, color) {
 		this.gainType = GainType.Once;
 	}
 
