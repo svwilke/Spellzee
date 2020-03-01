@@ -28,6 +28,10 @@ public abstract class Screen {
 
 	public void RemoveUIObj(UIObj obj) {
 		obj.screen = null;
+		if(objUnderMouse.Contains(obj)) {
+			objUnderMouse.Remove(obj);
+			SetTooltip("");
+		}
 		uiObjs.Remove(obj);
 	}
 
