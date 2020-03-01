@@ -61,6 +61,10 @@ public class BattleScreen : Screen {
 		battle.log.Add(pawn.GetName() + " heals for @00FF00" + heal + "@- health.");
 	}
 
+	public void OnPawnDied(Battle battle, Pawn pawn) {
+		battle.log.Add(pawn.GetName() + " dies.");
+	}
+
 	public void OnBeforeCast(Battle battle, Pawn pawn, Pawn target, string spellId) {
 		Spell spell = Spells.Get(spellId);
 		string end = ".";
@@ -469,6 +473,7 @@ public class BattleScreen : Screen {
 		EventBus.UIMouseExit.AddListener(ResetInformation);
 		EventBus.PawnDamage.AddListener(OnPawnDamage);
 		EventBus.PawnHeal.AddListener(OnPawnHeal);
+		EventBus.PawnDied.AddListener(OnPawnDied);
 		EventBus.CastSpellPre.AddListener(OnBeforeCast);
 		EventBus.PawnUpdate.AddListener(OnPawnUpdate);
 	}
@@ -478,6 +483,7 @@ public class BattleScreen : Screen {
 		EventBus.UIMouseExit.RemoveListener(ResetInformation);
 		EventBus.PawnDamage.RemoveListener(OnPawnDamage);
 		EventBus.PawnHeal.RemoveListener(OnPawnHeal);
+		EventBus.PawnDied.RemoveListener(OnPawnDied);
 		EventBus.CastSpellPre.RemoveListener(OnBeforeCast);
 		EventBus.PawnUpdate.RemoveListener(OnPawnUpdate);
 	}
