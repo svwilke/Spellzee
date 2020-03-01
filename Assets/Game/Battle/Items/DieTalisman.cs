@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DieTalisman : Equipment {
 
-	public DieTalisman(int id, string name) : base(id, name, "+1 Die\n-1 Roll") {
+	public DieTalisman(string name) : base(name, "+1 Die\n-1 Roll") {
 
 	}
 

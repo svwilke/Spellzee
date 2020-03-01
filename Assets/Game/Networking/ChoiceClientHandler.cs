@@ -26,8 +26,8 @@ public class ChoiceClientHandler : ClientHandler {
 	}
 
 	public void OnShopList(NetworkMessage msg) {
-		int eqId = msg.ReadMessage<IntegerMessage>().value;
-		Equipment eq = DB.Equipments[eqId];
+		string eqId = msg.ReadMessage<StringMessage>().value;
+		Equipment eq = Equipments.Get(eqId);
 		screen.newItem.SetText("To buy: " + eq.GetName());
 		screen.newItem.SetTooltip(eq.GetDescription());
 		screen.newItem.FitSizeToText();

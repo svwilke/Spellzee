@@ -16,20 +16,20 @@ public class ChoiceScreen : Screen {
 
 	private MessageBox waitForPlayersMsg;
 
-	private int eq = 0;
-	public int eqToBuy = -1;
+	private string eq;
+	public string eqToBuy = null;
 
 	public ChoiceScreen(Game game, Vector2i size, PlayerPawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		waitForPlayersMsg = new MessageBox("Waiting for other players...");
-		int[] equip = this.pawn.GetEquipment();
+		string[] equip = this.pawn.GetEquipment();
 		if(this.pawn.GetEquipment().Length > 0) {
 			eq = equip[0];
-			currentItem.SetText("Current item: " + DB.Equipments[eq].GetName());
-			currentItem.SetTooltip(DB.Equipments[eq].GetDescription());
+			currentItem.SetText("Current item: " + Equipments.Get(eq).GetName());
+			currentItem.SetTooltip(Equipments.Get(eq).GetDescription());
 		} else {
 			currentItem.SetTooltip("Current item: none");
-			eq = -1;
+			eq = null;
 		}
 		currentItem.FitSizeToText();
 		currentItem.SetPosition(currentItem.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
@@ -38,10 +38,10 @@ public class ChoiceScreen : Screen {
 	public override void OnConstruct() {
 		AddUIObj(itemButton = new TextButton(new Vector2i(size.width / 2 - 100, size.height / 2 - 20), "Get Item", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		itemButton.SetOnClick(() => {
-			if(eq >= 0) {
+			if(eq != null) {
 				MessageBox reallyItem = new MessageBox("Buying this will replace your current item.");
 				reallyItem.AddButton("Buy anyway", () => {
-					Game.client.Send(GameMsg.BuySpell, new IntegerMessage(eqToBuy));
+					Game.client.Send(GameMsg.BuySpell, new StringMessage(eqToBuy));
 					itemButton.currentState = UIObj.State.Disabled;
 					spellButton.currentState = UIObj.State.Disabled;
 					ShowMessageBox(waitForPlayersMsg);
@@ -49,7 +49,7 @@ public class ChoiceScreen : Screen {
 				reallyItem.AddButton("Please no", () => CloseMessageBox());
 				ShowMessageBox(reallyItem);
 			} else {
-				Game.client.Send(GameMsg.BuySpell, new IntegerMessage(eqToBuy));
+				Game.client.Send(GameMsg.BuySpell, new StringMessage(eqToBuy));
 				itemButton.currentState = UIObj.State.Disabled;
 				spellButton.currentState = UIObj.State.Disabled;
 				ShowMessageBox(waitForPlayersMsg);

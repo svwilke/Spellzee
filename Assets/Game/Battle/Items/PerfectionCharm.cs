@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PerfectionCharm : Equipment {
 
-	public PerfectionCharm(int id, string name) : base(id, name, "Additional total Affinities based on your needs.") {
+	public PerfectionCharm(string name) : base(name, "Additional total Affinities based on your needs.") {
 
 	}
 

@@ -32,9 +32,9 @@ public class ChoiceServerHandler : ServerHandler {
 
 	public void OnBuyItem(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
-		IntegerMessage message = msg.ReadMessage<IntegerMessage>();
-		int equipId = message.value;
-		int[] equipped = pawns[pawnId].GetEquipment();
+		StringMessage message = msg.ReadMessage<StringMessage>();
+		string equipId = message.value;
+		string[] equipped = pawns[pawnId].GetEquipment();
 		if(equipped.Length > 0) {
 			pawns[pawnId].Unequip(equipped[0]);
 		}
@@ -59,8 +59,8 @@ public class ChoiceServerHandler : ServerHandler {
 	public override void Open() {
 		base.Open();
 		for(int i = 0; i < pawns.Length; i++) {
-			int shop = Random.Range(0, DB.Equipments.Length);
-			NetworkServer.SendToClient(i, GameMsg.ShopList, new IntegerMessage(shop));
+			int shop = Random.Range(0, DB.BuyableEquipments.Length);
+			NetworkServer.SendToClient(i, GameMsg.ShopList, new StringMessage(DB.BuyableEquipments[shop].GetId()));
 		}
 	}
 }

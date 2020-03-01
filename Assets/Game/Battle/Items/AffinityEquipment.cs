@@ -7,7 +7,7 @@ public class AffinityEquipment : Equipment {
 	private AttributeModifier.Operation operation;
 	private double[] affinityModifiers;
 
-	public AffinityEquipment(int id, string name, AttributeModifier.Operation operation, double fire, double water, double earth, double air, double light, double dark, double chaos) : base(id, name, "") {
+	public AffinityEquipment(string name, AttributeModifier.Operation operation, double fire, double water, double earth, double air, double light, double dark, double chaos) : base(name, "") {
 		this.operation = operation;
 		affinityModifiers = new double[] {
 			fire, water, earth, air, light, dark, chaos

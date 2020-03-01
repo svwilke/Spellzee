@@ -355,10 +355,10 @@ public class BattleScreen : Screen {
 		foreach(Text text in currentItemTexts) {
 			RemoveUIObj(text);
 		}
-		int[] eq = pawn.GetEquipment();
+		string[] eq = pawn.GetEquipment();
 		int currentY = size.height - 58;
 		for(int i = 0; i < eq.Length; i++) {
-			Equipment e = DB.Equipments[eq[i]];
+			Equipment e = Equipments.Get(eq[i]);
 			Text text = new Text(new Vector2i(5, currentY), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, e.GetName());
 			text.FitSizeToText(1);
 			text.SetTooltip(e.GetDescription());

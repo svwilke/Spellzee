@@ -2,20 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Equipment {
+public abstract class Equipment : RegistryEntry<Equipment> {
 
-	private int id;
 	private string name;
 	protected string description;
 
-	public Equipment(int id, string name, string description) {
-		this.id = id;
+	public Equipment(string name, string description) {
 		this.name = name;
 		this.description = description;
-	}
-
-	public int GetId() {
-		return id;
 	}
 
 	public string GetName() {

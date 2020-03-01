@@ -5,7 +5,7 @@ using UnityEngine;
 public class RestoreRing : Equipment
 {
 
-	public RestoreRing(int id, string name) : base(id, name, "You restore twice as much health when an enemy is killed.") {
+	public RestoreRing(string name) : base(name, "You restore twice as much health when an enemy is killed.") {
 		
 	}
 

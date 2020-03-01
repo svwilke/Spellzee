@@ -13,9 +13,9 @@ public class Pawn {
 	public EventBus.EvtPawn OnBeginTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnEndTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnSpellsChange = new EventBus.EvtPawn();
-	public EventBus.EvtPawnInteger OnItemEquipped = new EventBus.EvtPawnInteger();
-	public EventBus.EvtPawnInteger OnItemUnequipped = new EventBus.EvtPawnInteger();
-	public EventBus.EvtPawnInteger OnItemUsed = new EventBus.EvtPawnInteger();
+	public EventBus.EvtPawnString OnItemEquipped = new EventBus.EvtPawnString();
+	public EventBus.EvtPawnString OnItemUnequipped = new EventBus.EvtPawnString();
+	public EventBus.EvtPawnString OnItemUsed = new EventBus.EvtPawnString();
 
 	private int id;
 	private string name;
@@ -28,7 +28,7 @@ public class Pawn {
 
 	private Dictionary<string, int> ailments = new Dictionary<string, int>();
 
-	private List<int> equipped = new List<int>();
+	private HashSet<string> equipped = new HashSet<string>();
 
 	public Attribute MissChance = new Attribute().SetBaseValue(0);
 	public Attribute SpellHealBonus = new Attribute();
@@ -51,9 +51,9 @@ public class Pawn {
 		Equip(eq.GetId());
 	}
 
-	public void Equip(int eqId) {
+	public void Equip(string eqId) {
 		equipped.Add(eqId);
-		DB.Equipments[eqId].OnEquipped(this);
+		Equipments.Get(eqId).OnEquipped(this);
 		OnItemEquipped.Invoke(null, this, eqId);
 	}
 
@@ -65,17 +65,17 @@ public class Pawn {
 		return HasEquipped(eq.GetId());
 	}
 
-	public bool HasEquipped(int eqId) {
+	public bool HasEquipped(string eqId) {
 		return equipped.Contains(eqId);
 	}
 
-	public void Unequip(int eqId) {
+	public void Unequip(string eqId) {
 		equipped.Remove(eqId);
-		DB.Equipments[eqId].OnUnequipped(this);
+		Equipments.Get(eqId).OnUnequipped(this);
 		OnItemUnequipped.Invoke(null, this, eqId);
 	}
 
-	public int[] GetEquipment() {
+	public string[] GetEquipment() {
 		return equipped.ToArray();
 	}
 
@@ -280,7 +280,7 @@ public class Pawn {
 			writer.Write(ailment.Value);
 		}
 		writer.Write(equipped.Count);
-		foreach(int eqId in equipped) {
+		foreach(string eqId in equipped) {
 			writer.Write(eqId);
 		}
 		MissChance.Serialize(writer);
@@ -306,7 +306,7 @@ public class Pawn {
 		equipped.Clear();
 		int eqCount = reader.ReadInt32();
 		for(int i = 0; i < eqCount; i++) {
-			equipped.Add(reader.ReadInt32());
+			equipped.Add(reader.ReadString());
 		}
 		MissChance.Deserialize(reader);
 		SpellHealBonus.Deserialize(reader);
@@ -337,10 +337,7 @@ public class Pawn {
 			clone.knownSpells.Add(spellId);
 		}
 		clone.ailments = new Dictionary<string, int>(other.ailments);
-		clone.equipped = new List<int>(other.equipped.Count);
-		foreach(int eqId in other.equipped) {
-			clone.equipped.Add(eqId);
-		}
+		clone.equipped = new HashSet<string>(other.equipped);
 		clone.SpellHealBonus = Attribute.Clone(other.SpellHealBonus);
 		return clone;
 	}
