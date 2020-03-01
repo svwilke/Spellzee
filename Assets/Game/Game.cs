@@ -46,6 +46,8 @@ public class Game : RB.IRetroBlitGame
 
 	private List<UIObj> uiObjs = new List<UIObj>();
 
+	private static Queue<int> soundQueue = new Queue<int>();
+
 	public static float volume = 0.25F;
 
 	public bool Initialize() {
@@ -103,6 +105,17 @@ public class Game : RB.IRetroBlitGame
 				}
 			}
 		}
+		HashSet<int> soundSet = new HashSet<int>();
+		while(soundQueue.Count > 0) {
+			soundSet.Add(soundQueue.Dequeue());
+		}
+		foreach(int sound in soundSet) {
+			RB.SoundPlay(sound, volume);
+		}
+	}
+
+	public static void PlaySound(int sound) {
+		soundQueue.Enqueue(sound);
 	}
 
 	private string message = "";

@@ -79,7 +79,7 @@ public class PlayerPawnCard : UIObj
 	public override void OnClick() {
 		if(onClick != null) {
 			onClick.Invoke();
-			RB.SoundPlay(Game.AUDIO_BUTTON, Game.volume);
+			Game.PlaySound(Game.AUDIO_BUTTON);
 		}
 	}
 }

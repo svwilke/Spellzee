@@ -59,7 +59,7 @@ public abstract class UIObj {
         if(onClick != null && hasOnClick)
         {
             onClick.Invoke();
-            RB.SoundPlay(Game.AUDIO_BUTTON, Game.volume);
+            Game.PlaySound(Game.AUDIO_BUTTON);
         }
     }
 

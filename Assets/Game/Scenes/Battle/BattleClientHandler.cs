@@ -71,7 +71,7 @@ public class BattleClientHandler : ClientHandler {
 		Battle b = (game.GetOpenScreen() as BattleScreen).battle;
 		int die = msg.ReadMessage<IntegerMessage>().value;
 		b.locks[die] = !b.locks[die];
-		RB.SoundPlay(Game.AUDIO_BUTTON, Game.volume);
+		Game.PlaySound(Game.AUDIO_BUTTON);
 	}
 
 	public void OnTakeDamage(NetworkMessage msg) {
@@ -79,7 +79,7 @@ public class BattleClientHandler : ClientHandler {
 		Pawn pawn = battle.GetPawn(message.array[0]);
 		bool aliveBefore = pawn.IsAlive();
 		pawn.Damage(message.array[1]);
-		RB.SoundPlay(Game.AUDIO_HURT, Game.volume);
+		Game.PlaySound(Game.AUDIO_HURT);
 		EventBus.PawnDamage.Invoke(battle, pawn, message.array[1]);
 		if(aliveBefore && !pawn.IsAlive()) {
 			EventBus.PawnDied.Invoke(battle, pawn);
@@ -89,7 +89,7 @@ public class BattleClientHandler : ClientHandler {
 	public void OnHeal(NetworkMessage msg) {
 		GameMsg.MsgIntegerArray message = msg.ReadMessage<GameMsg.MsgIntegerArray>();
 		battle.GetPawn(message.array[0]).Heal(message.array[1]);
-		RB.SoundPlay(Game.AUDIO_HEAL, Game.volume);
+		Game.PlaySound(Game.AUDIO_HEAL);
 		EventBus.PawnHeal.Invoke(battle, battle.GetPawn(message.array[0]), message.array[1]);
 	}
 
