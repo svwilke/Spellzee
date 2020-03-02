@@ -12,7 +12,11 @@ public class Equipments {
 	public static Equipment ElementalFocus = Register("elemental_focus", new AffinityEquipment("Elemental Focus", AttributeModifier.Operation.AddBase, 2, 2, 2, 2, 0, 0, 0));
 	public static Equipment TalismanOfDisorder = Register("talisman_of_disorder", new DieTalisman("Talisman of Disorder"));
 	public static Equipment RingOfRestoration = Register("ring_of_restoration", new RestoreRing("Ring of Restoration"));
-	public static Equipment HealCharm = Register("heal_charm", new HealCharm("Heal Charm"));
+	public static Equipment HealCharm = Register("heal_charm", new SpellEquipment("Heal Charm", "Spells restoring life to you restore 1 additional life.", false, (spell, context, sc) => {
+		if(sc is HealComponent) {
+			(sc as HealComponent).AddModifier(AttributeModifier.Operation.AddTotal, 1);
+		}
+	}));
 
 	public static Equipment Register(string id, Equipment equipment) {
 		equipment.SetId(id);

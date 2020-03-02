@@ -11,14 +11,14 @@ public class DB {
 	public static int[] EnemySpells = new int[] { 7, 9, 7, 6, 10, 8 };
 
 	public static EnemyTemplate[] Enemies = new EnemyTemplate[] {
-		new EnemyTemplate("Text").SetMaxHp(8).SetTurnWeights(0F, 0F, 6F)
-		/*new EnemyTemplate("Sloth").SetMaxHp(3, 6).AddSpells(Spells.Bite).SetTurnWeights(1F, 0F, 6F),
+		//new EnemyTemplate("Text").SetMaxHp(8).SetTurnWeights(1F, 0F, 1F).AddSpells(Spells.Bite)
+		new EnemyTemplate("Sloth").SetMaxHp(3, 6).AddSpells(Spells.Bite).SetTurnWeights(1F, 0F, 6F),
 		new EnemyTemplate("Pixie").SetMaxHp(4).AddSpells(Spells.Cuteness),
 		new EnemyTemplate("Rat").SetMaxHp(4).AddSpells(Spells.Bite),
 		new EnemyTemplate("Cave Bat").SetMaxHp(5).AddSpells(Spells.Bite),
 		new EnemyTemplate("Wolf").SetMaxHp(7).AddSpells(Spells.Claw),
 		new EnemyTemplate("Cutpursh").SetMaxHp(8).AddSpells(Spells.Slice),
-		new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(Spells.Stomp)*/
+		new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(Spells.Stomp)
 	};
 
 	public static PlayerTemplate[] Classes = new PlayerTemplate[] {
@@ -36,6 +36,6 @@ public class DB {
 	};
 
 	public static Equipment[] BuyableEquipments = new Equipment[] {
-		Equipments.CharmOfPerfection, Equipments.SolarOrb, Equipments.LunarOrb, Equipments.ElementalFocus, Equipments.RingOfRestoration
+		Equipments.CharmOfPerfection, Equipments.SolarOrb, Equipments.LunarOrb, Equipments.ElementalFocus, Equipments.RingOfRestoration, Equipments.HealCharm
 	};
 }
