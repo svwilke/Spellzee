@@ -323,6 +323,7 @@ public class BattleScreen : Screen {
 				}
 			} else {
 				targetPawn = null;
+				SetTooltip(targetSpell.GetShortDescription(battle.BuildContext(-1)));
 				targetPoint = mouse;
 				if(RB.ButtonPressed(RB.BTN_POINTER_ANY)) {
 					renderTargeting = false;

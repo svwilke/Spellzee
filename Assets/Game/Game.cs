@@ -57,7 +57,6 @@ public class Game : RB.IRetroBlitGame
 		
 		RB.SpriteSheetSetup(SPRITEPACK_BATTLE, "Sprites/Battle", new Vector2i(12, 12));
 		RB.SpriteSheetSet(SPRITEPACK_BATTLE);
-		RB.SpriteSheetSetup(SPRITEPACK_UI, "Sprites/UI", new Vector2i(12, 12));
 
 		RB.SoundSetup(AUDIO_BUTTON, "Audio/Select");
 		RB.SoundSetup(AUDIO_ROLL, "Audio/Roll");

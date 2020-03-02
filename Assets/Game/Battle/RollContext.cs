@@ -65,6 +65,14 @@ public class RollContext {
 		return target;
 	}
 
+	public Pawn[] GetAllies() {
+		return allies.ToArray();
+	}
+
+	public Pawn[] GetEnemies() {
+		return enemies.ToArray();
+	}
+
 	public void ForEachEnemy(System.Action<Pawn> func) {
 		foreach(Pawn p in enemies) {
 			func.Invoke(p);

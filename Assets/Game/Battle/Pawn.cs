@@ -17,6 +17,10 @@ public class Pawn {
 	public EventBus.EvtPawnString OnItemUnequipped = new EventBus.EvtPawnString();
 	public EventBus.EvtPawnString OnItemUsed = new EventBus.EvtPawnString();
 
+	public EventBus.EvtSpellComponent OnSpellComponentCaster = new EventBus.EvtSpellComponent();
+	public EventBus.EvtSpellComponent OnSpellComponentTarget = new EventBus.EvtSpellComponent();
+	public EventBus.EvtSpellComponentList OnBuildSpellComponents = new EventBus.EvtSpellComponentList();
+
 	private int id;
 	private string name;
 
@@ -33,6 +37,9 @@ public class Pawn {
 	public Attribute MissChance = new Attribute().SetBaseValue(0);
 	public Attribute SpellHealBonus = new Attribute();
 	public Attribute SpellDamageBonus = new Attribute();
+
+	public Attribute AilmentApplyBonus = new Attribute();
+	public Attribute DamageReduction = new Attribute();
 
 	public Pawn(string name, int maxHp) {
 		this.name = name;
