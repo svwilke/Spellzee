@@ -17,6 +17,7 @@ public class Equipments {
 			(sc as HealComponent).AddModifier(AttributeModifier.Operation.AddTotal, 1);
 		}
 	}));
+	public static Equipment IgneousRock = Register("igneous_rock", new IgniteRock("Igneous Rock", "Convert 1 damage of your Fire spells to 1 Burn."));
 
 	public static Equipment Register(string id, Equipment equipment) {
 		equipment.SetId(id);

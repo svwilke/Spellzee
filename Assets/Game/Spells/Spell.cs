@@ -78,4 +78,13 @@ public class Spell : RegistryEntry<Spell> {
 		pattern.Match(context);
 		return pattern.GetElementDisplays();
 	}
+
+	public bool IsElement(RollContext context, Element elem) {
+		foreach(ElementDisplay ed in GetElementDisplays(context)) {
+			if(ed.element == elem) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
