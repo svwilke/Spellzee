@@ -10,6 +10,13 @@ public class MainScreen : Screen {
 
 	private string ip = "localhost";
 	private int volumeValue = 50;
+	private int currentResIndex = 1;
+
+	private InputField ipInput;
+	private Text resolutionText;
+	private Text volumeText;
+	private TextButton resButtonLeft;
+	private TextButton resButtonRight;
 
 	public override void OnConstruct() {
 		TextButton btn;
@@ -27,16 +34,15 @@ public class MainScreen : Screen {
 		btn.SetOnClick(() => {
 			game.JoinMultiplayerHost(ip);
 		});
-		InputField input;
-		AddUIObj(input = new InputField(new Vector2i(left + 56, top + 50)));
-		input.SetText("localhost");
-		input.SetOnCompleteEdit((txt) => ip = txt.ToString());
+		AddUIObj(ipInput = new InputField(new Vector2i(left + 56, top + 50)));
+		ipInput.SetText("localhost");
+		ipInput.SetOnCompleteEdit((txt) => SetIp(txt.ToString().Trim()));
 		AddUIObj(btn = new TextButton(new Vector2i(left, top + 80), "Exit Game"));
 		btn.SetOnClick(() => {
 			Application.Quit();
 		});
-		Text text = new Text(new Vector2i(RB.DisplaySize.width - 60, top + 76), new Vector2i(10, 10), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "50");
-		AddUIObj(text);
+		volumeText = new Text(new Vector2i(RB.DisplaySize.width - 60, top + 76), new Vector2i(10, 10), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "50");
+		AddUIObj(volumeText);
 		AddUIObj(new Text(new Vector2i(RB.DisplaySize.width - 100, top + 76), new Vector2i(16, 10), RB.ALIGN_H_RIGHT | RB.ALIGN_V_CENTER, "Volume:"));
 		AddUIObj(btn = new TextButton(new Vector2i(RB.DisplaySize.width - 77, top + 80), "<"));
 		btn.SetOnClick(() => {
@@ -45,7 +51,9 @@ public class MainScreen : Screen {
 				volumeValue = 0;
 			}
 			Game.volume = volumeValue / 200F;
-			text.SetText(volumeValue.ToString());
+			PlayerPrefs.SetInt("sound_volume", volumeValue);
+			PlayerPrefs.Save();
+			volumeText.SetText(volumeValue.ToString());
 		});
 		AddUIObj(btn = new TextButton(new Vector2i(RB.DisplaySize.width - 43, top + 80), ">"));
 		btn.SetOnClick(() => {
@@ -54,41 +62,114 @@ public class MainScreen : Screen {
 				volumeValue = 100;
 			}
 			Game.volume = volumeValue / 200F;
-			text.SetText(volumeValue.ToString());
+			PlayerPrefs.SetInt("sound_volume", volumeValue);
+			PlayerPrefs.Save();
+			volumeText.SetText(volumeValue.ToString());
 		});
 
-		Text resText = new Text(new Vector2i(RB.DisplaySize.width - 60, top + 66), new Vector2i(20, 10), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "(960, 512)");
-		resText.SetPosition(resText.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
-		AddUIObj(resText);
-		AddUIObj(btn = new TextButton(new Vector2i(RB.DisplaySize.width - 60, top + 54), "Toggle Fullscreen", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		resolutionText = new Text(new Vector2i(RB.DisplaySize.width - 74, top + 58), new Vector2i(20, 10), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "(960, 512)");
+		resolutionText.SetPosition(resolutionText.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+		AddUIObj(resolutionText);
+		AddUIObj(btn = new TextButton(new Vector2i(RB.DisplaySize.width - 74, top + 42), "Toggle Fullscreen", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		btn.SetOnClick(() => {
 			bool full = !UnityEngine.Screen.fullScreen;
-			int width = Game.Widths[1];
-			int height = Game.Heights[1];
-			int scrWidth = 0;
-			int scrHeight = 0;
-			Resolution[] ress = UnityEngine.Screen.resolutions;
-			for(int i = 0; i < ress.Length; i++) {
-				if (scrWidth < ress[i].width) {
-					scrWidth = ress[i].width;
-				}
-				if(scrHeight < ress[i].height) {
-					scrHeight = ress[i].height;
-				}
-			}
+			int index = currentResIndex;
 			if(full) {
-				int i = 1;
-				for(i = 0; i < Game.Widths.Length; i++) {
-					if (scrWidth < Game.Widths[i] || scrHeight < Game.Heights[i]) {
-						break;
-					}
-				}
-				width = Game.Widths[i - 1];
-				height = Game.Heights[i - 1];
+				index = GetFullscreenResIndex();
+				PlayerPrefs.SetString("fullscreen", "Yes, please!");
+			} else {
+				PlayerPrefs.DeleteKey("fullscreen");
 			}
-			resText.SetText("(" + width + ", " + height + ")");
-			UnityEngine.Screen.SetResolution(width, height, full);
+			PlayerPrefs.Save();
+			SetResolution(index, full);
 		});
-		
+
+		AddUIObj(resButtonLeft = new TextButton(new Vector2i(btn.pos.x, top + 58), "<"));
+		resButtonLeft.SetOnClick(() => {
+			if(!UnityEngine.Screen.fullScreen && currentResIndex > 0) {
+				int newResIndex = currentResIndex - 1;
+				currentResIndex = newResIndex;
+				PlayerPrefs.SetInt("resolution_index", currentResIndex);
+				PlayerPrefs.Save();
+				SetResolution(newResIndex, false);
+			}
+		});
+		AddUIObj(resButtonRight = new TextButton(new Vector2i(btn.pos.x + btn.size.width - resButtonLeft.size.width, top + 58), ">"));
+		resButtonRight.SetOnClick(() => {
+			if(!UnityEngine.Screen.fullScreen && currentResIndex < Game.Widths.Length - 1) {
+				Vector2i screenRes = GetScreenResolution();
+				int newResIndex = currentResIndex + 1;
+				if(screenRes.width >= Game.Widths[newResIndex] && screenRes.height >= Game.Heights[newResIndex]) {
+					currentResIndex = newResIndex;
+					PlayerPrefs.SetInt("resolution_index", currentResIndex);
+					PlayerPrefs.Save();
+					SetResolution(newResIndex, false);
+				}
+			}
+		});
+
+		LoadSettings();
+	}
+
+	private void SetIp(string ip) {
+		PlayerPrefs.SetString("join_game_ip", ip);
+		ipInput.SetText(ip);
+	}
+
+	private void SetResolution(int resIndex, bool full) {
+		int width = Game.Widths[resIndex];
+		int height = Game.Heights[resIndex];
+		resolutionText.SetText("(" + width + ", " + height + ")");
+		resButtonLeft.currentState = full ? UIObj.State.Disabled : UIObj.State.Enabled;
+		resButtonRight.currentState = full ? UIObj.State.Disabled : UIObj.State.Enabled;
+		UnityEngine.Screen.SetResolution(width, height, full);
+	}
+
+	private Vector2i GetScreenResolution() {
+		int scrWidth = 0;
+		int scrHeight = 0;
+		Resolution[] ress = UnityEngine.Screen.resolutions;
+		int i = 0;
+		for(i = 0; i < ress.Length; i++) {
+			if(scrWidth < ress[i].width) {
+				scrWidth = ress[i].width;
+			}
+			if(scrHeight < ress[i].height) {
+				scrHeight = ress[i].height;
+			}
+		}
+		return new Vector2i(scrWidth, scrHeight);
+	}
+
+	private int GetFullscreenResIndex() {
+		Vector2i screenRes = GetScreenResolution();
+		int i;
+		for(i = 0; i < Game.Widths.Length; i++) {
+			if(screenRes.width < Game.Widths[i] || screenRes.height < Game.Heights[i]) {
+				break;
+			}
+		}
+		return i - 1;
+	}
+
+	private void LoadSettings() {
+		if(PlayerPrefs.HasKey("sound_volume")) {
+			volumeValue = PlayerPrefs.GetInt("sound_volume");
+			Game.volume = volumeValue / 200F;
+			volumeText.SetText(volumeValue.ToString());
+		}
+		if(PlayerPrefs.HasKey("join_game_ip")) {
+			SetIp(PlayerPrefs.GetString("join_game_ip"));
+		}
+		bool fullscreen = PlayerPrefs.HasKey("fullscreen");
+		currentResIndex = 1;
+		if(PlayerPrefs.HasKey("resolution_index")) {
+			currentResIndex = PlayerPrefs.GetInt("resolution_index");
+		}
+		int usedResIndex = currentResIndex;
+		if(fullscreen) {
+			usedResIndex = GetFullscreenResIndex();
+		}
+		SetResolution(usedResIndex, fullscreen);
 	}
 }
