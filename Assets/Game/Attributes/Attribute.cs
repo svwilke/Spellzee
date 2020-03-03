@@ -13,6 +13,8 @@ public class Attribute {
 	private double defaultBase;
 	private bool hasDefaultBase;
 
+	public int Size { get { return modifiers.Count; } }
+
 	public Attribute(params AttributeModifier[] modifiers) {
 		this.modifiers = new Dictionary<string, AttributeModifier>();
 		foreach(AttributeModifier modifier in modifiers) {

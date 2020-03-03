@@ -16,7 +16,7 @@ public class Spells {
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 5)));
 	public static Spell Incinerate = Register("incinerate", new Spell("Incinerate", "Deal 9 damage.", true, new SimplePattern(Element.Fire, Element.Fire, Element.Fire, Element.Fire, Element.Fire))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 9)));
-	public static Spell CureOfTheWoods = Register("cure_of_the_woods", new Spell("Cure of the Woods", "Restore 5 life to all allies.", false, new SimplePattern(Element.Earth, Element.Earth, Element.Earth, Element.Earth, Element.Earth))
+	public static Spell RainOfLife = Register("rain_of_life", new Spell("Rain of Life", "Restore 5 life to all allies.", false, new SimplePattern(Element.Water, Element.Water, Element.Water, Element.Water, Element.Water))
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Allies, 5)));
 	public static Spell Flamestorm = Register("flamestorm", new Spell("Flamestorm", "Deal 2 damage, or 4 damage with an additional Fire and Air.", true, new OptionalPattern(Element.Fire, Element.Air).SetOptional(Element.Fire, Element.Air))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, (pm as OptionalPattern).OptionalFulfilled() ? 4 : 2)));
@@ -87,8 +87,8 @@ public class Spells {
 				return new NullComponent();
 			}
 		}));
-	public static Spell DrainLife = Register("drain_life", new Spell("Drain Life", "Deal 2 damage to a target and restore 1 life to yourself.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 2))
+	public static Spell DrainLife = Register("drain_life", new Spell("Drain Life", "Deal 1 damage to a target and restore 1 life to yourself.", true, new SimplePattern(Element.Dark, Element.Dark))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 1))
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Caster, 1)));
 	public static Spell Eclipse = Register("eclipse", new Spell("Eclipse", "Deal 2 damage to all enemies and restore 2 life to all allies.", false, new SimplePattern(Element.Dark, Element.Dark, Element.Light, Element.Light))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2))
@@ -105,8 +105,11 @@ public class Spells {
 		}, (spell, context) => "Restore to full life.")));
 	public static Spell HollowShell = Register("hollow_shell", new Spell("Hollow Shell", "Revive a dead target if it has more than 0 life.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.")));
-	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 1 Protect.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Protect, 1)));
+	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 2 Protect.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Protect, 2)));
+	public static Spell AquaticBlast = Register("aquatic_blast", new Spell("Aquatic Blast", "Deal 2-3 damage.", true, new SimplePattern(Element.Water, Element.Water))
+		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 2, 3)));
+
 
 	// Enemy Spells
 
