@@ -114,7 +114,7 @@ public class Spells {
 	public static Spell Slice = Register("slice", new Spell("Slice", "Deal 2 damage to all enemies.", false, new NullPattern())
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 	public static Spell Stomp = Register("stomp", new Spell("Stomp", "Deal 2 damage to all enemies.", false, new NullPattern())
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 3)));
 
 	public static Spell Register(string id, Spell spell) {
 		spell.SetId(id);
