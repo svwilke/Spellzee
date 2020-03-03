@@ -21,6 +21,7 @@ public class SimplePattern : PatternMatcher {
 	}
 
 	public override void Match(RollContext context) {
+		rollContext = context;
 		foreach(KeyValuePair<Element, int> elemCount in elementCounts) {
 			if(context.GetElementCount(elemCount.Key, false) < elemCount.Value) {
 				doesMatch = false;
@@ -28,7 +29,6 @@ public class SimplePattern : PatternMatcher {
 			}
 		}
 		doesMatch = true;
-		rollContext = context;
 	}
 
 	public override ElementDisplay[] GetElementDisplays() {

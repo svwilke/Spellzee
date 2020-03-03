@@ -51,7 +51,7 @@ public class SpellButton : UIObj
 
 		RB.Print(pos + new Vector2i(2, 2), Color.black, spell.GetName());
 
-		ElementDisplay[] displays = spell.GetElementDisplays(battle.BuildContext());
+		ElementDisplay[] displays = spell.GetElementDisplays(battle.BuildContext(screen.GetCurrentTargetPawnId()));
 		int px = pos.x + 2;
 		int py = pos.y + size.height - 18;
 		for(int i = 0; i < displays.Length; i++) {

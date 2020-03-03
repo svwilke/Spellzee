@@ -319,6 +319,7 @@ public class BattleScreen : Screen {
 					Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = targetSpell.GetId(), targetId = targetPawn.GetId() });
 					renderTargeting = false;
 					targetSpell = null;
+					targetPawn = null;
 					SetTooltip("");
 				}
 			} else {
@@ -372,6 +373,7 @@ public class BattleScreen : Screen {
 			currentItemTexts.Add(text);
 			bottomPane.AddToTab(1, text);
 		}
+		UpdateContext();
 	}
 
 	public void UpdateContext() {
