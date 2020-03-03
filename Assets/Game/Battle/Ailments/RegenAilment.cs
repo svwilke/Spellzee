@@ -19,7 +19,8 @@ public class RegenAilment : Ailment
 
 	public void Regen(Battle battle, Pawn pawn) {
 		int regen = pawn.GetAilment(this);
-		pawn.CmdHeal(regen);
+		EventBus.DamageHealEvent healEvent = new EventBus.DamageHealEvent(this, regen, regen);
+		pawn.CmdHeal(healEvent);
 		pawn.CmdSetAilment(this, regen - 1);
 	}
 }

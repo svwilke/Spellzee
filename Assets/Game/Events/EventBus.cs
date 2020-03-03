@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.Events;
 
 public class EventBus {
@@ -39,4 +37,53 @@ public class EventBus {
 
 	[System.Serializable]
 	public class EvtSpellComponentList : UnityEvent<Spell, RollContext, List<SpellComponent>> { }
+
+	[System.Serializable]
+	public class EvtDamageHeal : UnityEvent<Pawn, DamageHealEvent> { }
+
+	public class DamageHealEvent {
+		private Spell spell;
+		private SpellComponent component;
+		private Ailment ailment;
+		private int ailmentIntensity;
+		public int amount;
+		
+		public DamageHealEvent(int amount) {
+			this.amount = amount;
+		}
+		
+		public DamageHealEvent(Spell spell, SpellComponent component, int amount) : this(amount) {
+			this.spell = spell;
+			this.component = component;
+		}
+
+		public DamageHealEvent(Ailment ailment, int ailmentIntensity, int amount) : this(amount) {
+			this.ailment = ailment;
+			this.ailmentIntensity = ailmentIntensity;
+		}
+
+		public Spell GetSpell() {
+			return spell;
+		}
+
+		public SpellComponent GetSpellComponent() {
+			return component;
+		}
+
+		public Ailment GetAilment() {
+			return ailment;
+		}
+
+		public int GetAilmentIntensity() {
+			return ailmentIntensity;
+		}
+
+		public bool IsSourceSpell() {
+			return spell != null;
+		}
+
+		public bool IsSourceAilment() {
+			return ailment != null;
+		}
+	}
 }

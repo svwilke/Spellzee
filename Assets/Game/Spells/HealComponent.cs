@@ -10,7 +10,8 @@
 		GetTargets(context).ForEach(pawn => {
 			HealComponent singleTarget = new HealComponent(targetType, heal);
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
-			pawn.CmdHeal(singleTarget.GetValue());
+			EventBus.DamageHealEvent healEvent = new EventBus.DamageHealEvent(spell, singleTarget, singleTarget.GetValue());
+			pawn.CmdHeal(healEvent);
 		});
 	}
 

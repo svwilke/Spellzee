@@ -9,6 +9,7 @@ public class Ailments {
 	public static Ailment Burn = Register("burn", new BurnAilment("Burn", "Brn", Color.red));
 	public static Ailment Blind = Register("blind", new BlindAilment("Blind", "Bld", Element.Light.GetColor()));
 	public static Ailment Regen = Register("regen", new RegenAilment("Regen", "Rgn", Element.Earth.GetColor()));
+	public static Ailment Protect = Register("protect", new ProtectAilment("Protect", "Prt", Element.Water.GetColor()));
 
 	public static Ailment Register(string id, Ailment ailment) {
 		ailment.SetId(id);

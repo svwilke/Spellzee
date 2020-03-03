@@ -23,7 +23,8 @@ public class BurnAilment : Ailment
 
 	public void Burn(Battle battle, Pawn pawn) {
 		int intensity = pawn.GetAilment(this);
-		pawn.CmdDamage(intensity);
+		EventBus.DamageHealEvent damageEvent = new EventBus.DamageHealEvent(this, intensity, intensity);
+		pawn.CmdDamage(damageEvent);
 		pawn.CmdSetAilment(this, intensity - 1);
 	}
 }

@@ -12,7 +12,8 @@ public class DamageComponent : IntSpellComponent {
 		GetTargets(context).ForEach(pawn => {
 			DamageComponent singleTarget = new DamageComponent(targetType, dmg);
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
-			pawn.CmdDamage(singleTarget.GetValue());
+			EventBus.DamageHealEvent damageEvent = new EventBus.DamageHealEvent(spell, singleTarget, singleTarget.GetValue());
+			pawn.CmdDamage(damageEvent);
 		});
 	}
 

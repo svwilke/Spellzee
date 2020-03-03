@@ -7,8 +7,8 @@ using static AttributeModifier;
 
 public class Pawn {
 
-	public EventBus.EvtPawnInteger OnTakeDamage = new EventBus.EvtPawnInteger();
-	public EventBus.EvtPawnInteger OnHeal = new EventBus.EvtPawnInteger();
+	public EventBus.EvtDamageHeal OnTakeDamage = new EventBus.EvtDamageHeal();
+	public EventBus.EvtDamageHeal OnHeal = new EventBus.EvtDamageHeal();
 	public EventBus.EvtPawn OnSetupTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnBeginTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnEndTurn = new EventBus.EvtPawn();
@@ -178,15 +178,25 @@ public class Pawn {
 		}
 	}
 
-	public void CmdDamage(int dmg) {
+	public void CmdDamage(EventBus.DamageHealEvent damage) {
+		OnTakeDamage.Invoke(this, damage);
+		int dmg = damage.amount;
+		if(dmg < 0) {
+			dmg = 0;
+		}
 		Damage(dmg);
 		NetworkServer.SendToAll(GameMsg.TakeDamage, new GameMsg.MsgIntegerArray(id, dmg));
 		//NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
-	public void CmdHeal(int heal) {
-		Heal(heal);
-		NetworkServer.SendToAll(GameMsg.Heal, new GameMsg.MsgIntegerArray(id, heal));
+	public void CmdHeal(EventBus.DamageHealEvent heal) {
+		OnHeal.Invoke(this, heal);
+		int hl = heal.amount;
+		if(hl < 0) {
+			hl = 0;
+		}
+		Heal(hl);
+		NetworkServer.SendToAll(GameMsg.Heal, new GameMsg.MsgIntegerArray(id, hl));
 		//NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 

@@ -48,7 +48,8 @@ public class Spells {
 				if(damagePerAlly[i] > 0) {
 					DamageComponent singleTargetDamage = new DamageComponent(SpellComponent.TargetType.Allies, damagePerAlly[i]);
 					allies[i].OnSpellComponentTarget.Invoke(spell, context, singleTargetDamage);
-					allies[i].CmdDamage(singleTargetDamage.GetValue());
+					EventBus.DamageHealEvent damageEvent = new EventBus.DamageHealEvent(Spells.Earthquake, singleTargetDamage, singleTargetDamage.GetValue());
+					allies[i].CmdDamage(damageEvent);
 				}
 			}
 			DamageComponent enemyDamage = new DamageComponent(SpellComponent.TargetType.Enemies, 8);
@@ -63,7 +64,8 @@ public class Spells {
 				if(damagePerEnemy[i] > 0) {
 					DamageComponent singleTargetDamage = new DamageComponent(SpellComponent.TargetType.Enemies, damagePerEnemy[i]);
 					enemies[i].OnSpellComponentTarget.Invoke(spell, context, singleTargetDamage);
-					enemies[i].CmdDamage(singleTargetDamage.GetValue());
+					EventBus.DamageHealEvent damageEvent = new EventBus.DamageHealEvent(Spells.Earthquake, singleTargetDamage, singleTargetDamage.GetValue());
+					enemies[i].CmdDamage(damageEvent);
 				}
 			}
 		}, (spell, context) => "Deal 4 damage randomly split among all allies\nand 8 damage randomly split among all enemies.")));
@@ -98,10 +100,13 @@ public class Spells {
 			HealComponent heal = new HealComponent(SpellComponent.TargetType.Target, target.MaxHp - target.CurrentHp);
 			context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, heal);
 			target.OnSpellComponentTarget.Invoke(spell, context, heal);
-			target.CmdHeal(heal.GetValue());
+			EventBus.DamageHealEvent evtHeal = new EventBus.DamageHealEvent(Spells.Synthesis, heal, heal.GetValue());
+			target.CmdHeal(evtHeal);
 		}, (spell, context) => "Restore to full life.")));
 	public static Spell HollowShell = Register("hollow_shell", new Spell("Hollow Shell", "Revive a dead target if it has more than 0 life.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.")));
+	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 1 Protect.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Protect, 1)));
 
 	// Enemy Spells
 
