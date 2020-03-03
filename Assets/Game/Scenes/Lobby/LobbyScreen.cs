@@ -64,22 +64,20 @@ public class LobbyScreen : Screen {
 		prevClassButton.isVisible = false;
 		prevClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
-			if(cls > 0) {
-				LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
-				LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls - 1, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
-				Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
-			}
+			cls = (cls - 1 + DB.Classes.Length) % DB.Classes.Length;
+			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
+			LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
+			Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
 		});
 
 		AddUIObj(nextClassButton = new TextButton(new Vector2i(0, 0), ">", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		nextClassButton.isVisible = false;
 		nextClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
-			if(cls < DB.Classes.Length - 1) {
-				LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
-				LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls + 1, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
-				Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
-			}
+			cls = (cls + 1) % DB.Classes.Length;
+			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
+			LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
+			Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
 		});
 	}
 
