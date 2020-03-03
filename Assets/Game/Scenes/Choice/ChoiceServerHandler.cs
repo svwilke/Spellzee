@@ -34,10 +34,6 @@ public class ChoiceServerHandler : ServerHandler {
 		int pawnId = msg.conn.connectionId;
 		StringMessage message = msg.ReadMessage<StringMessage>();
 		string equipId = message.value;
-		string[] equipped = pawns[pawnId].GetEquipment();
-		if(equipped.Length > 0) {
-			pawns[pawnId].Unequip(equipped[0]);
-		}
 		pawns[pawnId].Equip(equipId);
 		OnReady(pawnId);
 	}

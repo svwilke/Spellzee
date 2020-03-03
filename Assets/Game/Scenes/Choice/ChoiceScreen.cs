@@ -38,22 +38,10 @@ public class ChoiceScreen : Screen {
 	public override void OnConstruct() {
 		AddUIObj(itemButton = new TextButton(new Vector2i(size.width / 2 - 100, size.height / 2 - 20), "Get Item", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		itemButton.SetOnClick(() => {
-			if(eq != null) {
-				MessageBox reallyItem = new MessageBox("Buying this will replace your current item.");
-				reallyItem.AddButton("Buy anyway", () => {
-					Game.client.Send(GameMsg.BuySpell, new StringMessage(eqToBuy));
-					itemButton.currentState = UIObj.State.Disabled;
-					spellButton.currentState = UIObj.State.Disabled;
-					ShowMessageBox(waitForPlayersMsg);
-				});
-				reallyItem.AddButton("Please no", () => CloseMessageBox());
-				ShowMessageBox(reallyItem);
-			} else {
-				Game.client.Send(GameMsg.BuySpell, new StringMessage(eqToBuy));
-				itemButton.currentState = UIObj.State.Disabled;
-				spellButton.currentState = UIObj.State.Disabled;
-				ShowMessageBox(waitForPlayersMsg);
-			}
+			Game.client.Send(GameMsg.BuySpell, new StringMessage(eqToBuy));
+			itemButton.currentState = UIObj.State.Disabled;
+			spellButton.currentState = UIObj.State.Disabled;
+			ShowMessageBox(waitForPlayersMsg);
 			
 		});
 
