@@ -311,7 +311,7 @@ public class Pawn {
 		int knownSpellCount = reader.ReadInt32();
 		knownSpells = new List<string>(knownSpellCount);
 		for(int i = 0; i < knownSpellCount; i++) {
-			knownSpells.Add(reader.ReadString());
+			AddSpell(reader.ReadString());
 		}
 		int ailmentCount = reader.ReadInt32();
 		ailments = new Dictionary<string, int>(ailmentCount);
@@ -321,7 +321,7 @@ public class Pawn {
 		equipped.Clear();
 		int eqCount = reader.ReadInt32();
 		for(int i = 0; i < eqCount; i++) {
-			equipped.Add(reader.ReadString());
+			Equip(reader.ReadString());
 		}
 		MissChance.Deserialize(reader);
 		SpellHealBonus.Deserialize(reader);
