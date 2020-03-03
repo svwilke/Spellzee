@@ -191,11 +191,15 @@ public class Pawn {
 	}
 
 	public void Restore() {
+		int restoration = MaxHp / 8;
+		if(this is PlayerPawn) {
+			restoration = (int)(this as PlayerPawn).EndOfBattleRestoration.GetValue(MaxHp);
+		}
 		if(isDead) {
-			CurrentHp = MaxHp / 8;
+			CurrentHp = restoration;
 			isDead = false;
 		} else {
-			Heal(MaxHp / 8);
+			Heal(restoration);
 		}
 		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
