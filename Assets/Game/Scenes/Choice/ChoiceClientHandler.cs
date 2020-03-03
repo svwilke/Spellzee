@@ -33,6 +33,7 @@ public class ChoiceClientHandler : ClientHandler {
 		screen.newItem.FitSizeToText();
 		screen.newItem.SetPosition(screen.newItem.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		screen.eqToBuy = eqId;
+		screen.EnableItemBuy();
 	}
 
 	public void OnOpenVendor(NetworkMessage msg) {

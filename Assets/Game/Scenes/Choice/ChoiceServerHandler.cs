@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
@@ -55,8 +54,12 @@ public class ChoiceServerHandler : ServerHandler {
 	public override void Open() {
 		base.Open();
 		for(int i = 0; i < pawns.Length; i++) {
-			int shop = Random.Range(0, DB.BuyableEquipments.Length);
-			NetworkServer.SendToClient(i, GameMsg.ShopList, new StringMessage(DB.BuyableEquipments[shop].GetId()));
+			List<Equipment> buyable = new List<Equipment>(DB.BuyableEquipments);
+			buyable.RemoveAll(pawns[i].HasEquipped);
+			if(buyable.Count > 0) {
+				int shop = Random.Range(0, buyable.Count);
+				NetworkServer.SendToClient(i, GameMsg.ShopList, new StringMessage(buyable[shop].GetId()));
+			}
 		}
 	}
 }

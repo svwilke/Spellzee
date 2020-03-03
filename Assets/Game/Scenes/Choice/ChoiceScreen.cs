@@ -10,7 +10,6 @@ public class ChoiceScreen : Screen {
 	private PlayerPawn pawn;
 
 	public Text newItem;
-	private Text currentItem;
 
 	private Text header;
 
@@ -22,17 +21,10 @@ public class ChoiceScreen : Screen {
 	public ChoiceScreen(Game game, Vector2i size, PlayerPawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		waitForPlayersMsg = new MessageBox("Waiting for other players...");
-		string[] equip = this.pawn.GetEquipment();
-		if(this.pawn.GetEquipment().Length > 0) {
-			eq = equip[0];
-			currentItem.SetText("Current item: " + Equipments.Get(eq).GetName());
-			currentItem.SetTooltip(Equipments.Get(eq).GetDescription());
-		} else {
-			currentItem.SetTooltip("Current item: none");
-			eq = null;
-		}
-		currentItem.FitSizeToText();
-		currentItem.SetPosition(currentItem.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
+	}
+
+	public void EnableItemBuy() {
+		itemButton.currentState = UIObj.State.Enabled;
 	}
 
 	public override void OnConstruct() {
@@ -44,6 +36,7 @@ public class ChoiceScreen : Screen {
 			ShowMessageBox(waitForPlayersMsg);
 			
 		});
+		itemButton.currentState = UIObj.State.Disabled;
 
 		AddUIObj(spellButton = new TextButton(new Vector2i(size.width / 2 + 100, size.height / 2 - 20), "+1 Extra Spell Slot", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		spellButton.SetOnClick(() => {
@@ -54,12 +47,9 @@ public class ChoiceScreen : Screen {
 		});
 
 		newItem = new Text(new Vector2i(size.width / 2 - 100, size.height / 2), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
-		currentItem = new Text(new Vector2i(size.width / 2 - 100, size.height / 2 + 20), new Vector2i(), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
 		newItem.SetColor(Color.black);
-		currentItem.SetColor(Color.black);
 		AddUIObj(newItem);
-		AddUIObj(currentItem);
-
+		
 		header = new Text(new Vector2i(size.width / 2, 80), new Vector2i(100, 20), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "@w214Choose");
 		header.FitSizeToText();
 		header.SetPosition(header.pos, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
