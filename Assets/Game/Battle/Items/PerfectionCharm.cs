@@ -36,7 +36,7 @@ public class PerfectionCharm : Equipment {
 	public void UpdateAffinityModifiers(PlayerPawn player) {
 		int[] elementCount = new int[Element.Count];
 		foreach(Spell spell in player.GetSpells()) {
-			ElementDisplay[] displays = spell.GetElementDisplays(null);
+			ElementDisplay[] displays = spell.GetElementDisplays(RollContext.Null);
 			foreach(ElementDisplay display in displays) {
 				elementCount[display.element.GetId()] += 1;
 			}
