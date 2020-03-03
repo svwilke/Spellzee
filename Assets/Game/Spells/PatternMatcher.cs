@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class PatternMatcher {
 
 	protected bool doesMatch = false;
-	protected RollContext rollContext = null;
+	protected RollContext rollContext = RollContext.Null;
 
 	public abstract void Match(RollContext context);
 
