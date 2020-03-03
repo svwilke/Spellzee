@@ -15,7 +15,10 @@ public abstract class SpellComponent {
 				targetList.Add(context.GetCaster());
 				break;
 			case TargetType.Target:
-				targetList.Add(context.GetTarget());
+				Pawn target = context.GetTarget();
+				if(target != null) {
+					targetList.Add(target);
+				}
 				break;
 			case TargetType.Allies:
 				targetList.AddRange(context.GetAllies());
@@ -36,6 +39,14 @@ public abstract class SpellComponent {
 
 	public abstract void Execute(Spell spell, RollContext context);
 	public abstract string GetDescription(Spell spell, RollContext context);
+
+	protected void UpdateComponentForDescription(Spell spell, RollContext context) {
+		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
+		List<Pawn> targets = GetTargets(context);
+		if(targets.Count == 1) {
+			targets[0].OnSpellComponentTarget.Invoke(spell, context, this);
+		}
+	}
 
 	public enum TargetType {
 		None, Caster, Target, Allies, Enemies, All

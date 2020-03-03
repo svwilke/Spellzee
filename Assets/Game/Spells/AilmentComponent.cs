@@ -18,7 +18,7 @@ public class AilmentComponent : IntSpellComponent {
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
-		// invoke necessary events for description matching behaviour (with modifiers!)
+		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Apply {0} {1}", GetValue(), ailment.GetFullName());
 		switch(targetType) {
 			case TargetType.Caster:

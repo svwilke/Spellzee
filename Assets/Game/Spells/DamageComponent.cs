@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 public class DamageComponent : IntSpellComponent {
 
 	public DamageComponent(TargetType targetType, double baseValue) : base(targetType, baseValue) {
@@ -16,7 +17,7 @@ public class DamageComponent : IntSpellComponent {
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
-		// invoke necessary events for description matching behaviour (with modifiers!)
+		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Deal {0} damage", GetValue());
 		switch(targetType) {
 			case TargetType.Caster:

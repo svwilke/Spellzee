@@ -15,7 +15,7 @@
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
-		// invoke necessary events for description matching behaviour (with modifiers!)
+		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Restore {0} life", GetValue());
 		switch(targetType) {
 			case TargetType.Caster:
