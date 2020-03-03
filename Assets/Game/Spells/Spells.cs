@@ -25,7 +25,7 @@ public class Spells {
 	public static Spell SolarRay = Register("solar_ray", new Spell("Solar Ray", "Deal 6 damage.", true, new SimplePattern(Element.Fire, Element.Fire, Element.Light, Element.Light))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 6)));
 	public static Spell HealingRays = Register("healing_rays", new Spell("Healing Rays", "Restore 2 life to all allies.", false, new SimplePattern(Element.Light, Element.Light, Element.Light))
-		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 2)));
+		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Allies, 2)));
 	public static Spell Ignite = Register("ignite", new Spell("Ignite", "Apply 2 Burn.", true, new SimplePattern(Element.Fire, Element.Fire, Element.Fire))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Burn, 2)));
 	public static Spell Tsunami = Register("tsunami", new Spell("Tsunami", "Deal 1 damage, +2 additional damage for each additional Water.", true, new ExtendingPattern(Element.Water, Element.Water).SetExtension(Element.Water))
