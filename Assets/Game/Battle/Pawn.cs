@@ -102,6 +102,13 @@ public class Pawn {
 		status.OnRemoved(this);
 	}
 
+	public void RemoveAllStatuses() {
+		List<Status> statuses = new List<Status>(statusList);
+		foreach(Status s in statuses) {
+			RemoveStatus(s);
+		}
+	}
+
 	public void SetStatuses(List<Status> statusList) {
 		this.statusList = statusList;
 		// Maybe change this to remove all statuses
@@ -239,6 +246,10 @@ public class Pawn {
 
 	public bool DoesKnowSpell(string spellId) {
 		return knownSpells.Contains(spellId);
+	}
+
+	public void Synchronize() {
+		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
 	/// <summary>

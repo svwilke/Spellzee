@@ -110,6 +110,8 @@ public class Spells {
 	public static Spell AquaticBlast = Register("aquatic_blast", new Spell("Aquatic Blast", "Deal 2-3 damage.", true, new SimplePattern(Element.Water, Element.Water))
 		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 2, 3)));
 
+	public static Spell Submerge = Register("submerge", new Spell("Submerge", "+40 Water Affinity until the end of your next turn.", false, new SimplePattern(Element.Water))
+		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Caster, "+40 Water Affinity until the end of your next turn.", () => new AffinityStatus(Status.StatusType.Positive, Element.Water, 1, AttributeModifier.Operation.AddBase, 40))));
 
 	// Enemy Spells
 

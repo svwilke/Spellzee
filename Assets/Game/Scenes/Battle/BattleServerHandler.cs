@@ -91,6 +91,9 @@ public class BattleServerHandler : ServerHandler {
 			}
 			
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
+				foreach(Pawn p in battle.allies) {
+					p.RemoveAllStatuses();
+				}
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
 				if(level % 2 == 1) {
 					OpenChoice(level);
