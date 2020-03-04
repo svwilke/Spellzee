@@ -55,14 +55,14 @@ public class PlayerPawnCard : UIObj
 		RB.Print(imageRect, Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "Img");
 
 		int ailX = pos.x + 30 + off + RB.PrintMeasure(pawn.GetName()).width + 2;
-		foreach(KeyValuePair<string, int> ailment in pawn.GetAilments()) {
-			Ailment ail = Ailments.Get(ailment.Key);
-			if(ailment.Value > 0) {
-				string text = ail.GetShortName() + " " + ailment.Value;
+		foreach(Status s in pawn.GetStatuses()) {
+			if(s.IsVisible()) {
+				string text = s.GetDisplayText();
 				int w = RB.PrintMeasure(text).width;
-				RB.Print(new Vector2i(ailX, pos.y + 6 + off), ail.GetColor(), text);
+				RB.Print(new Vector2i(ailX, pos.y + 6 + off), s.GetColor(), text);
 				ailX += w + 3;
 			}
+			
 		}
 
 		Vector2i hpSize = RB.PrintMeasure("HP: ");

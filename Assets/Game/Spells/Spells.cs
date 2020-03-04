@@ -27,13 +27,13 @@ public class Spells {
 	public static Spell HealingRays = Register("healing_rays", new Spell("Healing Rays", "Restore 2 life to all allies.", false, new SimplePattern(Element.Light, Element.Light, Element.Light))
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Allies, 2)));
 	public static Spell Ignite = Register("ignite", new Spell("Ignite", "Apply 2 Burn.", true, new SimplePattern(Element.Fire, Element.Fire, Element.Fire))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Burn, 2)));
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BurnStatus(intensity), 2)));
 	public static Spell Tsunami = Register("tsunami", new Spell("Tsunami", "Deal 1 damage, +2 additional damage for each additional Water.", true, new ExtendingPattern(Element.Water, Element.Water).SetExtension(Element.Water))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 1 + (pm as ExtendingPattern).GetExtensionAmount() * 2)));
 	public static Spell Flash = Register("flash", new Spell("Flash", "Apply 1 Blind.", true, new SimplePattern(Element.Light, Element.Light))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Blind, 1)));
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BlindStatus(intensity), 1)));
 	public static Spell ConsumingDarkness = Register("consuming_darkness", new Spell("Consuming Darkness", "Apply 3 Blind.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark, Element.Dark))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Blind, 3)));
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BlindStatus(intensity), 3)));
 	public static Spell Earthquake = Register("earthquake", new Spell("Earthquake", "Deal 4 damage randomly split among all allies and 8 damage randomly split among all enemies.", false, new SimplePattern(Element.Earth, Element.Earth, Element.Earth, Element.Earth))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.All, (spell, context) => {
 			DamageComponent allyDamage = new DamageComponent(SpellComponent.TargetType.Allies, 4);
@@ -77,12 +77,12 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 2)));
 	public static Spell MendingHerbs = Register("mending_herbs", new Spell("Mending Herbs", "Restore 1 life and apply 2 Regenerate.", true, new SimplePattern(Element.Earth, Element.Earth, Element.Earth))
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 1))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Regen, 2)));
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new RegenStatus(intensity), 2)));
 	public static Spell Sandstorm = Register("sandstorm", new Spell("Sandstorm", "Deal 2 damage. Apply 1 Blind with an additional Earth and Air.", true, new OptionalPattern(Element.Earth, Element.Air).SetOptional(Element.Earth, Element.Air))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 2))
 		.AddComponent(pm => {
 			if((pm as OptionalPattern).OptionalFulfilled()) {
-				return new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Blind, 1);
+				return new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BlindStatus(intensity), 1);
 			} else {
 				return new NullComponent();
 			}
@@ -94,7 +94,7 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2))
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Allies, 2)));
 	public static Spell Synthesis = Register("synthesis", new Spell("Synthesis", "Restore a target to full life and apply 2 Blind.", true, new SimplePattern(Element.Earth, Element.Earth, Element.Earth, Element.Light, Element.Light))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Blind, 2))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BlindStatus(intensity), 2))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => {
 			Pawn target = context.GetTarget();
 			HealComponent heal = new HealComponent(SpellComponent.TargetType.Target, target.MaxHp - target.CurrentHp);
@@ -106,7 +106,7 @@ public class Spells {
 	public static Spell HollowShell = Register("hollow_shell", new Spell("Hollow Shell", "Revive a dead target if it has more than 0 life.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.")));
 	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 2 Protect.", true, new SimplePattern(Element.Dark, Element.Dark, Element.Dark))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, Ailments.Protect, 2)));
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new ProtectStatus(intensity), 2)));
 	public static Spell AquaticBlast = Register("aquatic_blast", new Spell("Aquatic Blast", "Deal 2-3 damage.", true, new SimplePattern(Element.Water, Element.Water))
 		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 2, 3)));
 

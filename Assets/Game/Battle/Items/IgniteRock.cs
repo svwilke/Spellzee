@@ -32,7 +32,7 @@ public class IgniteRock : Equipment {
 			}
 		}
 		foreach(KeyValuePair<SpellComponent.TargetType, int> dcc in damageComponentCounts) {
-			components.Add(new AilmentComponent(dcc.Key, Ailments.Burn, dcc.Value));
+			components.Add(new AilmentComponent(dcc.Key, intensity => new BurnStatus(intensity), dcc.Value));
 		}
 	}
 

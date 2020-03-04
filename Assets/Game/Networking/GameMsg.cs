@@ -89,16 +89,30 @@ public class GameMsg {
 		}
 	}
 
+	public class MsgStatusList : MessageBase {
+		public int pawnId;
+		public List<Status> statuses;
+
+		public override void Serialize(NetworkWriter writer) {
+			writer.Write(pawnId);
+			writer.Write(statuses.Count);
+			foreach(Status status in statuses) {
+				status.Serialize(writer);
+			}
+		}
+
+		public override void Deserialize(NetworkReader reader) {
+			pawnId = reader.ReadInt32();
+			int statusCount = reader.ReadInt32();
+			statuses = new List<Status>(statusCount);
+			for(int i = 0; i < statusCount; i++) {
+				statuses.Add(Status.DeserializeNew(reader));
+			}
+		}
+	}
+
 	public class MsgCastSpell : MessageBase {
 		public string spellId;
 		public int targetId = -1;
-	}
-
-	public class MsgUpdateAilment : MessageBase {
-		public enum UpdateType { Set, Apply }
-		public UpdateType updateType;
-		public int pawnId;
-		public string ailmentId;
-		public int intensity;
 	}
 }
