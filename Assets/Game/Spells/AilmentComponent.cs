@@ -1,25 +1,26 @@
-﻿using System.Linq;
+﻿using System;
 public class AilmentComponent : IntSpellComponent {
 
-	protected Ailment ailment;
+	protected Func<int, AilmentStatus> ailmentFactory;
 
-	public AilmentComponent(TargetType targetType, Ailment ailment, double baseValue) : base(targetType, baseValue) {
-		this.ailment = ailment;
+	public AilmentComponent(TargetType targetType, Func<int, AilmentStatus> ailmentFactory, double baseValue) : base(targetType, baseValue) {
+		this.ailmentFactory = ailmentFactory;
 	}
 
 	public override void Execute(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
 		int val = GetValue();
 		GetTargets(context).ForEach(pawn => {
-			AilmentComponent singleTarget = new AilmentComponent(targetType, ailment, val);
+			AilmentComponent singleTarget = new AilmentComponent(targetType, ailmentFactory, val);
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
-			pawn.CmdApplyAilment(ailment, singleTarget.GetValue());
+			AilmentStatus status = singleTarget.ailmentFactory.Invoke(singleTarget.GetValue());
+			pawn.CmdAddStatus(status);
 		});
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
 		UpdateComponentForDescription(spell, context);
-		string desc = string.Format("Apply {0} {1}", GetValue(), ailment.GetFullName());
+		string desc = string.Format("Apply {0} {1}", GetValue(), ailmentFactory.Invoke(0).GetFullName());
 		switch(targetType) {
 			case TargetType.Caster:
 				desc += " to yourself";

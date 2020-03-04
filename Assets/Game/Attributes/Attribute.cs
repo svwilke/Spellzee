@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 public class Attribute {
 
-	private Dictionary<string, AttributeModifier> modifiers;
+	private Dictionary<int, HashSet<AttributeModifier>> modifiers;
 
 	private double cachedBase;
 	private double cachedValue;
@@ -13,13 +13,23 @@ public class Attribute {
 	private double defaultBase;
 	private bool hasDefaultBase;
 
-	public int Size { get { return modifiers.Count; } }
+	public int Size { get { return modifierCount; } }
+
+	private int modifierCount = 0;
 
 	public Attribute(params AttributeModifier[] modifiers) {
-		this.modifiers = new Dictionary<string, AttributeModifier>();
+		Clear();
 		foreach(AttributeModifier modifier in modifiers) {
 			AddModifier(modifier);
 		}
+	}
+
+	public void Clear() {
+		this.modifiers = new Dictionary<int, HashSet<AttributeModifier>>();
+		for(int i = 0; i <= AttributeModifier.MaxPriority; i++) {
+			this.modifiers.Add(i, new HashSet<AttributeModifier>());
+		}
+		modifierCount = 0;
 	}
 
 	public Attribute SetBaseValue(double value) {
@@ -44,10 +54,8 @@ public class Attribute {
 		}
 		double val = baseValue;
 		for(int prio = 0; prio <= AttributeModifier.MaxPriority; prio++) {
-			foreach(AttributeModifier mod in modifiers.Values) {
-				if(mod.GetPriority() == prio) {
-					val = mod.Apply(val, baseValue);
-				}
+			foreach(AttributeModifier mod in modifiers[prio]) {
+				val = mod.Apply(val, baseValue);
 			}
 		}
 		cachedValue = val;
@@ -56,31 +64,47 @@ public class Attribute {
 	}
 
 	public void AddModifier(AttributeModifier mod) {
-		modifiers[mod.GetName()] = mod;
+		modifiers[mod.GetPriority()].Add(mod);
 		isDirty = true;
+		modifierCount += 1;
 	}
 
 	public void RemoveModifier(AttributeModifier mod) {
-		RemoveModifier(mod.GetName());
+		if(modifiers[mod.GetPriority()].Contains(mod)) {
+			modifiers[mod.GetPriority()].Remove(mod);
+			modifierCount -= 1;
+		}
 	}
 
 	public void RemoveModifier(string modName) {
-		modifiers.Remove(modName);
+		foreach(HashSet<AttributeModifier> mods in modifiers.Values) {
+			HashSet<AttributeModifier> remove = new HashSet<AttributeModifier>();
+			foreach(AttributeModifier mod in mods) {
+				if(mod.GetName().Equals(modName)) {
+					remove.Add(mod);
+				}
+			}
+			mods.RemoveWhere(remove.Contains);
+			modifierCount -= remove.Count;
+		}
 		isDirty = true;
 	}
 
 	public void Serialize(NetworkWriter writer) {
-		writer.Write(modifiers.Count);
-		foreach(AttributeModifier mod in modifiers.Values) {
-			mod.Serialize(writer);
+		writer.Write(Size);
+		foreach(HashSet<AttributeModifier> mods in modifiers.Values) {
+			foreach(AttributeModifier mod in mods) {
+				mod.Serialize(writer);
+			}
 		}
 	}
 
 	public void Deserialize(NetworkReader reader) {
-		modifiers = new Dictionary<string, AttributeModifier>();
+		Clear();
 		int count = reader.ReadInt32();
 		for(int i = 0; i < count; i++) {
-			AddModifier(AttributeModifier.DeserializeNew(reader));
+			AttributeModifier mod = AttributeModifier.DeserializeNew(reader);
+			AddModifier(mod);
 		}
 	}
 
@@ -92,8 +116,10 @@ public class Attribute {
 
 	public static Attribute Clone(Attribute other) {
 		Attribute attr = new Attribute();
-		foreach(AttributeModifier mod in other.modifiers.Values) {
-			attr.AddModifier(mod);
+		foreach(HashSet<AttributeModifier> mods in other.modifiers.Values) {
+			foreach(AttributeModifier mod in mods) {
+				attr.AddModifier(mod);
+			}
 		}
 		return attr;
 	}

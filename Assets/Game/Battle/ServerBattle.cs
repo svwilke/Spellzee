@@ -54,7 +54,7 @@ public class ServerBattle : Battle
 		GameMsg.MsgCastSpell msg = new GameMsg.MsgCastSpell() { spellId = spellId, targetId = targetPawnId };
 
 		Pawn pawn = GetCurrentPawn();
-		if(Random.value < pawn.MissChance.GetValue()) {
+		if(Random.value > pawn.HitChance.GetValue()) {
 			NetworkServer.SendToAll(GameMsg.Miss, msg);
 			NextTurn();
 			return;

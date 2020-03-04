@@ -32,7 +32,7 @@ public class DB {
 	public static Spell[] BuyableSpells = new Spell[] {
 		Spells.Fireball, Spells.Whirlwind, Spells.Root, Spells.Revitalize, Spells.Incinerate, Spells.RainOfLife, Spells.Flamestorm, Spells.HolyLight, Spells.SolarRay, Spells.HealingRays,
 		Spells.Ignite, Spells.Tsunami, Spells.Flash, Spells.ConsumingDarkness, Spells.Earthquake, Spells.Gust, Spells.Rockblast, Spells.ThrowStone, Spells.MendingHerbs, Spells.Sandstorm,
-		Spells.DrainLife, Spells.Eclipse, Spells.Synthesis, Spells.HollowShell, Spells.VoidBarrier, Spells.AquaticBlast
+		Spells.DrainLife, Spells.Eclipse, Spells.Synthesis, Spells.HollowShell, Spells.VoidBarrier, Spells.AquaticBlast, Spells.Submerge
 	};
 
 	public static Equipment[] BuyableEquipments = new Equipment[] {

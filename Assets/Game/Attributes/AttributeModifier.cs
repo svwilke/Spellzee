@@ -9,6 +9,8 @@ public class AttributeModifier {
 	private Operation op;
 	private double modifier;
 
+	public AttributeModifier(Operation op, double modifier) : this("", op, modifier) { }
+
 	public AttributeModifier(string name, Operation op, double modifier) {
 		this.name = name;
 		this.op = op;
@@ -56,13 +58,13 @@ public class AttributeModifier {
 	}
 
 	public void Serialize(NetworkWriter writer) {
-		writer.Write(name);
+		//writer.Write(name);
 		writer.Write((byte)op);
 		writer.Write(modifier);
 	}
 
 	public void Deserialize(NetworkReader reader) {
-		name = reader.ReadString();
+		//name = reader.ReadString();
 		op = (Operation)reader.ReadByte();
 		modifier = reader.ReadDouble();
 	}

@@ -31,10 +31,11 @@ public class Pawn {
 	private bool isDead = false;
 
 	private Dictionary<string, int> ailments = new Dictionary<string, int>();
+	private List<Status> statusList = new List<Status>();
 
 	private HashSet<string> equipped = new HashSet<string>();
 
-	public Attribute MissChance = new Attribute().SetBaseValue(0);
+	public Attribute HitChance = new Attribute().SetBaseValue(1);
 	public Attribute SpellHealBonus = new Attribute();
 	public Attribute SpellDamageBonus = new Attribute();
 
@@ -86,76 +87,50 @@ public class Pawn {
 		return equipped.ToArray();
 	}
 
-	public IEnumerable<KeyValuePair<string, int>> GetAilments() {
-		return ailments;
-	}
-
-	public void ApplyAilment(string ailmentId, int intensity) {
-		ApplyAilment(Ailments.Get(ailmentId), intensity);
-	}
-
-	public void ApplyAilment(Ailment ailment, int intensity) {
-		ailment.ApplyToPawn(this, intensity);
-	}
-
-	public void CmdApplyAilment(string ailmentId, int intensity) {
-		CmdApplyAilment(Ailments.Get(ailmentId), intensity);
-	}
-
-	public void CmdApplyAilment(Ailment ailment, int intensity) {
-		ApplyAilment(ailment, intensity);
-		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgUpdateAilment() {
-			updateType = GameMsg.MsgUpdateAilment.UpdateType.Apply,
-			pawnId = id,
-			ailmentId = ailment.GetId(),
-			intensity = intensity
-		});
-	}
-
-	public void SetAilment(string ailmentId, int intensity) {
-		int oldIntensity = 0;
-		if(ailments.ContainsKey(ailmentId)) {
-			oldIntensity = ailments[ailmentId];
+	public void AddStatus(Status status) {
+		foreach(Status s in statusList) {
+			if(s.GetType() == status.GetType() && s.Merge(status)) {
+				return;
+			}
 		}
-		ailments[ailmentId] = intensity;
-		Ailments.Get(ailmentId).OnIntensityChange(this, oldIntensity, intensity);
+		statusList.Add(status);
+		status.OnAdded(this);
 	}
 
-	public void SetAilment(Ailment ailment, int intensity) {
-		SetAilment(ailment.GetId(), intensity);
+	public void RemoveStatus(Status status) {
+		statusList.Remove(status);
+		status.OnRemoved(this);
 	}
 
-	public void CmdSetAilment(string ailmentId, int intensity) {
-		SetAilment(ailmentId, intensity);
-		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgUpdateAilment() {
-			updateType = GameMsg.MsgUpdateAilment.UpdateType.Set,
-			pawnId = id,
-			ailmentId = ailmentId,
-			intensity = intensity
-		});
-	}
-
-	public void CmdSetAilment(Ailment ailment, int intensity) {
-		CmdSetAilment(ailment.GetId(), intensity);
-	}
-
-	public int GetAilment(string ailmentId) {
-		if(!ailments.ContainsKey(ailmentId)) {
-			return 0;
+	public void RemoveAllStatuses() {
+		List<Status> statuses = new List<Status>(statusList);
+		foreach(Status s in statuses) {
+			RemoveStatus(s);
 		}
-		return ailments[ailmentId];
 	}
 
-	public int GetAilment(Ailment ailment) {
-		return GetAilment(ailment.GetId());
+	public void SetStatuses(List<Status> statusList) {
+		this.statusList = statusList;
+		// Maybe change this to remove all statuses
+		// and then add these to achieve sync with server
 	}
 
-	public bool HasAilment(string ailmentId) {
-		return GetAilment(ailmentId) > 0;
+	public void CmdAddStatus(Status status) {
+		AddStatus(status);
+		CmdUpdateStatuses();
 	}
 
-	public bool HasAilment(Ailment ailment) {
-		return GetAilment(ailment.GetId()) > 0;
+	public void CmdRemoveStatus(Status status) {
+		RemoveStatus(status);
+		CmdUpdateStatuses();
+	}
+
+	public void CmdUpdateStatuses() {
+		NetworkServer.SendToAll(GameMsg.UpdateAilment, new GameMsg.MsgStatusList() { pawnId = id, statuses = statusList });
+	}
+
+	public List<Status> GetStatuses() {
+		return statusList;
 	}
 
 	public void Damage(int dmg) {
@@ -273,6 +248,10 @@ public class Pawn {
 		return knownSpells.Contains(spellId);
 	}
 
+	public void Synchronize() {
+		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
+	}
+
 	/// <summary>
 	/// Sets the fields of this Pawn to the same as those of the pawn given as an argument.
 	/// </summary>
@@ -299,16 +278,15 @@ public class Pawn {
 		for(int i = 0; i < knownSpells.Count; i++) {
 			writer.Write(knownSpells[i]);
 		}
-		writer.Write(ailments.Count);
-		foreach(KeyValuePair<string, int> ailment in ailments) {
-			writer.Write(ailment.Key);
-			writer.Write(ailment.Value);
+		writer.Write(statusList.Count);
+		foreach(Status status in statusList) {
+			status.Serialize(writer);
 		}
 		writer.Write(equipped.Count);
 		foreach(string eqId in equipped) {
 			writer.Write(eqId);
 		}
-		MissChance.Serialize(writer);
+		HitChance.Serialize(writer);
 		SpellHealBonus.Serialize(writer);
 	}
 
@@ -323,17 +301,17 @@ public class Pawn {
 		for(int i = 0; i < knownSpellCount; i++) {
 			AddSpell(reader.ReadString());
 		}
-		int ailmentCount = reader.ReadInt32();
-		ailments = new Dictionary<string, int>(ailmentCount);
-		for(int i = 0; i < ailmentCount; i++) {
-			SetAilment(reader.ReadString(), reader.ReadInt32());
+		int statusCount = reader.ReadInt32();
+		statusList = new List<Status>(statusCount);
+		for(int i = 0; i < statusCount; i++) {
+			statusList.Add(Status.DeserializeNew(reader));
 		}
 		equipped.Clear();
 		int eqCount = reader.ReadInt32();
 		for(int i = 0; i < eqCount; i++) {
 			Equip(reader.ReadString());
 		}
-		MissChance.Deserialize(reader);
+		HitChance.Deserialize(reader);
 		SpellHealBonus.Deserialize(reader);
 	}
 

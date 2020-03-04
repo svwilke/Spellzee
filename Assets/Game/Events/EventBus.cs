@@ -44,8 +44,7 @@ public class EventBus {
 	public class DamageHealEvent {
 		private Spell spell;
 		private SpellComponent component;
-		private Ailment ailment;
-		private int ailmentIntensity;
+		private Status status;
 		public int amount;
 		
 		public DamageHealEvent(int amount) {
@@ -57,9 +56,8 @@ public class EventBus {
 			this.component = component;
 		}
 
-		public DamageHealEvent(Ailment ailment, int ailmentIntensity, int amount) : this(amount) {
-			this.ailment = ailment;
-			this.ailmentIntensity = ailmentIntensity;
+		public DamageHealEvent(Status status, int amount) : this(amount) {
+			this.status = status;
 		}
 
 		public Spell GetSpell() {
@@ -70,20 +68,16 @@ public class EventBus {
 			return component;
 		}
 
-		public Ailment GetAilment() {
-			return ailment;
-		}
-
-		public int GetAilmentIntensity() {
-			return ailmentIntensity;
+		public Status GetStatus() {
+			return status;
 		}
 
 		public bool IsSourceSpell() {
 			return spell != null;
 		}
 
-		public bool IsSourceAilment() {
-			return ailment != null;
+		public bool IsSourceStatus() {
+			return status != null;
 		}
 	}
 }
