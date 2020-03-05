@@ -9,30 +9,48 @@ public class IgniteRock : Equipment {
 
 	public override void OnEquipped(Pawn pawn) {
 		pawn.OnBuildSpellComponents.AddListener(AddBurnAilment);
-		pawn.OnSpellComponentCaster.AddListener(SubtractFireDamage);
+		//pawn.OnSpellComponentCaster.AddListener(SubtractFireDamage);
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
 		pawn.OnBuildSpellComponents.RemoveListener(AddBurnAilment);
-		pawn.OnSpellComponentCaster.RemoveListener(SubtractFireDamage);
+		//pawn.OnSpellComponentCaster.RemoveListener(SubtractFireDamage);
 	}
 
 	public void AddBurnAilment(Spell spell, RollContext context, List<SpellComponent> components) {
 		Dictionary<SpellComponent.TargetType, int> damageComponentCounts = new Dictionary<SpellComponent.TargetType, int>();
+		List<SpellComponent> toRemove = new List<SpellComponent>();
 		if(spell.IsElement(context, Element.Fire)) {
 			foreach(SpellComponent sc in components) {
-				if(sc is DamageComponent) {
+				DamageComponent dc = sc as DamageComponent;
+				if(dc != null && dc.GetValue() >= 1) {
 					SpellComponent.TargetType tt = sc.GetTargetType();
 					if(damageComponentCounts.ContainsKey(tt)) {
 						damageComponentCounts[tt] += 1;
 					} else {
 						damageComponentCounts[tt] = 1;
 					}
+					dc.AddModifier(AttributeModifier.Operation.SubtractBase, 1);
 				}
 			}
 		}
+		components.RemoveAll(toRemove.Contains);
 		foreach(KeyValuePair<SpellComponent.TargetType, int> dcc in damageComponentCounts) {
-			components.Add(new AilmentComponent(dcc.Key, intensity => new BurnStatus(intensity), dcc.Value));
+			AilmentComponent burnFound = null;
+			foreach(SpellComponent sc in components) {
+				if(sc.GetTargetType() == dcc.Key) {
+					AilmentComponent ac = sc as AilmentComponent;
+					if(ac != null && ac.GetAilment() is BurnStatus) {
+						burnFound = ac;
+						break;
+					}
+				}
+			}
+			if(burnFound != null) {
+				burnFound.AddModifier(AttributeModifier.Operation.AddBase, dcc.Value);
+			} else {
+				components.Add(new AilmentComponent(dcc.Key, intensity => new BurnStatus(intensity), dcc.Value));
+			}
 		}
 	}
 

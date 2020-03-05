@@ -63,6 +63,16 @@ public class Spell : RegistryEntry<Spell> {
 		pattern.Match(context);
 		List<SpellComponent> componentList = componentFactories.Select(func => func.Invoke(pattern)).ToList();
 		context.GetCaster().OnBuildSpellComponents.Invoke(this, context, componentList);
+		List<SpellComponent> zeroComponents = new List<SpellComponent>();
+		foreach(SpellComponent sc in componentList) {
+			IntSpellComponent isc = sc as IntSpellComponent;
+			if(isc != null) {
+				if(isc.GetValue() <= 0) {
+					zeroComponents.Add(isc);
+				}
+			}
+		}
+		componentList.RemoveAll(zeroComponents.Contains);
 		return componentList;
 	}
 

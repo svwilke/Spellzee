@@ -7,6 +7,10 @@ public class AilmentComponent : IntSpellComponent {
 		this.ailmentFactory = ailmentFactory;
 	}
 
+	public AilmentStatus GetAilment() {
+		return ailmentFactory.Invoke(GetValue());
+	}
+
 	public override void Execute(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
 		int val = GetValue();
