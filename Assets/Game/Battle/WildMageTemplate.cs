@@ -12,7 +12,7 @@ public class WildMageTemplate : PlayerTemplate {
 		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
 		player.SetId(lobbyPlayer.id);
 		int[] affinityCounts = new int[Element.Count];
-		Spell[] spellsToLearn = REX.Choice(DB.BuyableSpells, 4);
+		Spell[] spellsToLearn = REX.Choice(Spells.GetCastableSpells(), 4);
 		for(int i = 0; i < spellsToLearn.Length; i++) {
 			ElementDisplay[] d = spellsToLearn[i].GetElementDisplays(RollContext.Null);
 			for(int j = 0; j < d.Length; j++) {

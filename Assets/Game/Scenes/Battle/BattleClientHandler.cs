@@ -137,7 +137,6 @@ public class BattleClientHandler : ClientHandler {
 	public void OnAilmentUpdate(NetworkMessage msg) {
 		GameMsg.MsgStatusList msgStatusList = msg.ReadMessage<GameMsg.MsgStatusList>();
 		Pawn pawn = battle.GetPawn(msgStatusList.pawnId);
-		Debug.Log(pawn.GetName() + " has " + msgStatusList.statuses.Count + " statuses");
 		pawn.SetStatuses(msgStatusList.statuses);
 	}
 
