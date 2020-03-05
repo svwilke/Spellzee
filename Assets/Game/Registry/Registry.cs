@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
-public class Registry<T> where T : RegistryEntry<T>
+public class Registry<T> : IEnumerable<T> where T : RegistryEntry<T>
 {
 
 	private Dictionary<string, T> entries = new Dictionary<string, T>();
@@ -18,5 +19,13 @@ public class Registry<T> where T : RegistryEntry<T>
 			throw new System.Exception("Duplicate registry entry with id " + id + ".");
 		}
 		entries.Add(id, entry.GetRegistryObject());
+	}
+
+	public IEnumerator<T> GetEnumerator() {
+		return entries.Values.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() {
+		return entries.Values.GetEnumerator();
 	}
 }

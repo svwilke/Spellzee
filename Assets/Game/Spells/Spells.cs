@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spells {
@@ -139,5 +140,9 @@ public class Spells {
 
 	public static Spell Get(string id) {
 		return Registry.Get(id);
+	}
+
+	public static Spell[] GetCastableSpells() {
+		return Registry.Where(spell => !(spell.GetPattern() is NullPattern)).ToArray();
 	}
 }

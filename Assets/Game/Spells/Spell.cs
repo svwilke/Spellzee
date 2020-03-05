@@ -28,6 +28,10 @@ public class Spell : RegistryEntry<Spell> {
 		return name;
 	}
 
+	public PatternMatcher GetPattern() {
+		return pattern;
+	}
+
 	public virtual string GetLongDescription() {
 		return desc;
 	}

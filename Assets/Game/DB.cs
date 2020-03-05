@@ -29,12 +29,6 @@ public class DB {
 		new WildMageTemplate("Wild Mage").SetMaxHp(16)
 	};
 
-	public static Spell[] BuyableSpells = new Spell[] {
-		Spells.Fireball, Spells.Whirlwind, Spells.Root, Spells.Revitalize, Spells.Incinerate, Spells.RainOfLife, Spells.Flamestorm, Spells.HolyLight, Spells.SolarRay, Spells.HealingRays,
-		Spells.Ignite, Spells.Tsunami, Spells.Flash, Spells.TakeSight, Spells.Earthquake, Spells.Gust, Spells.Rockblast, Spells.ThrowStone, Spells.MendingHerbs, Spells.Sandstorm,
-		Spells.DrainLife, Spells.Eclipse, Spells.Synthesis, Spells.HollowShell, Spells.VoidBarrier, Spells.AquaticBlast, Spells.Submerge, Spells.Levitate, Spells.ConsumingDarkness, Spells.ToAsh
-	};
-
 	public static Equipment[] BuyableEquipments = new Equipment[] {
 		Equipments.CharmOfPerfection, Equipments.SolarOrb, Equipments.LunarOrb, Equipments.ElementalFocus, Equipments.RingOfRestoration, Equipments.HealCharm, Equipments.IgneousRock, Equipments.TalismanOfDisorder
 	};
