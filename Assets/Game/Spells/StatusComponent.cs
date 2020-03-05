@@ -15,11 +15,27 @@ public class StatusComponent : SpellComponent {
 		GetTargets(context).ForEach(pawn => {
 			StatusComponent singleTarget = new StatusComponent(targetType, shortDescription, statusFactory);
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
-			pawn.AddStatus(singleTarget.statusFactory.Invoke());
+			pawn.CmdAddStatus(singleTarget.statusFactory.Invoke());
 		});
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
-		return shortDescription;
+		UpdateComponentForDescription(spell, context);
+		string desc = "{0}";
+		switch(targetType) {
+			case TargetType.Caster:
+				desc = "To you: " + desc;
+				break;
+			case TargetType.Allies:
+				desc = "To allies: " + desc;
+				break;
+			case TargetType.Enemies:
+				desc = "To enemies: " + desc;
+				break;
+			case TargetType.All:
+				desc = "To all: " + desc;
+				break;
+		}
+		return string.Format(desc, shortDescription);
 	}
 }

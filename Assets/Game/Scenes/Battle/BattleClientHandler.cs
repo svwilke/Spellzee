@@ -126,12 +126,18 @@ public class BattleClientHandler : ClientHandler {
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
 		EventBus.PawnUpdate.Invoke(battle, newPawn);
 		battle.SetPawn(newPawn.GetId(), newPawn);
-
+		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		if(screen != null) {
+			if(screen.spellPane.GetOpenTabIndex() == newPawn.GetId()) {
+				screen.ViewSpellTab(newPawn.GetId());
+			}
+		}
 	}
 
 	public void OnAilmentUpdate(NetworkMessage msg) {
 		GameMsg.MsgStatusList msgStatusList = msg.ReadMessage<GameMsg.MsgStatusList>();
 		Pawn pawn = battle.GetPawn(msgStatusList.pawnId);
+		Debug.Log(pawn.GetName() + " has " + msgStatusList.statuses.Count + " statuses");
 		pawn.SetStatuses(msgStatusList.statuses);
 	}
 

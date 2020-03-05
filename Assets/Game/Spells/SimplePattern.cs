@@ -20,6 +20,15 @@ public class SimplePattern : PatternMatcher {
 		}
 	}
 
+	public SimplePattern(Element element, int count) {
+		displays = new ElementDisplay[count];
+		elementCounts = new Dictionary<Element, int>();
+		for(int i = 0; i < count; i++) {
+			displays[i] = new ElementDisplay(element, false);
+		}
+		elementCounts.Add(element, count);
+	}
+
 	public override void Match(RollContext context) {
 		rollContext = context;
 		foreach(KeyValuePair<Element, int> elemCount in elementCounts) {

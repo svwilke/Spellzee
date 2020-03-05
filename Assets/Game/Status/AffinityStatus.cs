@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AffinityStatus : Status {
+public class AffinityStatus : DurationStatus {
 
 	private Element element;
 	private AttributeModifier modifier;
-	private int duration;
 
 	public AffinityStatus(StatusType type, Element element, int duration, AttributeModifier.Operation operation, double value) : this(type, element, duration, new AttributeModifier(operation, value)) {
 		
 	}
 
-	public AffinityStatus(StatusType type, Element element, int duration, AttributeModifier modifier) : base(type) {
+	public AffinityStatus(StatusType type, Element element, int duration, AttributeModifier modifier) : base(type, duration) {
 		this.element = element;
 		this.modifier = modifier;
-		this.duration = duration;
 	}
 
 	protected override void OnStatusAdded() {
@@ -31,12 +29,6 @@ public class AffinityStatus : Status {
 		if(player != null) {
 			player.Affinities[element.GetId()].RemoveModifier(modifier);
 			player.Synchronize();
-		}
-	}
-
-	protected override void OnTurnEnded() {
-		if(age >= duration) {
-			pawn.RemoveStatus(this);
 		}
 	}
 }
