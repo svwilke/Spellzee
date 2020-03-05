@@ -264,8 +264,8 @@ public class BattleScreen : Screen {
 				//RB.DrawRect(targetRect.Offset(new Vector2i(0, 0)).Expand(1), Color.black);
 				originButton.Render();
 			}
+			RB.DrawRect(new Rect2i(originButton.pos, originButton.size).Expand(1), Color.yellow);
 			RB.DrawPixel(originPoint + new Vector2i(1, 0), Color.white);
-			//RB.DrawRect(new Rect2i(originButton.pos, originButton.size).Expand(2), Color.black);
 			RB.DrawLine(originPoint + new Vector2i(0, 1), targetPoint + new Vector2i(0, 1), Color.yellow);
 			RB.DrawLine(originPoint, targetPoint, Color.white);
 			RB.DrawLine(originPoint - new Vector2i(0, 1), targetPoint - new Vector2i(0, 1), Color.yellow);
@@ -290,7 +290,11 @@ public class BattleScreen : Screen {
 				}
 			}
 			if(RB.KeyPressed(KeyCode.Escape) || RB.KeyPressed(KeyCode.Backspace)) {
-				pawnSelectedByKey = -1;
+				renderTargeting = false;
+				targetSpell = null;
+				targetPawn = null;
+				SetTooltip("");
+				return;
 			}
 			if(pawnSelectedByKey >= 0) {
 				Pawn p = battle.GetPawn(pawnSelectedByKey);
@@ -329,6 +333,8 @@ public class BattleScreen : Screen {
 				if(RB.ButtonPressed(RB.BTN_POINTER_ANY)) {
 					renderTargeting = false;
 					targetSpell = null;
+					targetPawn = null;
+					SetTooltip("");
 				}
 			}
 		} else {
