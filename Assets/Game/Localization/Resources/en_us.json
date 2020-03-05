@@ -1,0 +1,31 @@
+{
+	"spell.fireball.name": "Fireball",
+	"spell.fireball.desc": "Deal 5 damage.",
+	
+	"spell.whirlwind.name": "Whirlwind",
+	"spell.whirlwind.desc": "Deal 3 damage.",
+	
+	"spell.root.name": "Root",
+	"spell.root.desc": "Restore 2 life to yourself.",
+	
+	"spell.revitalize.name": "Revitalize",
+	"spell.revitalize.desc": "Restore 5 life.",
+	
+	"spell.incinerate.name": "Incinerate",
+	"spell.incinerate.desc": "Deal 9 damage.",
+	
+	"spell.rain_of_life.name": "Rain of Life",
+	"spell.rain_of_life.desc": "Restore 5 life to all allies.",
+	
+	"spell.flamestorm.name": "Flamestorm",
+	"spell.flamestorm.desc": "Deal 2 damage, or 4 damage with an additional Fire and Air.",
+	
+	"spell.holy_light.name": "Holy Light",
+	"spell.holy_light.desc": "Deal 4 damage.",
+	
+	"spell.solar_ray.name": "Solar Ray",
+	"spell.solar_ray.desc": "Deal 6 damage.",
+	
+	"spell.healing_rays.name": "Healing Rays",
+	"spell.healing_rays.desc": "Restore 2 life to all allies."
+}

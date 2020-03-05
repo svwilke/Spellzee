@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Spells {
 
-	private static Registry<Spell> Registry = new Registry<Spell>();
+	private static Registry<Spell> Registry = new Registry<Spell>("spell");
 
 	public static Spell Fireball = Register("fireball", new Spell("Fireball", "Deal 5 damage.", true, new SimplePattern(Element.Fire, 4))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 5)));
@@ -119,6 +119,10 @@ public class Spells {
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.All, "+10 Dark Affinity for 1 turn.", () => new AffinityStatus(Status.StatusType.Positive, Element.Dark, 1, AttributeModifier.Operation.AddBase, 10))));
 	public static Spell ToAsh = Register("to_ash", new Spell("To Ash", "Apply 1 Burn to everyone.", false, new SimplePattern(Element.Fire, 2))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.All, intensity => new BurnStatus(intensity), 1)));
+	public static Spell Kindle = Register("kindle", new Spell("Kindle", "Deal 1 damage and apply 1 Burn.", true, new SimplePattern(Element.Fire, 2))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 1))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BurnStatus(intensity), 1)));
+
 	// Enemy Spells
 
 	public static Spell Cuteness = Register("cuteness", new Spell("Cuteness", "Deal 1 damage.", true, new NullPattern())

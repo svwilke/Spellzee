@@ -10,6 +10,8 @@ public class Game : RB.IRetroBlitGame
 	public static int[] Widths = new int[] { 480, 960, 1440, 1920, 2400, 2880, 3360, 3840 };
 	public static int[] Heights = new int[] { 256, 512, 768, 1024, 1280, 1536, 1892, 2048 };
 
+	public static Locale locale;
+
 	private ClientHandler clientHandler;
 	private ServerHandler serverHandler;
 
@@ -51,6 +53,12 @@ public class Game : RB.IRetroBlitGame
 	public static float volume = 0.25F;
 
 	public bool Initialize() {
+		string lang = "en_us";
+		if(PlayerPrefs.HasKey("lang")) {
+			lang = PlayerPrefs.GetString("lang");
+		}
+		locale = new Locale(lang);
+
 		networkConfig.AddChannel(QosType.ReliableSequenced);
 
 		RB.EffectSet(RB.Effect.Desaturation, 0.5F);
