@@ -112,6 +112,7 @@ public class MainScreen : Screen {
 	}
 
 	private void SetIp(string ip) {
+		this.ip = ip;
 		PlayerPrefs.SetString("join_game_ip", ip);
 		ipInput.SetText(ip);
 	}
