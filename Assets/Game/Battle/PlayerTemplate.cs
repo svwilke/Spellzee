@@ -49,6 +49,7 @@ public class PlayerTemplate : RegistryEntry<PlayerTemplate> {
 	public virtual PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
 		player.SetId(lobbyPlayer.id);
+		player.SetSprite(GetId());
 		knownSpells.ForEach(player.AddSpell);
 		for(int i = 0; i < player.Affinities.Length; i++) {
 			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));

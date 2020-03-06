@@ -49,10 +49,14 @@ public class PlayerPawnCard : UIObj
 		}
 		RB.Print(titleRect, Color.white, RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, pawn.GetName());
 
-		Rect2i imageRect = new Rect2i(pos.x + 3 + off, pos.y + 3 + off, new Vector2i(25, 25));
+		Rect2i imageRect = new Rect2i(pos.x + 6 + off, pos.y + 6 + off, new Vector2i(18, 18));
 		RB.DrawRectFill(imageRect, Color.white);
 		RB.DrawRect(imageRect, Color.black);
-		RB.Print(imageRect, Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "Img");
+		if(pawn.GetSprite() == null) {
+			RB.Print(imageRect, Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "Img");
+		} else {
+			RB.DrawSprite(pawn.GetSprite(), imageRect.Expand(-1));
+		}
 
 		int ailX = pos.x + 30 + off + RB.PrintMeasure(pawn.GetName()).width + 2;
 		foreach(Status s in pawn.GetStatuses()) {

@@ -11,6 +11,7 @@ public class WildMageTemplate : PlayerTemplate {
 	public override PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
 		player.SetId(lobbyPlayer.id);
+		player.SetSprite(GetId());
 		int[] affinityCounts = new int[Element.Count];
 		Spell[] spellsToLearn = REX.Choice(Spells.GetCastableSpells(), 4);
 		for(int i = 0; i < spellsToLearn.Length; i++) {

@@ -24,6 +24,8 @@ public class Pawn {
 	private int id;
 	private string name;
 
+	private string spriteName;
+
 	public int CurrentHp { get; private set; }
 	public int MaxHp { get; private set; }
 
@@ -45,6 +47,14 @@ public class Pawn {
 	public Pawn(string name, int maxHp) {
 		this.name = name;
 		this.MaxHp = CurrentHp = maxHp;
+	}
+
+	public void SetSprite(string spriteName) {
+		this.spriteName = spriteName;
+	}
+
+	public string GetSprite() {
+		return spriteName;
 	}
 
 	public void SetId(int id) {
@@ -265,12 +275,14 @@ public class Pawn {
 		knownSpells = pawn.knownSpells;
 		ailments = pawn.ailments;
 		equipped = pawn.equipped;
+		spriteName = pawn.spriteName;
 	}
 
 	public virtual void Serialize(NetworkWriter writer) {
 		writer.Write(this is PlayerPawn);
 		writer.Write(id);
 		writer.Write(name);
+		writer.Write(spriteName);
 		writer.Write(CurrentHp);
 		writer.Write(MaxHp);
 		writer.Write(isDead);
@@ -293,6 +305,7 @@ public class Pawn {
 	public virtual void Deserialize(NetworkReader reader) {
 		id = reader.ReadInt32();
 		name = reader.ReadString();
+		spriteName = reader.ReadString();
 		CurrentHp = reader.ReadInt32();
 		MaxHp = reader.ReadInt32();
 		isDead = reader.ReadBoolean();

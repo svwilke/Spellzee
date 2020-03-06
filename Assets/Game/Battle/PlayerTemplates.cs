@@ -6,7 +6,7 @@ public class PlayerTemplates {
 
 	private static Registry<PlayerTemplate> Registry = new Registry<PlayerTemplate>();
 
-	public static PlayerTemplate Wizard = Register("wizard", new PlayerTemplate("Wizard").SetMaxHp(16).AddSpells(Spells.Fireball, Spells.Whirlwind, Spells.Root, Spells.Revitalize));
+	public static PlayerTemplate Wizard = Register("wizard", new PlayerTemplate("Wizard").SetMaxHp(16).AddSpells(Spells.Fireball, Spells.Whirlwind, Spells.Root, Spells.Revitalize).SetAffinities(15, 15, 15, 15, 0, 0, 0));
 	public static PlayerTemplate Sorcerer = Register("sorcerer", new PlayerTemplate("Sorcerer").SetMaxHp(16).AddSpells(Spells.Gust, Spells.Root, Spells.HolyLight, Spells.Flash));
 	public static PlayerTemplate Mage = Register("mage", new WildMageTemplate("Mage").SetMaxHp(16));
 	public static PlayerTemplate Druid = Register("druid", new PlayerTemplate("Druid").SetMaxHp(16).AddSpells(Spells.Whirlwind, Spells.ThrowStone, Spells.MendingHerbs, Spells.Revitalize));
