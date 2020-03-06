@@ -131,6 +131,8 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 	public static Spell Stomp = Register("stomp", new Spell("Stomp", "Deal 2 damage to all enemies.", false, new NullPattern())
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 3)));
+	public static Spell Bash = Register("bash", new Spell("Bash", "Apply 1 Shock to all enemies.", true, new NullPattern())
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));
 
 	public static Spell Register(string id, Spell spell) {
 		spell.SetId(id);
