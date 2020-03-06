@@ -18,7 +18,10 @@ public class LobbyScreen : Screen {
 
 	private LobbyClientHandler lobby;
 
+	private PlayerTemplate[] playerTemplates;
+
 	public LobbyScreen(Game game, Vector2i size, LobbyClientHandler lobby) : base(game, size) {
+		playerTemplates = PlayerTemplates.GetPlayableClasses();
 		playerCardPos = new int[4];
 		desiredPlayerCardPos = new int[4];
 		lastPlayerCount = 0;
@@ -64,7 +67,7 @@ public class LobbyScreen : Screen {
 		prevClassButton.isVisible = false;
 		prevClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
-			cls = (cls - 1 + DB.Classes.Length) % DB.Classes.Length;
+			cls = (cls - 1 + playerTemplates.Length) % playerTemplates.Length;
 			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
 			LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
 			Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
@@ -74,7 +77,7 @@ public class LobbyScreen : Screen {
 		nextClassButton.isVisible = false;
 		nextClassButton.SetOnClick(() => {
 			int cls = lobby.GetLobbyPlayer(Game.peerId).charClass;
-			cls = (cls + 1) % DB.Classes.Length;
+			cls = (cls + 1) % playerTemplates.Length;
 			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
 			LobbyPlayer updatedPlayer = new LobbyPlayer() { charClass = cls, charName = oldPlayer.charName, id = oldPlayer.id, ready = false };
 			Game.client.Send(GameMsg.PlayerLobbyUpdate, new GameMsg.MsgPlayerLobbyUpdate() { lobbyPlayer = updatedPlayer });
@@ -110,8 +113,8 @@ public class LobbyScreen : Screen {
 			RB.Print(new Vector2i(xPos - 27, topLeftY + size.height - 116), Color.white, "Ready?");
 		}
 
-		RB.Print(new Rect2i(topLeftX + 11, topLeftY + 71, w - 24, 20), Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, DB.Classes[player.charClass].GetName());
-		RB.Print(new Rect2i(topLeftX + 10, topLeftY + 70, w - 24, 20), Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, DB.Classes[player.charClass].GetName());
+		RB.Print(new Rect2i(topLeftX + 11, topLeftY + 71, w - 24, 20), Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, playerTemplates[player.charClass].GetName());
+		RB.Print(new Rect2i(topLeftX + 10, topLeftY + 70, w - 24, 20), Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, playerTemplates[player.charClass].GetName());
 		RB.DrawEllipseFill(new Vector2i(xPos + 16, topLeftY - 2 + size.height - 110), new Vector2i(5, 5), Color.black);
 		RB.DrawEllipseFill(new Vector2i(xPos + 15, topLeftY - 3 + size.height - 110), new Vector2i(5, 5), player.ready ? Color.green : Color.red);
 		RB.DrawEllipse(new Vector2i(xPos + 15, topLeftY - 3 + size.height - 110), new Vector2i(5, 5), Color.white);

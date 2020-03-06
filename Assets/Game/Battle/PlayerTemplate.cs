@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerTemplate {
+public class PlayerTemplate : RegistryEntry<PlayerTemplate> {
 
 	protected string className;
 	protected int maxHp = 16;
 	protected List<string> knownSpells;
 	protected double[] affinityModifiers;
+	public bool IsDevOnly { get; private set; }
 
 	public PlayerTemplate(string name) {
 		className = name;
 		knownSpells = new List<string>();
 		affinityModifiers = new double[7];
+	}
+
+	public PlayerTemplate SetDevOnly() {
+		IsDevOnly = true;
+		return this;
 	}
 
 	public string GetName() {

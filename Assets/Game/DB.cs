@@ -21,14 +21,6 @@ public class DB {
 		new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(Spells.Stomp)
 	};
 
-	public static PlayerTemplate[] Classes = new PlayerTemplate[] {
-		new PlayerTemplate("Wizard").SetMaxHp(16).AddSpells(Spells.Fireball, Spells.Whirlwind, Spells.Root, Spells.Revitalize).SetAffinities(15, 15, 15, 15, 0, 0, 0),
-		new PlayerTemplate("Sorcerer").SetMaxHp(16).AddSpells(Spells.Gust, Spells.Root, Spells.HolyLight, Spells.Flash),
-		new PlayerTemplate("Druid").SetMaxHp(18).AddSpells(Spells.Whirlwind, Spells.ThrowStone, Spells.MendingHerbs, Spells.Revitalize),
-		new PlayerTemplate("Warlock").SetMaxHp(16).AddSpells(Spells.DrainLife, Spells.VoidBarrier, Spells.AquaticBlast, Spells.Ignite),
-		new WildMageTemplate("Wild Mage").SetMaxHp(16)
-	};
-
 	public static Equipment[] BuyableEquipments = new Equipment[] {
 		Equipments.CharmOfPerfection, Equipments.SolarOrb, Equipments.LunarOrb, Equipments.ElementalFocus, Equipments.RingOfRestoration, Equipments.HealCharm, Equipments.IgneousRock, Equipments.TalismanOfDisorder
 	};
