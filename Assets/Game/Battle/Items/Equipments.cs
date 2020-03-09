@@ -18,6 +18,7 @@ public class Equipments {
 		}
 	}));
 	public static Equipment IgneousRock = Register("igneous_rock", new IgniteRock("Igneous Rock", "Convert 1 damage of your Fire spells to 1 Burn."));
+	public static Equipment ChaosGift = Register("chaos_gift", new ChaosGift("Gift of Chaos"));
 
 	public static Equipment Register(string id, Equipment equipment) {
 		equipment.SetId(id);

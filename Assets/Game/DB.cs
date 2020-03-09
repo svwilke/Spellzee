@@ -22,6 +22,14 @@ public class DB {
 	};
 
 	public static Equipment[] BuyableEquipments = new Equipment[] {
-		Equipments.CharmOfPerfection, Equipments.SolarOrb, Equipments.LunarOrb, Equipments.ElementalFocus, Equipments.RingOfRestoration, Equipments.HealCharm, Equipments.IgneousRock, Equipments.TalismanOfDisorder
+		Equipments.CharmOfPerfection,
+		Equipments.SolarOrb,
+		Equipments.LunarOrb,
+		Equipments.ElementalFocus,
+		Equipments.RingOfRestoration,
+		Equipments.HealCharm,
+		Equipments.IgneousRock,
+		Equipments.TalismanOfDisorder,
+		Equipments.ChaosGift
 	};
 }
