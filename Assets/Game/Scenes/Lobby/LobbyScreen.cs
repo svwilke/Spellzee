@@ -18,7 +18,7 @@ public class LobbyScreen : Screen {
 
 	private LobbyClientHandler lobby;
 
-	private PlayerTemplate[] playerTemplates;
+	private PawnTemplate[] playerTemplates;
 
 	public LobbyScreen(Game game, Vector2i size, LobbyClientHandler lobby) : base(game, size) {
 		playerTemplates = PlayerTemplates.GetPlayableClasses();

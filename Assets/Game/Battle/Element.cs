@@ -12,9 +12,10 @@ public class Element {
 	public static Element Dark;
 	public static Element Chaos;
 
-	public const int Count = 7;
+	public const int Count = 9;
 
-	public static Element None = new Element(7, "None", Color.white, "FFFFFF");
+	public static Element Physical;
+	public static Element None;
 
 	public static Element[] All = new Element[] {
 		Fire = new Element(0, "Fire", new Color(239F / 255F, 45F / 255F, 31F / 255F), "EF2D1F"),
@@ -23,20 +24,23 @@ public class Element {
 		Air = new Element(3, "Air", new Color(131F / 255F, 219F / 255F, 219F / 255F), "83DBDB"),
 		Light = new Element(4, "Light", new Color(239F / 255F, 239F / 255F, 31F / 255F), "EFEF1F"),
 		Dark = new Element(5, "Dark", new Color(44F / 255F, 44F / 255F, 55F / 255F), "2C2C37"),
-		Chaos = new Element(6, "Chaos", new Color(128F / 255F, 31F / 255F, 128F / 255F), "801F80"),
-		None
+		Chaos = new Element(6, "Chaos", new Color(128F / 255F, 31F / 255F, 128F / 255F), "801F80", baseAffinity: 0),
+		Physical = new Element(7, "Phys", Color.white, "FFFFFF", baseAffinity: 0),
+		None = new Element(8, "None", Color.white, "FFFFFF", baseAffinity: 0)
 	};
 
 	private int id;
 	private string name;
 	private Color color;
 	private string colorHex;
+	private double baseAffinity;
 
-	private Element(int id, string name, Color color, string colorHex) {
+	private Element(int id, string name, Color color, string colorHex, double baseAffinity = 10) {
 		this.id = id;
 		this.name = name;
 		this.color = color;
 		this.colorHex = colorHex;
+		this.baseAffinity = baseAffinity;
 	}
 
 	public string GetName() {
@@ -53,6 +57,10 @@ public class Element {
 
 	public string GetColoredName() {
 		return GetColorHex() + GetName() + "@-";
+	}
+
+	public double GetBaseAffinity() {
+		return baseAffinity;
 	}
 
 	public int GetId() {

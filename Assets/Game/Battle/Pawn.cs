@@ -44,9 +44,19 @@ public class Pawn {
 	public Attribute AilmentApplyBonus = new Attribute();
 	public Attribute DamageReduction = new Attribute();
 
+	public Attribute[] Affinities = new Attribute[Element.Count];
+	public Attribute DieCount = new Attribute().SetBaseValue(5);
+	public Attribute LockCount = new Attribute();
+	public Attribute RollCount = new Attribute().SetBaseValue(3);
+	public Attribute SpellSlotCount = new Attribute().SetBaseValue(4);
+	public Attribute EndOfBattleRestoration = new Attribute(new AttributeModifier("Base Value", Operation.MultiplyTotal, 0.125));
+
 	public Pawn(string name, int maxHp) {
 		this.name = name;
 		this.MaxHp = CurrentHp = maxHp;
+		for(int i = 0; i < Affinities.Length; i++) {
+			Affinities[i] = new Attribute();
+		}
 	}
 
 	public void SetSprite(string spriteName) {
@@ -258,28 +268,35 @@ public class Pawn {
 		return knownSpells.Contains(spellId);
 	}
 
+	public double GetAffinity(Element element) {
+		return GetAffinity(element.GetId());
+	}
+
+	public double GetAffinity(int elemId) {
+		return Affinities[elemId].GetValue(Element.All[elemId].GetBaseAffinity());
+	}
+
+	public double GetAffinityTotal() {
+		double total = 0;
+		for(int i = 0; i < Affinities.Length; i++) {
+			total += GetAffinity(i);
+		}
+		return total;
+	}
+
 	public void Synchronize() {
 		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
-	/// <summary>
-	/// Sets the fields of this Pawn to the same as those of the pawn given as an argument.
-	/// </summary>
-	/// <param name="pawn">The pawn with the fields to update to</param>
-	public virtual void Update(Pawn pawn) {
-		id = pawn.id;
-		name = pawn.name;
-		CurrentHp = pawn.CurrentHp;
-		MaxHp = pawn.MaxHp;
-		isDead = pawn.isDead;
-		knownSpells = pawn.knownSpells;
-		ailments = pawn.ailments;
-		equipped = pawn.equipped;
-		spriteName = pawn.spriteName;
-	}
-
 	public virtual void Serialize(NetworkWriter writer) {
-		writer.Write(this is PlayerPawn);
+		if(this is PlayerPawn) {
+			writer.Write((byte)1);
+		} else
+		if(this is EnemyPawn) {
+			writer.Write((byte)2);
+		} else {
+			writer.Write((byte)0);
+		}
 		writer.Write(id);
 		writer.Write(name);
 		writer.Write(spriteName);
@@ -300,6 +317,13 @@ public class Pawn {
 		}
 		HitChance.Serialize(writer);
 		SpellHealBonus.Serialize(writer);
+		for(int i = 0; i < Affinities.Length; i++) {
+			Affinities[i].Serialize(writer);
+		}
+		DieCount.Serialize(writer);
+		RollCount.Serialize(writer);
+		SpellSlotCount.Serialize(writer);
+		EndOfBattleRestoration.Serialize(writer);
 	}
 
 	public virtual void Deserialize(NetworkReader reader) {
@@ -326,14 +350,29 @@ public class Pawn {
 		}
 		HitChance.Deserialize(reader);
 		SpellHealBonus.Deserialize(reader);
+		for(int i = 0; i < Affinities.Length; i++) {
+			Affinities[i].Deserialize(reader);
+		}
+		DieCount.Deserialize(reader);
+		RollCount.Deserialize(reader);
+		SpellSlotCount.Deserialize(reader);
+		EndOfBattleRestoration.Deserialize(reader);
 	}
 
 	public static Pawn DeserializeNew(NetworkReader reader) {
 		Pawn p;
-		if(reader.ReadBoolean()) {
-			p = new PlayerPawn("", 1);
-		} else {
-			p = new Pawn("", 1);
+		int cls = reader.ReadByte();
+		switch(cls) {
+			default:
+			case 0:
+				p = new Pawn("", 1);
+				break;
+			case 1:
+				p = new PlayerPawn("", 1);
+				break;
+			case 2:
+				p = new EnemyPawn("", 1);
+				break;
 		}
 		p.Deserialize(reader);
 		return p;

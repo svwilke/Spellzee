@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WildMageTemplate : PlayerTemplate {
+public class WildMageTemplate : PawnTemplate {
 
 	public WildMageTemplate(string name) : base(name) {
 

@@ -131,6 +131,7 @@ public class BattleClientHandler : ClientHandler {
 			if(screen.spellPane.GetOpenTabIndex() == newPawn.GetId()) {
 				screen.ViewSpellTab(newPawn.GetId());
 			}
+			screen.Rebuild();
 		}
 	}
 
@@ -148,9 +149,9 @@ public class BattleClientHandler : ClientHandler {
 			battle.locks[i] = false;
 		}
 		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
-		if(battle.currentTurn < battle.allies.Length) {
+		//if(battle.currentTurn < battle.allies.Length) {
 			screen.ViewSpellTab(battle.currentTurn);
-		}
+		//}
 		screen.UpdateContext();
 	}
 

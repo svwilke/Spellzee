@@ -27,6 +27,7 @@ public class BattleScreen : Screen {
 	// Info Panes
 	// Player
 	private Text playerName;
+	private Text affinityNames;
 	private Text affinities;
 	// Spell
 	private Spell viewedSpell;
@@ -110,14 +111,9 @@ public class BattleScreen : Screen {
 		affinities.SetColor(Color.white);
 		affinities.SetEffect(Text.Outline);
 		infoPane.AddToTab(0, affinities);
-		AddUIObj(affinities = new Text(new Vector2i(size.width / 2 + 5 + infoPaneWidth / 2, size.height - 58), new Vector2i(infoPaneWidth / 2 - 6, 40), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP));
-		affinities.SetColor(Color.white);
-		string affText = "";
-		for(int i = 0; i < 6; i++) {
-			affText += "\n " + Element.All[i].GetColorHex() + Element.All[i].GetName();
-		}
-		affinities.SetText(affText);
-		infoPane.AddToTab(0, affinities);
+		AddUIObj(affinityNames = new Text(new Vector2i(size.width / 2 + 5 + infoPaneWidth / 2, size.height - 58), new Vector2i(infoPaneWidth / 2 - 6, 40), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP));
+		affinityNames.SetColor(Color.white);
+		infoPane.AddToTab(0, affinityNames);
 		AddUIObj(affinities = new Text(new Vector2i(size.width / 2 + 5 + infoPaneWidth / 2, size.height - 58), new Vector2i(infoPaneWidth / 2 - 6, 40), RB.ALIGN_H_RIGHT | RB.ALIGN_V_TOP));
 		affinities.SetColor(Color.black);
 		infoPane.AddToTab(0, affinities);
@@ -140,26 +136,27 @@ public class BattleScreen : Screen {
 
 		pawnCards = new Dictionary<Pawn, UIObj>();
 
-		EnemyPawnCard epc = new EnemyPawnCard(new Vector2i(size.x / 2, 72), new Vector2i(128, 128), battle.enemy, battle, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER);
-		AddUIObj(epc);
-		pawnCards.Add(battle.enemy, epc);
-
 		viewPawnImages = new Image[battle.allies.Length + 1];
-		string[] tabNames = new string[battle.allies.Length];
+		string[] tabNames = new string[battle.allies.Length + 1];
 		int spellCount = 0;
 		PlayerPawnCard ppc;
 		PackedSprite viewSprite = RB.PackedSpriteGet("Eye", Game.SPRITEPACK_BATTLE);
-		for(int i = 0; i < battle.allies.Length; i++) {
-			AddUIObj(ppc = new PlayerPawnCard(new Vector2i(8, 8 + 36 * i), new Vector2i(96, 32), battle.allies[i], battle));
-			pawnCards.Add(battle.allies[i], ppc);
-			AddUIObj(viewPawnImages[i] = new Image(new Vector2i(108, 24 + 36 * i), viewSprite));
+		for(int i = 0; i < battle.allies.Length + 1; i++) {
+			Pawn pawn = battle.GetPawn(i);
+			Vector2i pos = new Vector2i(8, 8 + 36 * i);
+			if(pawn is EnemyPawn) {
+				pos = new Vector2i(8 + 98 * 2, 8 + 36 / 2);
+			}
+			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(96, 32), pawn, battle));
+			pawnCards.Add(pawn, ppc);
+			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(100, 16), viewSprite));
 			if(i > 0) viewPawnImages[i].isVisible = false;
 			int x = i;
 			ppc.SetOnClick(() => {
 				ViewSpellTab(x);
 			});
-			tabNames[i] = battle.allies[i].GetName();
-			spellCount += battle.allies[i].GetSpells().Length;
+			tabNames[i] = pawn.GetName();
+			spellCount += pawn.GetSpells().Length;
 		}
 
 		spellPane = new TabbedPane(new Vector2i(size.width - 102, 0), new Vector2i(102, size.height), true);
@@ -168,7 +165,7 @@ public class BattleScreen : Screen {
 		spellButtons = new SpellButton[spellCount];
 		spellButtonOwnership = new int[spellCount];
 		int currentSpellIndex = 0;
-		for(int i = 0; i < battle.allies.Length; i++) {
+		for(int i = 0; i < battle.allies.Length + 1; i++) {
 			currentSpellIndex = FillSpellPane(spellPane, i, currentSpellIndex);
 		}
 		/*
@@ -218,7 +215,7 @@ public class BattleScreen : Screen {
 	}
 
 	private int FillSpellPane(TabbedPane pane, int index, int buttonIndexStart) {
-		Spell[] knownSpells = battle.allies[index].GetSpells();
+		Spell[] knownSpells = battle.GetPawn(index).GetSpells();
 		for(int i = 0; i < knownSpells.Length; i++) {
 			SpellButton sb = new SpellButton(this, battle, knownSpells[i], new Vector2i(size.width - 97, 5 + i * 31), index != Game.peerId);
 			if(index == Game.peerId) {
@@ -352,18 +349,23 @@ public class BattleScreen : Screen {
 		}
 		spellPane.OpenTab(pawnId);
 		infoPane.OpenTab(0);
-		PlayerPawn pawn = battle.allies[pawnId] as PlayerPawn;
+		Pawn pawn = battle.GetPawn(pawnId);
 		playerName.SetText(pawn.GetName());
 		string affText = "";
 		FastString perc = new FastString(3);
 
 		double affTotal = pawn.GetAffinityTotal();
-		for(int i = 0; i < 6; i++) {
+		string affTitles = "";
+		for(int i = 0; i < Element.Count; i++) {
 			perc.Clear();
 			double aff = pawn.GetAffinity(i);
 			perc.Append((int)(aff / affTotal * 100), 2, FastString.FILL_SPACES);
-			affText += "\n" /*+ Element.All[i].GetColorHex()*/ + pawn.GetAffinity(i) + " (" + perc + "%)";
+			if(aff > 0) {
+				affText += "\n" /*+ Element.All[i].GetColorHex()*/ + aff + " (" + perc + "%)";
+				affTitles += "\n " + Element.All[i].GetColoredName();
+			}
 		}
+		affinityNames.SetText(affTitles);
 		affinities.SetText(affText);
 
 		foreach(Text text in currentItemTexts) {
@@ -466,17 +468,10 @@ public class BattleScreen : Screen {
 
 	public void OnPawnUpdate(Battle battle, Pawn newPawn) {
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-		if(oldPawn.GetId() == battle.allies.Length) {
-			EnemyPawnCard epc = pawnCards[oldPawn] as EnemyPawnCard;
-			pawnCards.Remove(oldPawn);
-			epc.pawn = newPawn;
-			pawnCards.Add(newPawn, epc);
-		} else {
-			PlayerPawnCard ppc = pawnCards[oldPawn] as PlayerPawnCard;
-			pawnCards.Remove(oldPawn);
-			ppc.pawn = newPawn;
-			pawnCards.Add(newPawn, ppc);
-		}
+		PlayerPawnCard ppc = pawnCards[oldPawn] as PlayerPawnCard;
+		pawnCards.Remove(oldPawn);
+		ppc.pawn = newPawn;
+		pawnCards.Add(newPawn, ppc);
 	}
 
 	public override void OnOpen() {

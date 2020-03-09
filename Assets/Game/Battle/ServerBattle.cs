@@ -39,11 +39,9 @@ public class ServerBattle : Battle
 	public void SetupTurn() {
 		Pawn pawn = GetCurrentPawn();
 		pawn.OnSetupTurn.Invoke(this, pawn);
-		if(pawn is PlayerPawn) {
-			PlayerPawn currentPlayer = pawn as PlayerPawn;
-			SetDieCount(Mathf.Max(1, (int)currentPlayer.DieCount.GetValue()));
-			SetRollCount(Mathf.Max(0, (int)currentPlayer.RollCount.GetValue()));
-		}
+		SetDieCount(Mathf.Max(1, (int)pawn.DieCount.GetValue()));
+		SetRollCount(Mathf.Max(0, (int)pawn.RollCount.GetValue()));
+		ResetDice();
 		ResetLocks();
 		
 		NetworkServer.SendToAll(GameMsg.SetupTurn, new GameMsg.MsgIntegerArray(rolls.Length, rollsHad));
@@ -66,8 +64,9 @@ public class ServerBattle : Battle
 	}
 
 	public IEnumerator DoAITurn(EnemyPawn enemyPawn) {
-		yield return new WaitForSeconds(1.5F);
-		enemyPawn.DoTurn(this);
+		do {
+			yield return new WaitForSeconds(1F);
+		} while(enemyPawn.DoTurn(this));
 	}
 
 	public bool AreAllAlliesDead() {

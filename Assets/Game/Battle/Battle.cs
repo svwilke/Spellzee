@@ -47,6 +47,12 @@ public class Battle {
 		locks = newLocks;
 	}
 
+	public void ResetDice() {
+		for(int i = 0; i < rolls.Length; i++) {
+			rolls[i] = Element.None;
+		}
+	}
+
 	public void ResetLocks() {
 		for(int i = 0; i < locks.Length; i++) {
 			locks[i] = false;
