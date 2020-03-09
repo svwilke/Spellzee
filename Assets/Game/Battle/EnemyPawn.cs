@@ -47,7 +47,7 @@ public class EnemyPawn : Pawn {
 		Spell spell = REX.Choice(GetSpells());
 		string spellId = spell.GetId();
 		int targetId = -1;
-		if(spell.DoesRequireTarget()) {
+		if(spell.DoesRequireTarget(battle.BuildContext())) {
 			List<int> possibleTargets = new List<int>();
 			for(int i = 0; i < battle.allies.Length; i++) {
 				if(battle.allies[i].IsAlive()) {

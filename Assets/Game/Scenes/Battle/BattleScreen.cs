@@ -313,18 +313,20 @@ public class BattleScreen : Screen {
 				}
 			}
 			if(on != null && pawnTarget != null) {
-				if(pawnTarget != targetPawn) {
-					SetTooltip(targetSpell.GetShortDescription(battle.BuildContext(pawnTarget.GetId())));
-				}
-				targetPawn = pawnTarget;
-				targetPoint = new Vector2i(onRect.x + onRect.width, onRect.y + onRect.height / 2);
-				targetRect = new Rect2i(onRect.x - 1, onRect.y - 1, onRect.width + 1, onRect.height + 1);
-				if(RB.ButtonPressed(RB.BTN_POINTER_A) || RB.KeyPressed(KeyCode.Return)) {
-					Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = targetSpell.GetId(), targetId = targetPawn.GetId() });
-					renderTargeting = false;
-					targetSpell = null;
-					targetPawn = null;
-					SetTooltip("");
+				if(targetSpell.IsValidTarget(pawnTarget, battle.BuildContext())) {
+					if(pawnTarget != targetPawn) {
+						SetTooltip(targetSpell.GetShortDescription(battle.BuildContext(pawnTarget.GetId())));
+					}
+					targetPawn = pawnTarget;
+					targetPoint = new Vector2i(onRect.x + onRect.width, onRect.y + onRect.height / 2);
+					targetRect = new Rect2i(onRect.x - 1, onRect.y - 1, onRect.width + 1, onRect.height + 1);
+					if(RB.ButtonPressed(RB.BTN_POINTER_A) || RB.KeyPressed(KeyCode.Return)) {
+						Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = targetSpell.GetId(), targetId = targetPawn.GetId() });
+						renderTargeting = false;
+						targetSpell = null;
+						targetPawn = null;
+						SetTooltip("");
+					}
 				}
 			} else {
 				targetPawn = null;

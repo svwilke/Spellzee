@@ -6,15 +6,13 @@ public class Spell : RegistryEntry<Spell> {
 
 	private string name;
 	private string desc;
-	private bool requiresTarget;
 
 	private PatternMatcher pattern;
 	private List<Func<PatternMatcher, SpellComponent>> componentFactories;
 
-	public Spell(string name, string description, bool requiresTarget, PatternMatcher pattern) {
+	public Spell(string name, string description, PatternMatcher pattern) {
 		this.name = name;
 		this.desc = description;
-		this.requiresTarget = requiresTarget;
 		this.pattern = pattern;
 		componentFactories = new List<Func<PatternMatcher, SpellComponent>>();
 	}
@@ -39,6 +37,7 @@ public class Spell : RegistryEntry<Spell> {
 	public virtual string GetShortDescription(RollContext context) {
 		string shortDesc = "";
 		List<SpellComponent> componentList = BuildComponentList(context);
+		bool requiresTarget = DoesRequireTarget(context);
 		foreach(SpellComponent component in componentList) {
 			string compDesc = component.GetDescription(this, context);
 			if(compDesc != null && compDesc.Length > 0) {
@@ -55,8 +54,12 @@ public class Spell : RegistryEntry<Spell> {
 		return shortDesc.Trim();
 	}
 
-	public bool DoesRequireTarget() {
-		return requiresTarget;
+	public bool DoesRequireTarget(RollContext context) {
+		return BuildComponentList(context).Any(sc => sc.GetTargetType() == SpellComponent.TargetType.Target);
+	}
+
+	public bool IsValidTarget(Pawn pawn, RollContext context) {
+		return BuildComponentList(context).All(sc => sc.GetTargetType() != SpellComponent.TargetType.Target || sc.IsValidTarget(pawn, context));
 	}
 
 	public List<SpellComponent> BuildComponentList(RollContext context) {

@@ -22,20 +22,7 @@ public class StatusComponent : SpellComponent {
 	public override string GetDescription(Spell spell, RollContext context) {
 		UpdateComponentForDescription(spell, context);
 		string desc = "{0}";
-		switch(targetType) {
-			case TargetType.Caster:
-				desc = "To you: " + desc;
-				break;
-			case TargetType.Allies:
-				desc = "To allies: " + desc;
-				break;
-			case TargetType.Enemies:
-				desc = "To enemies: " + desc;
-				break;
-			case TargetType.All:
-				desc = "To all: " + desc;
-				break;
-		}
+		desc = DescriptionHelper.GetDescriptionPrefix(targetType, targetGroup) + desc;
 		return string.Format(desc, shortDescription);
 	}
 }

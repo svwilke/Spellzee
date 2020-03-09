@@ -73,6 +73,14 @@ public class RollContext {
 		return enemies.ToArray();
 	}
 
+	public bool IsAlly(Pawn pawn) {
+		return allies.Contains(pawn);
+	}
+
+	public bool IsEnemy(Pawn pawn) {
+		return enemies.Contains(pawn);
+	}
+
 	public void ForEachEnemy(System.Action<Pawn> func) {
 		foreach(Pawn p in enemies) {
 			func.Invoke(p);

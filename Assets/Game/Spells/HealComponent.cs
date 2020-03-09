@@ -18,20 +18,7 @@
 	public override string GetDescription(Spell spell, RollContext context) {
 		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Restore {0} life", GetValue());
-		switch(targetType) {
-			case TargetType.Caster:
-				desc += " to yourself";
-				break;
-			case TargetType.Allies:
-				desc += " to all allies";
-				break;
-			case TargetType.Enemies:
-				desc += " to all enemies";
-				break;
-			case TargetType.All:
-				desc += " to everyone";
-				break;
-		}
+		desc += DescriptionHelper.GetDescriptionSuffix(targetType, targetGroup);
 		desc += ".";
 		return desc;
 	}

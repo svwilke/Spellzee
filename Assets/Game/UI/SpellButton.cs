@@ -27,7 +27,7 @@ public class SpellButton : UIObj
 
 	public override void OnClick() {
 		if(!blocked) {
-			if(spell.DoesRequireTarget()) {
+			if(spell.DoesRequireTarget(battle.BuildContext())) {
 				screen.BeginTargeting(spell, this);
 			} else {
 				Game.client.Send(GameMsg.CastSpell, new GameMsg.MsgCastSpell() { spellId = spell.GetId() });
