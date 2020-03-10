@@ -8,8 +8,8 @@ public class WildMageTemplate : PawnTemplate {
 
 	}
 
-	public override PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
-		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
+	public override Pawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
+		Pawn player = new Pawn(lobbyPlayer.charName, maxHp, Pawn.Team.Friendly);
 		player.SetId(lobbyPlayer.id);
 		player.SetSprite(GetId());
 		int[] affinityCounts = new int[Element.Count];

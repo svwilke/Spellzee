@@ -7,7 +7,7 @@ public class VendorScreen : Screen
 {
 
 	private TextButton readyButton;
-	private PlayerPawn pawn;
+	private Pawn pawn;
 
 	private TabbedPane infoPane;
 	private Text spellName;
@@ -21,7 +21,7 @@ public class VendorScreen : Screen
 	private VendorButton[] sellButtons;
 	private List<ImageButton> swapButtons = new List<ImageButton>();
 
-	public VendorScreen(Game game, Vector2i size, PlayerPawn pawn) : base(game, size) {
+	public VendorScreen(Game game, Vector2i size, Pawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		buyButtons = new VendorButton[0];
 		sellButtons = new VendorButton[0];

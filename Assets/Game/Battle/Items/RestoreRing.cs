@@ -10,16 +10,10 @@ public class RestoreRing : Equipment
 	}
 
 	public override void OnEquipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.EndOfBattleRestoration.AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.MultiplyTotal, 2));
-		}
+		pawn.EndOfBattleRestoration.AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.MultiplyTotal, 2));
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.EndOfBattleRestoration.RemoveModifier(GetName());
-		}
+		pawn.EndOfBattleRestoration.RemoveModifier(GetName());
 	}
 }

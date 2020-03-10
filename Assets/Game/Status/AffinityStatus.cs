@@ -17,18 +17,12 @@ public class AffinityStatus : DurationStatus {
 	}
 
 	protected override void OnStatusAdded() {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.Affinities[element.GetId()].AddModifier(modifier);
-			player.Synchronize();
-		}
+		pawn.Affinities[element.GetId()].AddModifier(modifier);
+		pawn.Synchronize();
 	}
 
 	protected override void OnStatusRemoved() {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.Affinities[element.GetId()].RemoveModifier(modifier);
-			player.Synchronize();
-		}
+		pawn.Affinities[element.GetId()].RemoveModifier(modifier);
+		pawn.Synchronize();
 	}
 }

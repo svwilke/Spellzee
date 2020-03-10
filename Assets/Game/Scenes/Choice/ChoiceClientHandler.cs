@@ -37,7 +37,7 @@ public class ChoiceClientHandler : ClientHandler {
 	}
 
 	public void OnOpenVendor(NetworkMessage msg) {
-		PlayerPawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn as PlayerPawn;
+		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
 		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
 		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));
 		game.OpenScreen(screen);

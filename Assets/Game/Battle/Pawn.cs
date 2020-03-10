@@ -26,6 +26,9 @@ public class Pawn {
 
 	private string spriteName;
 
+	public enum Team { Friendly, Hostile }
+	public Team team { get; private set; }
+
 	public int CurrentHp { get; private set; }
 	public int MaxHp { get; private set; }
 
@@ -51,12 +54,15 @@ public class Pawn {
 	public Attribute SpellSlotCount = new Attribute().SetBaseValue(4);
 	public Attribute EndOfBattleRestoration = new Attribute(new AttributeModifier("Base Value", Operation.MultiplyTotal, 0.125));
 
-	public Pawn(string name, int maxHp) {
+	private AIModule ai;
+
+	public Pawn(string name, int maxHp, Team team) {
 		this.name = name;
 		this.MaxHp = CurrentHp = maxHp;
 		for(int i = 0; i < Affinities.Length; i++) {
 			Affinities[i] = new Attribute();
 		}
+		this.team = team;
 	}
 
 	public void SetSprite(string spriteName) {
@@ -196,10 +202,7 @@ public class Pawn {
 	}
 
 	public void Restore() {
-		int restoration = MaxHp / 8;
-		if(this is PlayerPawn) {
-			restoration = (int)(this as PlayerPawn).EndOfBattleRestoration.GetValue(MaxHp);
-		}
+		int restoration = (int)EndOfBattleRestoration.GetValue(MaxHp);
 		if(isDead) {
 			CurrentHp = restoration;
 			isDead = false;
@@ -283,23 +286,28 @@ public class Pawn {
 		}
 		return total;
 	}
+	
+	public void SetAI(AIModule ai) {
+		this.ai = ai;
+	}
+
+	public bool HasAI() {
+		return ai != null;
+	}
+
+	public AIModule GetAI() {
+		return ai;
+	}
 
 	public void Synchronize() {
 		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
 	public virtual void Serialize(NetworkWriter writer) {
-		if(this is PlayerPawn) {
-			writer.Write((byte)1);
-		} else
-		if(this is EnemyPawn) {
-			writer.Write((byte)2);
-		} else {
-			writer.Write((byte)0);
-		}
 		writer.Write(id);
 		writer.Write(name);
 		writer.Write(spriteName);
+		writer.Write((byte)team);
 		writer.Write(CurrentHp);
 		writer.Write(MaxHp);
 		writer.Write(isDead);
@@ -330,6 +338,7 @@ public class Pawn {
 		id = reader.ReadInt32();
 		name = reader.ReadString();
 		spriteName = reader.ReadString();
+		team = (Team)reader.ReadByte();
 		CurrentHp = reader.ReadInt32();
 		MaxHp = reader.ReadInt32();
 		isDead = reader.ReadBoolean();
@@ -360,20 +369,7 @@ public class Pawn {
 	}
 
 	public static Pawn DeserializeNew(NetworkReader reader) {
-		Pawn p;
-		int cls = reader.ReadByte();
-		switch(cls) {
-			default:
-			case 0:
-				p = new Pawn("", 1);
-				break;
-			case 1:
-				p = new PlayerPawn("", 1);
-				break;
-			case 2:
-				p = new EnemyPawn("", 1);
-				break;
-		}
+		Pawn p = new Pawn("", 1, Team.Friendly);
 		p.Deserialize(reader);
 		return p;
 	}
@@ -383,7 +379,7 @@ public class Pawn {
 	}
 
 	public static Pawn Clone(Pawn other) {
-		Pawn clone = new Pawn(other.name, other.MaxHp);
+		Pawn clone = new Pawn(other.name, other.MaxHp, other.team);
 		clone.CurrentHp = other.CurrentHp;
 		clone.id = other.id;
 		clone.isDead = other.isDead;

@@ -39,7 +39,7 @@ public class ChoiceServerHandler : ServerHandler {
 
 	public void OnAddSlot(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
-		(pawns[pawnId] as PlayerPawn).SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
+		pawns[pawnId].SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
 		OnReady(pawnId);
 	}
 

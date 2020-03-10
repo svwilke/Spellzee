@@ -7,7 +7,7 @@ public class ChoiceScreen : Screen {
 
 	private TextButton itemButton;
 	private TextButton spellButton;
-	private PlayerPawn pawn;
+	private Pawn pawn;
 
 	public Text newItem;
 
@@ -18,7 +18,7 @@ public class ChoiceScreen : Screen {
 	private string eq;
 	public string eqToBuy = null;
 
-	public ChoiceScreen(Game game, Vector2i size, PlayerPawn pawn) : base(game, size) {
+	public ChoiceScreen(Game game, Vector2i size, Pawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		waitForPlayersMsg = new MessageBox("Waiting for other players...");
 	}

@@ -199,7 +199,7 @@ public class Game : RB.IRetroBlitGame
 		pawn.AddSpell(DB.EnemySpells[enemy]);
 		return pawn;*/
 		int level = Mathf.FloorToInt((enemy / DB.Enemies.Length));
-		return DB.Enemies[enemy % DB.Enemies.Length].Create(GetPlayerCount(), level);
+		return DB.Enemies[enemy % DB.Enemies.Length].Create(GetPlayerCount(), level, Pawn.Team.Hostile);
 	}
 
 	public void CancelConnection() {

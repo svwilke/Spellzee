@@ -9,31 +9,23 @@ public class PerfectionCharm : Equipment {
 	}
 
 	public override void OnEquipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			UpdateAffinityModifiers(player);
-			player.OnSpellsChange.AddListener(UpdateAffinities);
-		}
+		UpdateAffinityModifiers(pawn);
+		pawn.OnSpellsChange.AddListener(UpdateAffinities);
 		
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			for(int i = 0; i < Element.Count; i++) {
-				player.Affinities[i].RemoveModifier(GetName());
-			}
-			player.OnSpellsChange.RemoveListener(UpdateAffinities);
+		for(int i = 0; i < Element.Count; i++) {
+			pawn.Affinities[i].RemoveModifier(GetName());
 		}
+		pawn.OnSpellsChange.RemoveListener(UpdateAffinities);
 	}
 
 	public void UpdateAffinities(Battle battle, Pawn pawn) {
-		if(pawn is PlayerPawn) {
-			UpdateAffinityModifiers(pawn as PlayerPawn);
-		}
+		UpdateAffinityModifiers(pawn);
 	}
 
-	public void UpdateAffinityModifiers(PlayerPawn player) {
+	public void UpdateAffinityModifiers(Pawn player) {
 		int[] elementCount = new int[Element.Count];
 		foreach(Spell spell in player.GetSpells()) {
 			ElementDisplay[] displays = spell.GetElementDisplays(RollContext.Null);

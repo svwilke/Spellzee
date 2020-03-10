@@ -9,17 +9,11 @@ public class ShockStatus : AilmentStatus {
 	}
 
 	protected override void OnStatusAdded() {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.LockCount.AddModifier(new AttributeModifier(GetFullName(), AttributeModifier.Operation.Set, 0));
-		}
+		pawn.LockCount.AddModifier(new AttributeModifier(GetFullName(), AttributeModifier.Operation.Set, 0));
 	}
 
 	protected override void OnStatusRemoved() {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.LockCount.RemoveModifier(GetFullName());
-		}
+		pawn.LockCount.RemoveModifier(GetFullName());
 	}
 
 	protected override void OnTurnEnded() {

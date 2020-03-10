@@ -31,8 +31,8 @@ public class ServerBattle : Battle
 		SetupTurn();
 		
 		NetworkServer.SendToAll(GameMsg.NextTurn, new IntegerMessage(currentTurn));
-		if(GetCurrentPawn() is EnemyPawn && !AreAllAlliesDead()) {
-			game.StartCoroutine(DoAITurn(GetCurrentPawn() as EnemyPawn));
+		if(GetCurrentPawn().HasAI() && !AreAllAlliesDead()) {
+			game.StartCoroutine(DoAITurn(GetCurrentPawn()));
 		}
 	}
 
@@ -63,10 +63,11 @@ public class ServerBattle : Battle
 		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
 	}
 
-	public IEnumerator DoAITurn(EnemyPawn enemyPawn) {
+	public IEnumerator DoAITurn(Pawn aiPawn) {
+		AIModule ai = aiPawn.GetAI();
 		do {
 			yield return new WaitForSeconds(1F);
-		} while(enemyPawn.DoTurn(this));
+		} while(ai.DoTurn(this));
 	}
 
 	public bool AreAllAlliesDead() {

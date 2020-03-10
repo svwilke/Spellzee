@@ -54,19 +54,20 @@ public class PawnTemplate : RegistryEntry<PawnTemplate> {
 		return this;
 	}
 
-	public virtual Pawn Create(int playerCount, int level) {
+	public virtual Pawn Create(int playerCount, int level, Pawn.Team team) {
 		Pawn pawn;
-		pawn = new EnemyPawn(className, (int)((maxHp * playerCount) * (1.0 + (level * 0.15))));
+		pawn = new Pawn(className, (int)(maxHp * playerCount * (1.0 + (level * 0.15))), team);
 		pawn.SetSprite(GetId());
 		knownSpells.ForEach(pawn.AddSpell);
 		for(int i = 0; i < pawn.Affinities.Length; i++) {
 			pawn.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));
 		}
+		pawn.SetAI(new SimpleAI(pawn));
 		return pawn;
 	}
 
-	public virtual PlayerPawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
-		PlayerPawn player = new PlayerPawn(lobbyPlayer.charName, maxHp);
+	public virtual Pawn Create(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
+		Pawn player = new Pawn(lobbyPlayer.charName, maxHp, Pawn.Team.Friendly);
 		player.SetId(lobbyPlayer.id);
 		player.SetSprite(GetId());
 		knownSpells.ForEach(player.AddSpell);

@@ -24,7 +24,10 @@ public class BattleServerHandler : ServerHandler {
 
 	public void OnRoll(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn && battle.rollsLeft > 0) {
-			PlayerPawn pawn = battle.GetCurrentPawn() as PlayerPawn;
+			Pawn pawn = battle.GetCurrentPawn();
+			if(pawn.HasAI()) {
+				return;
+			}
 			int[] rolls = new int[battle.rolls.Length];
 			double[] weights = new double[pawn.Affinities.Length];
 			for(int i = 0; i < weights.Length; i++) {
@@ -45,6 +48,9 @@ public class BattleServerHandler : ServerHandler {
 
 	public void OnDieLockToggle(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn) {
+			if(battle.GetCurrentPawn().HasAI()) {
+				return;
+			}
 			IntegerMessage actualMsg = msg.ReadMessage<IntegerMessage>();
 			int die = actualMsg.value;
 			bool newLockState = !battle.locks[die];
@@ -55,7 +61,7 @@ public class BattleServerHandler : ServerHandler {
 						currentlyLocked++;
 					}
 				}
-				int possibleLocks = (int)(battle.GetCurrentPawn() as PlayerPawn).LockCount.GetValue(battle.locks.Length);
+				int possibleLocks = (int)battle.GetCurrentPawn().LockCount.GetValue(battle.locks.Length);
 				if(currentlyLocked >= possibleLocks) {
 					string dieText = "more than @FFFFFF" + possibleLocks + ((possibleLocks == 1) ? " die" : " dice");
 					if(possibleLocks == 0) {
@@ -72,6 +78,9 @@ public class BattleServerHandler : ServerHandler {
 
 	public void OnCastSpell(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn) {
+			if(battle.GetCurrentPawn().HasAI()) {
+				return;
+			}
 			GameMsg.MsgCastSpell actualMsg = msg.ReadMessage<GameMsg.MsgCastSpell>();
 			battle.CastSpell(actualMsg.spellId, actualMsg.targetId);
 		}
@@ -147,6 +156,9 @@ public class BattleServerHandler : ServerHandler {
 
 	public void OnPass(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn) {
+			if(battle.GetCurrentPawn().HasAI()) {
+				return;
+			}
 			NetworkServer.SendToAll(GameMsg.Pass, new EmptyMessage());
 			battle.NextTurn();
 		}

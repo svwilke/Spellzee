@@ -181,7 +181,7 @@ public class BattleClientHandler : ClientHandler {
 	}
 
 	public void OnOpenChoice(NetworkMessage msg) {
-		PlayerPawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn as PlayerPawn;
+		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
 		ChoiceScreen screen = new ChoiceScreen(game, RB.DisplaySize, pawn);
 		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
 		game.OpenClientHandler(new ChoiceClientHandler(game, pawn, screen));
@@ -192,7 +192,7 @@ public class BattleClientHandler : ClientHandler {
 	}
 
 	public void OnOpenVendor(NetworkMessage msg) {
-		PlayerPawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn as PlayerPawn;
+		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
 		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
 		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
 		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));

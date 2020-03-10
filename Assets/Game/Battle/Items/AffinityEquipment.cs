@@ -49,21 +49,14 @@ public class AffinityEquipment : Equipment {
 	}
 
 	public override void OnEquipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			for(int i = 0; i < Element.Count; i++) {
-				player.Affinities[i].AddModifier(new AttributeModifier(GetName(), operation, affinityModifiers[i]));
-			}
+		for(int i = 0; i < Element.Count; i++) {
+			pawn.Affinities[i].AddModifier(new AttributeModifier(GetName(), operation, affinityModifiers[i]));
 		}
-		
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			for(int i = 0; i < Element.Count; i++) {
-				player.Affinities[i].RemoveModifier(GetName());
-			}
+		for(int i = 0; i < Element.Count; i++) {
+			pawn.Affinities[i].RemoveModifier(GetName());
 		}
 	}
 }

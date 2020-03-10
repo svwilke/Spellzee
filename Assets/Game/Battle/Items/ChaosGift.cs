@@ -9,20 +9,13 @@ public class ChaosGift : Equipment {
 	}
 
 	public override void OnEquipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.DieCount.AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, 1));
-			player.OnBuildSpellComponents.AddListener(MakeTargetsRandom);
-		}
-		
+		pawn.DieCount.AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, 1));
+		pawn.OnBuildSpellComponents.AddListener(MakeTargetsRandom);
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
-		PlayerPawn player = pawn as PlayerPawn;
-		if(player != null) {
-			player.DieCount.RemoveModifier(GetName());
-			player.OnBuildSpellComponents.RemoveListener(MakeTargetsRandom);
-		}
+		pawn.DieCount.RemoveModifier(GetName());
+		pawn.OnBuildSpellComponents.RemoveListener(MakeTargetsRandom);
 	}
 
 	public void MakeTargetsRandom(Spell spell, RollContext context, List<SpellComponent> spellComponents) {

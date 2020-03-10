@@ -144,7 +144,7 @@ public class BattleScreen : Screen {
 		for(int i = 0; i < battle.allies.Length + 1; i++) {
 			Pawn pawn = battle.GetPawn(i);
 			Vector2i pos = new Vector2i(8, 8 + 40 * i);
-			if(pawn is EnemyPawn) {
+			if(pawn.team == Pawn.Team.Hostile) {
 				pos = new Vector2i(8 + 98 * 2, 8 + 40 / 2);
 			}
 			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(96, 38), pawn, battle));
