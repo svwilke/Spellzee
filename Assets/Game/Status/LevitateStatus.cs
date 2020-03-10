@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevitateStatus : AilmentStatus {
 
-	public LevitateStatus() : base(StatusType.Negative, "Levitate", "Lev", Element.Air.GetColor(), 1) {
+	public LevitateStatus() : base(StatusType.Negative, "Levitate", "levitate", Element.Air.GetColor(), 1) {
 
 	}
 

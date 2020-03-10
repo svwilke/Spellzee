@@ -49,7 +49,7 @@ public class PlayerPawnCard : UIObj
 		}
 		RB.Print(titleRect, Color.white, RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, pawn.GetName());
 
-		Rect2i imageRect = new Rect2i(pos.x + 6 + off, pos.y + 6 + off, new Vector2i(18, 18));
+		Rect2i imageRect = new Rect2i(pos.x + 4 + off, pos.y + 4 + off, new Vector2i(22, 22));
 		RB.DrawRectFill(imageRect, Color.white);
 		RB.DrawRect(imageRect, Color.black);
 		if(pawn.GetSprite() == null) {
@@ -57,16 +57,10 @@ public class PlayerPawnCard : UIObj
 		} else {
 			RB.DrawSprite(pawn.GetSprite(), imageRect.Expand(-1));
 		}
-
-		int ailX = pos.x + 30 + off + RB.PrintMeasure(pawn.GetName()).width + 2;
+		int ailY = pos.y + size.height - 11;
+		int ailX = pos.x + 5;
 		foreach(Status s in pawn.GetStatuses()) {
-			if(s.IsVisible()) {
-				string text = s.GetDisplayText();
-				int w = RB.PrintMeasure(text).width;
-				RB.Print(new Vector2i(ailX, pos.y + 6 + off), s.GetColor(), text);
-				ailX += w + 3;
-			}
-			
+			ailX += s.Render(ailX, ailY);
 		}
 
 		Vector2i hpSize = RB.PrintMeasure("HP: ");

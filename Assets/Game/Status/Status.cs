@@ -25,7 +25,7 @@ public class Status {
 	}
 
 	public bool IsVisible() {
-		return isVisible && GetDisplayText().Length > 0;
+		return isVisible;
 	}
 
 	protected void SetColor(Color color) {
@@ -91,8 +91,16 @@ public class Status {
 		pawn.CmdRemoveStatus(this);
 	}
 
-	public virtual string GetDisplayText() {
-		return "";
+	public virtual int Render(int x, int y) {
+		if(IsVisible()) {
+			if(IsPositive()) {
+				RB.DrawSprite("buff", new Vector2i(x, y));
+			} else {
+				RB.DrawSprite("debuff", new Vector2i(x, y));
+			}
+			return 8;
+		}
+		return 0;
 	}
 
 	public void Serialize(NetworkWriter writer) {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RegenStatus : AilmentStatus {
 
-	public RegenStatus(int value) : base(StatusType.Positive, "Regenerate", "Rgn", Element.Earth.GetColor(), value) {
+	public RegenStatus(int value) : base(StatusType.Positive, "Regenerate", "regen", Element.Earth.GetColor(), value) {
 
 	}
 

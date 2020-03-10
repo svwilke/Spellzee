@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BurnStatus : AilmentStatus {
 
-	public BurnStatus(int value) : base(StatusType.Negative, "Burn", "Brn", Element.Fire.GetColor(), value) {
+	public BurnStatus(int value) : base(StatusType.Negative, "Burn", "burn", Element.Fire.GetColor(), value) {
 
 	}
 

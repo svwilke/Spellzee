@@ -6,12 +6,12 @@ using Sirenix.Serialization;
 public class AilmentStatus : Status {
 
 	[OdinSerialize] private int value;
-	[OdinSerialize] private string shortName;
+	[OdinSerialize] private string spriteName;
 	[OdinSerialize] private string fullName;
 
-	public AilmentStatus(StatusType type, string fullName, string shortName, Color color, int value) : base(type) {
+	public AilmentStatus(StatusType type, string fullName, string spriteName, Color color, int value) : base(type) {
 		this.value = value;
-		this.shortName = shortName;
+		this.spriteName = spriteName;
 		this.fullName = fullName;
 		SetVisible(true);
 		SetColor(color);
@@ -45,7 +45,10 @@ public class AilmentStatus : Status {
 		return true;
 	}
 
-	public override string GetDisplayText() {
-		return shortName + " " + value;
+	public override int Render(int x, int y) {
+		RB.DrawSprite(spriteName, new Vector2i(x, y));
+		int w = RB.PrintMeasure(GetValue().ToString()).width;
+		RB.Print(new Vector2i(x + 9, y), Color.white, GetValue().ToString());
+		return 8 + w + 3;
 	}
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProtectStatus : AilmentStatus {
 
-	public ProtectStatus(int value) : base(StatusType.Positive, "Protect", "Prt", Element.Water.GetColor(), value) {
+	public ProtectStatus(int value) : base(StatusType.Positive, "Protect", "protect", Element.Water.GetColor(), value) {
 		
 	}
 

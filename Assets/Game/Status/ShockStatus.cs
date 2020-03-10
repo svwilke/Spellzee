@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShockStatus : AilmentStatus {
 
-	public ShockStatus(int value) : base(StatusType.Negative, "Shock", "Shk", Element.Water.GetColor(), value) {
+	public ShockStatus(int value) : base(StatusType.Negative, "Shock", "shock", Element.Water.GetColor(), value) {
 		
 	}
 

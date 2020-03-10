@@ -143,11 +143,11 @@ public class BattleScreen : Screen {
 		PackedSprite viewSprite = RB.PackedSpriteGet("Eye", Game.SPRITEPACK_BATTLE);
 		for(int i = 0; i < battle.allies.Length + 1; i++) {
 			Pawn pawn = battle.GetPawn(i);
-			Vector2i pos = new Vector2i(8, 8 + 36 * i);
+			Vector2i pos = new Vector2i(8, 8 + 40 * i);
 			if(pawn is EnemyPawn) {
-				pos = new Vector2i(8 + 98 * 2, 8 + 36 / 2);
+				pos = new Vector2i(8 + 98 * 2, 8 + 40 / 2);
 			}
-			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(96, 32), pawn, battle));
+			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(96, 38), pawn, battle));
 			pawnCards.Add(pawn, ppc);
 			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(100, 16), viewSprite));
 			if(i > 0) viewPawnImages[i].isVisible = false;

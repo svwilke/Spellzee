@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BlindStatus : AilmentStatus {
 
-	public BlindStatus(int value) : base(StatusType.Negative, "Blind", "Bld", Element.Light.GetColor(), value) {
+	public BlindStatus(int value) : base(StatusType.Negative, "Blind", "blind", Element.Light.GetColor(), value) {
 		
 	}
 
