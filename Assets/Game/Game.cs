@@ -182,12 +182,10 @@ public class Game : RB.IRetroBlitGame
 	public void StartGame(LobbyClientHandler.LobbyPlayer[] lobbyPlayers) {
 		Game.enemy = -1;
 		ServerBattle battle = new ServerBattle(this);
-		battle.allies = new Pawn[lobbyPlayers.Length];
-		for(int i = 0; i < battle.allies.Length; i++) {
-			battle.allies[i] = Pawn.CreatePlayer(lobbyPlayers[i]);
+		for(int i = 0; i < lobbyPlayers.Length; i++) {
+			battle.AddPawn(Pawn.CreatePlayer(lobbyPlayers[i]));
 		}
-		battle.enemy = CreateNextEnemy();
-		battle.enemy.SetId(battle.allies.Length);
+		battle.AddPawn(CreateNextEnemy());
 		GameMsg.MsgStartBattle msg = new GameMsg.MsgStartBattle() { battle = battle };
 		NetworkServer.SendToAll(GameMsg.StartBattle, msg);
 		OpenServerHandler(new BattleServerHandler(this, battle));

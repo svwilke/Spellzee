@@ -21,12 +21,7 @@ public abstract class AIModule {
 		int targetId = -1;
 		RollContext context = battle.BuildContext();
 		if(spell.DoesRequireTarget(context)) {
-			List<int> possibleTargets = new List<int>();
-			for(int i = 0; i < battle.allies.Length; i++) {
-				if(battle.allies[i].IsAlive() && spell.IsValidTarget(battle.allies[i], context)) {
-					possibleTargets.Add(battle.allies[i].GetId());
-				}
-			}
+			List<int> possibleTargets = battle.GetCurrentTargets().Where(pawn => pawn.IsAlive() && spell.IsValidTarget(pawn, context)).Select(pawn => pawn.GetId()).ToList();
 			targetId = REX.Choice(possibleTargets);
 		}
 		battle.CastSpell(spellId, targetId);

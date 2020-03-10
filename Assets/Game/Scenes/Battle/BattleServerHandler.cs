@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -88,19 +88,22 @@ public class BattleServerHandler : ServerHandler {
 
 
 	private void OnPawnDied(Battle b, Pawn pawn) {
-		bool allAlliesDead = battle.AreAllAlliesDead();
+		bool allAlliesDead = battle.AreAllDead(Pawn.Team.Friendly);
 		if(allAlliesDead) {
 			NetworkServer.SendToAll(GameMsg.EndGame, new StringMessage("You all died."));
 			return;
 		}
-		if(!battle.enemy.IsAlive()) {
+		if(battle.AreAllDead(Pawn.Team.Hostile)) {
 
-			for(int i = 0; i < battle.allies.Length; i++) {
-				battle.allies[i].Restore();
+			List<Pawn> friendlies = battle.GetPawns(Pawn.Team.Friendly);
+			List<Pawn> hostiles = battle.GetPawns(Pawn.Team.Hostile);
+
+			foreach(Pawn p in friendlies) {
+				p.Restore();
 			}
 			
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
-				foreach(Pawn p in battle.allies) {
+				foreach(Pawn p in friendlies) {
 					p.RemoveAllStatuses();
 				}
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
@@ -111,18 +114,16 @@ public class BattleServerHandler : ServerHandler {
 				}
 				return;
 			}
+
+			foreach(Pawn p in hostiles) {
+				battle.CmdRemovePawn(p);
+			}
+
 			Pawn enemy = game.CreateNextEnemy();
-			enemy.SetId(battle.allies.Length);
-			//this.battle.enemy.Update(enemy);
-			battle.enemy = enemy;
-			GameMsg.MsgPawn enemyUpdate = new GameMsg.MsgPawn() { pawn = enemy };
-			NetworkServer.SendToAll(GameMsg.UpdatePawn, enemyUpdate);
-			/*
-			battle.enemy = game.CreateNextEnemy();
-			battle.enemy.SetId(battle.allies.Length);
-			GameMsg.MsgStartBattle startBattleMsg = new GameMsg.MsgStartBattle() { battle = battle };
-			NetworkServer.SendToAll(GameMsg.StartBattle, startBattleMsg);
-			*/
+			battle.CmdAddPawn(enemy);
+
+			/*GameMsg.MsgPawn enemyUpdate = new GameMsg.MsgPawn() { pawn = enemy };
+			NetworkServer.SendToAll(GameMsg.UpdatePawn, enemyUpdate);*/
 			return;
 		}
 	}
@@ -165,19 +166,21 @@ public class BattleServerHandler : ServerHandler {
 	}
 
 	public void OpenChoice(int level) {
-		for(int i = 0; i < battle.allies.Length; i++) {
-			GameMsg.MsgPawn openChoiceMsg = new GameMsg.MsgPawn() { pawn = battle.allies[i] };
-			NetworkServer.SendToClient(i, GameMsg.OpenChoice, openChoiceMsg);
+		Pawn[] playerFriendlies = battle.GetPawns(Pawn.Team.Friendly).Where(pawn => !pawn.HasAI()).ToArray();
+		for(int i = 0; i < playerFriendlies.Length; i++) {
+			GameMsg.MsgPawn openChoiceMsg = new GameMsg.MsgPawn() { pawn = playerFriendlies[i] };
+			NetworkServer.SendToClient(playerFriendlies[i].GetId(), GameMsg.OpenChoice, openChoiceMsg);
 		}
-		game.OpenServerHandler(new ChoiceServerHandler(game, battle.allies, level));
+		game.OpenServerHandler(new ChoiceServerHandler(game, playerFriendlies, level));
 	}
 
 	public void OpenVendor() {
-		for(int i = 0; i < battle.allies.Length; i++) {
-			GameMsg.MsgPawn openVendorMsg = new GameMsg.MsgPawn() { pawn = battle.allies[i] };
-			NetworkServer.SendToClient(i, GameMsg.OpenVendor, openVendorMsg);
+		Pawn[] playerFriendlies = battle.GetPawns(Pawn.Team.Friendly).Where(pawn => !pawn.HasAI()).ToArray();
+		for(int i = 0; i < playerFriendlies.Length; i++) {
+			GameMsg.MsgPawn openVendorMsg = new GameMsg.MsgPawn() { pawn = playerFriendlies[i] };
+			NetworkServer.SendToClient(playerFriendlies[i].GetId(), GameMsg.OpenVendor, openVendorMsg);
 		}
-		game.OpenServerHandler(new VendorServerHandler(game, battle.allies));
+		game.OpenServerHandler(new VendorServerHandler(game, playerFriendlies));
 	}
 
 	public override void Close() {

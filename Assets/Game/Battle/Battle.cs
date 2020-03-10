@@ -5,8 +5,7 @@ using UnityEngine.Networking;
 
 public class Battle {
 
-	public Pawn[] allies;
-	public Pawn enemy;
+	public Pawn[] pawns;
 
 	public int currentTurn;
 
@@ -18,7 +17,11 @@ public class Battle {
 
 	public List<string> log;
 
-	public int MaxTurn { get { return allies.Length; } }
+	public int MaxTurn { get { return pawns.Length - 1; } }
+	public const int MaxPawnCount = 16;
+
+	private static int[] SlotsFriendly = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+	private static int[] SlotsHostile = new int[] { 12, 13, 14, 15, 8, 9, 10, 11 };
 
 	public Battle() {
 		rolls = new Element[5];
@@ -27,6 +30,7 @@ public class Battle {
 		for(int i = 0; i < rolls.Length; i++) {
 			rolls[i] = Element.None;
 		}
+		pawns = new Pawn[MaxPawnCount];
 	}
 
 	public void SetRollCount(int count) {
@@ -60,51 +64,114 @@ public class Battle {
 	}
 
 	public Pawn GetPawn(int id) {
-		if(id < allies.Length) {
-			return allies[id];
+		if(id < pawns.Length && id >= 0) {
+			return pawns[id];
+		} else {
+			throw new System.Exception("Could not get pawn with id " + id + ", out of range.");
 		}
-		return enemy;
 	}
 
 	public void SetPawn(int id, Pawn pawn) {
-		if(id < allies.Length) {
-			allies[id] = pawn;
+		if(id < pawns.Length && id >= 0) {
+			pawns[id] = pawn;
 		} else {
-			enemy = pawn;
+			throw new System.Exception("Could not set pawn with id " + id + ", out of range.");
 		}
+	}
+
+	public void CmdAddPawn(Pawn pawn) {
+		AddPawn(pawn);
+		NetworkServer.SendToAll(GameMsg.AddPawn, new GameMsg.MsgPawn() { pawn = pawn });
+	}
+
+	public void AddPawn(Pawn pawn) {
+		int slot = GetSlotForTeam(pawn.team);
+		if(slot >= 0) {
+			SetPawn(slot, pawn);
+			pawn.SetId(slot);
+		}
+	}
+
+	public int GetSlotForTeam(Pawn.Team team) {
+		int[] slots = team == Pawn.Team.Friendly ? SlotsFriendly : SlotsHostile;
+		for(int i = 0; i < slots.Length; i++) {
+			if(pawns[slots[i]] == null) {
+				return slots[i];
+			}
+		}
+		return -1;
+	}
+
+	public void CmdRemovePawn(Pawn pawn) {
+		RemovePawn(pawn);
+		NetworkServer.SendToAll(GameMsg.RemovePawn, new GameMsg.MsgPawn() { pawn = pawn });
+	}
+
+	public void RemovePawn(Pawn pawn) {
+		pawns[pawn.GetId()] = null;
 	}
 
 	public Pawn GetClientPawn() {
-		return allies[Game.peerId];
+		return pawns[Game.peerId];
 	}
 
 	public Pawn GetCurrentPawn() {
-		if(currentTurn >= allies.Length) {
-			return enemy;
-		} else {
-			return allies[currentTurn];
+		return pawns[currentTurn];
+	}
+
+	public int GetPawnCount() {
+		int count = 0;
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				count++;
+			}
 		}
+		return count;
+	}
+
+	public List<int> GetPawnIds() {
+		List<int> ids = new List<int>();
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				ids.Add(i);
+			}
+		}
+		return ids;
+	}
+
+	public List<Pawn> GetPawns(Pawn.Team team) {
+		List<Pawn> list = new List<Pawn>();
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				if(pawns[i].team == team) {
+					list.Add(pawns[i]);
+				}
+			}
+		}
+		return list;
 	}
 
 	public List<Pawn> GetCurrentTargets() {
 		List<Pawn> list = new List<Pawn>();
-		if(currentTurn >= allies.Length) {
-			for(int i = 0; i < allies.Length; i++) {
-				list.Add(allies[i]);
+		Pawn.Team currentTeam = GetCurrentPawn().team;
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				if(pawns[i].team != currentTeam) {
+					list.Add(pawns[i]);
+				}
 			}
-		} else {
-			list.Add(enemy);
 		}
 		return list;
 	}
 
 	public List<Pawn> GetCurrentAllies() {
 		List<Pawn> list = new List<Pawn>();
-		if(currentTurn >= allies.Length) {
-			list.Add(enemy);
-		} else {
-			for(int i = 0; i < allies.Length; i++) {
-				list.Add(allies[i]);
+		Pawn.Team currentTeam = GetCurrentPawn().team;
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				if(pawns[i].team == currentTeam) {
+					list.Add(pawns[i]);
+				}
 			}
 		}
 		return list;
@@ -119,11 +186,13 @@ public class Battle {
 	}
 
 	public void Serialize(NetworkWriter writer) {
-		writer.Write(allies.Length);
-		for(int i = 0; i < allies.Length; i++) {
-			allies[i].Serialize(writer);
+		writer.Write(GetPawnCount());
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null) {
+				writer.Write(i);
+				pawns[i].Serialize(writer);
+			}
 		}
-		enemy.Serialize(writer);
 		writer.Write(currentTurn);
 		writer.Write(rolls.Length);
 		for(int i = 0; i < rolls.Length; i++) {
@@ -133,12 +202,11 @@ public class Battle {
 	}
 
 	public void Deserialize(NetworkReader reader) {
-		int allyCount = reader.ReadInt32();
-		allies = new Pawn[allyCount];
-		for(int i = 0; i < allyCount; i++) {
-			allies[i] = Pawn.DeserializeNew(reader);
+		int pawnCount = reader.ReadInt32();
+		pawns = new Pawn[MaxPawnCount];
+		for(int i = 0; i < pawnCount; i++) {
+			pawns[reader.ReadInt32()] = Pawn.DeserializeNew(reader);
 		}
-		enemy = Pawn.DeserializeNew(reader);
 		currentTurn = reader.ReadInt32();
 		int rollCount = reader.ReadInt32();
 		rolls = new Element[rollCount];
@@ -157,11 +225,12 @@ public class Battle {
 
 	public static Battle Clone(Battle other) {
 		Battle clone = new Battle();
-		clone.allies = new Pawn[other.allies.Length];
-		for(int i = 0; i < clone.allies.Length; i++) {
-			clone.allies[i] = Pawn.Clone(other.allies[i]);
+		clone.pawns = new Pawn[MaxPawnCount];
+		for(int i = 0; i < MaxPawnCount; i++) {
+			if(other.pawns[i] != null) {
+				clone.pawns[i] = Pawn.Clone(other.pawns[i]);
+			}
 		}
-		clone.enemy = Pawn.Clone(other.enemy);
 		clone.currentTurn = other.currentTurn;
 		clone.rolls = new Element[other.rolls.Length];
 		clone.locks = new bool[other.rolls.Length];

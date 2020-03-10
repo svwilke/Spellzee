@@ -44,6 +44,9 @@ public class BattleScreen : Screen {
 	private Pawn targetPawn;
 	private int pawnSelectedByKey;
 
+	private Dictionary<int, int> pawnIdToIndex;
+	private Dictionary<int, int> pawnIndexToId;
+
 	public BattleScreen(Game game, Vector2i size, Battle battle) : base(game, size) {
 		this.battle = battle;
 		CreateBattleButtons();
@@ -134,26 +137,32 @@ public class BattleScreen : Screen {
 		// set up die buttons
 		UpdateDieButtons();
 
-		pawnCards = new Dictionary<Pawn, UIObj>();
+		pawnIdToIndex = new Dictionary<int, int>();
+		pawnIndexToId = new Dictionary<int, int>();
 
-		viewPawnImages = new Image[battle.allies.Length + 1];
-		string[] tabNames = new string[battle.allies.Length + 1];
+		pawnCards = new Dictionary<Pawn, UIObj>();
+		List<int> pawnIds = battle.GetPawnIds();
+		viewPawnImages = new Image[pawnIds.Count];
+		string[] tabNames = new string[pawnIds.Count];
 		int spellCount = 0;
 		PlayerPawnCard ppc;
 		PackedSprite viewSprite = RB.PackedSpriteGet("Eye", Game.SPRITEPACK_BATTLE);
-		for(int i = 0; i < battle.allies.Length + 1; i++) {
-			Pawn pawn = battle.GetPawn(i);
-			Vector2i pos = new Vector2i(8, 8 + 40 * i);
-			if(pawn.team == Pawn.Team.Hostile) {
-				pos = new Vector2i(8 + 98 * 2, 8 + 40 / 2);
-			}
-			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(96, 38), pawn, battle));
+		for(int i = 0; i < pawnIds.Count; i++) {
+			pawnIdToIndex.Add(pawnIds[i], i);
+			pawnIndexToId.Add(i, pawnIds[i]);
+			int pawnId = pawnIds[i];
+			Pawn pawn = battle.GetPawn(pawnId);
+			int y = pawnId % 4;
+			int x = pawnId / 4;
+			int off = x > 1 ? 5 : 0;
+			Vector2i pos = new Vector2i(4 + + off + 92 * x, 4 + 40 * y);
+			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(90, 38), pawn, battle));
 			pawnCards.Add(pawn, ppc);
-			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(100, 16), viewSprite));
+			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(3, 14), viewSprite));
 			if(i > 0) viewPawnImages[i].isVisible = false;
-			int x = i;
+			int spellTabId = i;
 			ppc.SetOnClick(() => {
-				ViewSpellTab(x);
+				ViewSpellTabIndex(spellTabId);
 			});
 			tabNames[i] = pawn.GetName();
 			spellCount += pawn.GetSpells().Length;
@@ -165,8 +174,8 @@ public class BattleScreen : Screen {
 		spellButtons = new SpellButton[spellCount];
 		spellButtonOwnership = new int[spellCount];
 		int currentSpellIndex = 0;
-		for(int i = 0; i < battle.allies.Length + 1; i++) {
-			currentSpellIndex = FillSpellPane(spellPane, i, currentSpellIndex);
+		for(int i = 0; i < pawnIds.Count; i++) {
+			currentSpellIndex = FillSpellPane(spellPane, pawnIds[i], i, currentSpellIndex);
 		}
 		/*
 		Spell[] knownSpells = battle.GetClientPawn().GetSpells();
@@ -214,17 +223,17 @@ public class BattleScreen : Screen {
 		}
 	}
 
-	private int FillSpellPane(TabbedPane pane, int index, int buttonIndexStart) {
-		Spell[] knownSpells = battle.GetPawn(index).GetSpells();
+	private int FillSpellPane(TabbedPane pane, int pawnId, int pawnIndex, int buttonIndexStart) {
+		Spell[] knownSpells = battle.GetPawn(pawnId).GetSpells();
 		for(int i = 0; i < knownSpells.Length; i++) {
-			SpellButton sb = new SpellButton(this, battle, knownSpells[i], new Vector2i(size.width - 97, 5 + i * 31), index != Game.peerId);
-			if(index == Game.peerId) {
+			SpellButton sb = new SpellButton(this, battle, knownSpells[i], new Vector2i(size.width - 97, 5 + i * 31), pawnId != Game.peerId);
+			if(pawnId == Game.peerId) {
 				sb.SetKeybind(KeyCode.Alpha1 + i);
 			}
 			spellButtons[i + buttonIndexStart] = sb;
-			spellButtonOwnership[i + buttonIndexStart] = index;
+			spellButtonOwnership[i + buttonIndexStart] = pawnId;
 			AddUIObj(sb);
-			pane.AddToTab(index, sb);
+			pane.AddToTab(pawnIndex, sb);
 		}
 		return buttonIndexStart + knownSpells.Length;
 	}
@@ -280,10 +289,11 @@ public class BattleScreen : Screen {
 			if((mouse - lastMousePos).SqrMagnitude() > 2) {
 				pawnSelectedByKey = -1;
 			}
-			for(int i = 0; i <= battle.allies.Length; i++) {
+			List<int> pawnIds = battle.GetPawnIds();
+			for(int i = 0; i < pawnIds.Count; i++) {
 				if(RB.KeyPressed(KeyCode.Alpha1 + i)) {
 					lastMousePos = mouse;
-					pawnSelectedByKey = i;
+					pawnSelectedByKey = pawnIds[i];
 				}
 			}
 			if(RB.KeyPressed(KeyCode.Escape) || RB.KeyPressed(KeyCode.Backspace)) {
@@ -342,14 +352,18 @@ public class BattleScreen : Screen {
 	}
 
 	public void ViewSpellTab(int pawnId) {
+		ViewSpellTabIndex(pawnIdToIndex[pawnId]);
+	}
+
+	public void ViewSpellTabIndex(int pawnIndex) {
 		for(int j = 0; j < viewPawnImages.Length; j++) {
 			if(viewPawnImages[j] != null) {
-				viewPawnImages[j].isVisible = j == pawnId;
+				viewPawnImages[j].isVisible = j == pawnIndex;
 			}
 		}
-		spellPane.OpenTab(pawnId);
+		spellPane.OpenTab(pawnIndex);
 		infoPane.OpenTab(0);
-		Pawn pawn = battle.GetPawn(pawnId);
+		Pawn pawn = battle.GetPawn(pawnIndexToId[pawnIndex]);
 		playerName.SetText(pawn.GetName());
 		string affText = "";
 		FastString perc = new FastString(3);

@@ -29,13 +29,15 @@ public class VendorServerHandler : ServerHandler {
 			}
 		}
 		ServerBattle battle = new ServerBattle(game);
-		battle.allies = pawns;
-		for(int i = 0; i < battle.allies.Length; i++) {
-			battle.allies[i].OnSpellsChange.Invoke(null, battle.allies[i]);
-			battle.allies[i].Heal(battle.allies[i].MaxHp);
+		foreach(Pawn pawn in pawns) {
+			battle.AddPawn(pawn);
 		}
-		battle.enemy = game.CreateNextEnemy();
-		battle.enemy.SetId(battle.allies.Length);
+		for(int i = 0; i < pawns.Length; i++) {
+			pawns[i].OnSpellsChange.Invoke(null, pawns[i]);
+			pawns[i].Heal(pawns[i].MaxHp);
+		}
+		Pawn enemy = game.CreateNextEnemy();
+		battle.AddPawn(enemy);
 		GameMsg.MsgStartBattle startBattleMsg = new GameMsg.MsgStartBattle() { battle = battle };
 		NetworkServer.SendToAll(GameMsg.StartBattle, startBattleMsg);
 		game.OpenServerHandler(new BattleServerHandler(game, battle));

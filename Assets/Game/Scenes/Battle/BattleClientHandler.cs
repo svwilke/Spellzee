@@ -30,6 +30,8 @@ public class BattleClientHandler : ClientHandler {
 		AddHandler(GameMsg.EndGame, OnEndGame);
 		AddHandler(GameMsg.Miss, OnMiss);
 		AddHandler(GameMsg.ShowMessage, OnShowMessage);
+		AddHandler(GameMsg.AddPawn, OnPawnAdd);
+		AddHandler(GameMsg.RemovePawn, OnPawnRemove);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -131,6 +133,24 @@ public class BattleClientHandler : ClientHandler {
 			if(screen.spellPane.GetOpenTabIndex() == newPawn.GetId()) {
 				screen.ViewSpellTab(newPawn.GetId());
 			}
+			screen.Rebuild();
+		}
+	}
+
+	public void OnPawnAdd(NetworkMessage msg) {
+		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
+		battle.AddPawn(pawnMsg.pawn);
+		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		if(screen != null) {
+			screen.Rebuild();
+		}
+	}
+
+	public void OnPawnRemove(NetworkMessage msg) {
+		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
+		battle.RemovePawn(pawnMsg.pawn);
+		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		if(screen != null) {
 			screen.Rebuild();
 		}
 	}

@@ -28,13 +28,15 @@ public class GameMsg {
 	public static short EndGame = MsgType.Highest + 25;
 	public static short Miss = MsgType.Highest + 26;
 	public static short ShowMessage = MsgType.Highest + 27;
+	public static short AddPawn = MsgType.Highest + 28;
+	public static short RemovePawn = MsgType.Highest + 29;
 
-	public static short OpenChoice = MsgType.Highest + 29;
-	public static short OpenVendor = MsgType.Highest + 30;
-	public static short ShopList = MsgType.Highest + 31;
-	public static short DropSpell = MsgType.Highest + 32;
-	public static short BuySpell = MsgType.Highest + 33;
-	public static short SwapSpells = MsgType.Highest + 34;
+	public static short OpenChoice = MsgType.Highest + 30;
+	public static short OpenVendor = MsgType.Highest + 31;
+	public static short ShopList = MsgType.Highest + 32;
+	public static short DropSpell = MsgType.Highest + 33;
+	public static short BuySpell = MsgType.Highest + 34;
+	public static short SwapSpells = MsgType.Highest + 35;
 
 	public class MsgPawn : MessageBase {
 		public Pawn pawn;

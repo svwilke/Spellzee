@@ -24,14 +24,14 @@ public class ServerBattle : Battle
 		
 		int start = currentTurn;
 		currentTurn = (currentTurn + 1) % (MaxTurn + 1);
-		while(!GetCurrentPawn().IsAlive() && currentTurn != start) {
+		while((GetCurrentPawn() == null || !GetCurrentPawn().IsAlive()) && currentTurn != start) {
 			currentTurn = (currentTurn + 1) % (MaxTurn + 1);
 		}
 
 		SetupTurn();
 		
 		NetworkServer.SendToAll(GameMsg.NextTurn, new IntegerMessage(currentTurn));
-		if(GetCurrentPawn().HasAI() && !AreAllAlliesDead()) {
+		if(GetCurrentPawn().HasAI() && !AreAllDead(Pawn.Team.Friendly)) {
 			game.StartCoroutine(DoAITurn(GetCurrentPawn()));
 		}
 	}
@@ -70,14 +70,12 @@ public class ServerBattle : Battle
 		} while(ai.DoTurn(this));
 	}
 
-	public bool AreAllAlliesDead() {
-		bool allAlliesDead = true;
-		for(int i = 0; i < allies.Length; i++) {
-			if(allies[i].IsAlive()) {
-				allAlliesDead = false;
-				break;
+	public bool AreAllDead(Pawn.Team team) {
+		for(int i = 0; i < pawns.Length; i++) {
+			if(pawns[i] != null && pawns[i].IsAlive() && pawns[i].team == team) {
+				return false;
 			}
 		}
-		return allAlliesDead;
+		return true;
 	}
 }
