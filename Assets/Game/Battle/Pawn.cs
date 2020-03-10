@@ -375,7 +375,7 @@ public class Pawn {
 	}
 
 	public static Pawn CreatePlayer(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
-		return PlayerTemplates.GetPlayableClasses()[lobbyPlayer.charClass].Create(lobbyPlayer);
+		return PawnTemplates.GetPlayableClasses()[lobbyPlayer.charClass].Create(lobbyPlayer);
 	}
 
 	public static Pawn Clone(Pawn other) {

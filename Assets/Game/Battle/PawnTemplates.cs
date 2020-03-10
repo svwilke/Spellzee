@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerTemplates {
+public class PawnTemplates {
 
 	private static Registry<PawnTemplate> Registry = new Registry<PawnTemplate>();
 

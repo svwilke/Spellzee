@@ -19,13 +19,13 @@ public class DB {
 		//new EnemyTemplate("Wolf").SetMaxHp(6).AddSpells(Spells.Claw),
 		//new EnemyTemplate("Cutpursh").SetMaxHp(8).AddSpells(Spells.Slice),
 		//new EnemyTemplate("Golem").SetMaxHp(10).AddSpells(Spells.Stomp, Spells.Root)
-		PlayerTemplates.Sloth,
-		PlayerTemplates.Pixie,
-		PlayerTemplates.SewerRat,
-		PlayerTemplates.FieryBat,
-		PlayerTemplates.Wolf,
-		PlayerTemplates.Cutpurse,
-		PlayerTemplates.Golem
+		PawnTemplates.Sloth,
+		PawnTemplates.Pixie,
+		PawnTemplates.SewerRat,
+		PawnTemplates.FieryBat,
+		PawnTemplates.Wolf,
+		PawnTemplates.Cutpurse,
+		PawnTemplates.Golem
 	};
 
 	public static Equipment[] BuyableEquipments = new Equipment[] {
