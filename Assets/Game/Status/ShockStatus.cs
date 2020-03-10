@@ -5,7 +5,7 @@ using UnityEngine;
 public class ShockStatus : AilmentStatus {
 
 	public ShockStatus(int value) : base(StatusType.Negative, "Shock", "shock", Element.Water.GetColor(), value) {
-		
+		description = "{0} {1}: This character can not lock for {1} turns.";
 	}
 
 	protected override void OnStatusAdded() {

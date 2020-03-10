@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using Sirenix.Serialization;
 
@@ -8,6 +7,8 @@ public class AilmentStatus : Status {
 	[OdinSerialize] private int value;
 	[OdinSerialize] private string spriteName;
 	[OdinSerialize] private string fullName;
+
+	[OdinSerialize] protected string description;
 
 	public AilmentStatus(StatusType type, string fullName, string spriteName, Color color, int value) : base(type) {
 		this.value = value;
@@ -48,7 +49,15 @@ public class AilmentStatus : Status {
 	public override int Render(int x, int y) {
 		RB.DrawSprite(spriteName, new Vector2i(x, y));
 		int w = RB.PrintMeasure(GetValue().ToString()).width;
-		RB.Print(new Vector2i(x + 9, y), Color.white, GetValue().ToString());
+		RB.Print(new Vector2i(x + 9, y), Color.black, GetValue().ToString());
 		return 8 + w + 3;
+	}
+
+	public override string GetDescription() {
+		if(description != null) {
+			return string.Format(description, fullName, GetValue());
+		} else {
+			return base.GetDescription();
+		}
 	}
 }

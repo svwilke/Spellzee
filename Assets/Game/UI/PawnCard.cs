@@ -1,15 +1,15 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerPawnCard : UIObj
+public class PawnCard : UIObj
 {
 	private Battle battle;
 	public Pawn pawn;
 
 	private System.Action onClick;
 
-	public PlayerPawnCard(Vector2i pos, Vector2i size, Pawn pawn, Battle battle) {
+	public PawnCard(Vector2i pos, Vector2i size, Pawn pawn, Battle battle) {
 		this.battle = battle;
 		this.pawn = pawn;
 		this.pos = pos;
@@ -59,7 +59,8 @@ public class PlayerPawnCard : UIObj
 		}
 		int ailY = pos.y + size.height - 11;
 		int ailX = pos.x + 5;
-		foreach(Status s in pawn.GetStatuses()) {
+		List<Status> statuses = pawn.GetStatuses();
+		foreach(Status s in statuses) {
 			ailX += s.Render(ailX, ailY);
 		}
 
@@ -72,6 +73,22 @@ public class PlayerPawnCard : UIObj
 		RB.DrawRectFill(new Rect2i(healthBar.x, healthBar.y, fill, healthBar.height), pawn.IsAlive() ? Color.green : Color.gray);
 		RB.Print(healthBar, Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, pawn.CurrentHp + "/" + pawn.MaxHp);
 		RB.DrawRect(healthBar.Expand(1), Color.black);
+	}
+
+	private StatusBox statusDescriptionBox;
+	public override void OnMouseEnter() {
+		List<Status> statuses = pawn.GetStatuses().Where(status => status.GetDescription() != null && status.GetDescription().Length > 0).ToList();
+		if(statuses.Count > 0) {
+			statusDescriptionBox = new StatusBox(new Vector2i(pos.x, pos.y + size.height), (size.width - 1) * 2, statuses);
+			screen.AddUIObj(statusDescriptionBox);
+		}
+	}
+
+	public override void OnMouseExit() {
+		if(statusDescriptionBox != null) {
+			screen.RemoveUIObj(statusDescriptionBox);
+			statusDescriptionBox = null;
+		}
 	}
 
 	public override void OnClick() {

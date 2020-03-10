@@ -25,7 +25,7 @@ public class Element {
 		Light = new Element(4, "Light", new Color(239F / 255F, 239F / 255F, 31F / 255F), "EFEF1F"),
 		Dark = new Element(5, "Dark", new Color(44F / 255F, 44F / 255F, 55F / 255F), "2C2C37"),
 		Chaos = new Element(6, "Chaos", new Color(128F / 255F, 31F / 255F, 128F / 255F), "801F80", baseAffinity: 0),
-		Physical = new Element(7, "Phys", Color.white, "FFFFFF", baseAffinity: 0),
+		Physical = new Element(7, "Phys", new Color(81F / 255F, 81F / 255F, 81F / 255F), "515151", baseAffinity: 0),
 		None = new Element(8, "None", Color.white, "FFFFFF", baseAffinity: 0)
 	};
 

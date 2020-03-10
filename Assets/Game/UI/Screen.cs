@@ -95,7 +95,7 @@ public abstract class Screen {
 			}
 		}
 		objUnderMouse.RemoveWhere((obj) => objsNoLongerUnderMouse.Contains(obj));
-		List<UIObj> uiObjsToUpdate = uiObjs;
+		List<UIObj> uiObjsToUpdate = new List<UIObj>(uiObjs);
 		if(currentMsgBox != null) {
 			uiObjsToUpdate = currentMsgBox.GetUIObjs();
 		}

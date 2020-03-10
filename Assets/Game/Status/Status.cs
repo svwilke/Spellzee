@@ -103,6 +103,10 @@ public class Status {
 		return 0;
 	}
 
+	public virtual string GetDescription() {
+		return "";
+	}
+
 	public void Serialize(NetworkWriter writer) {
 		byte[] bytes = SerializationUtility.SerializeValue(this, DataFormat.Binary);
 		writer.WriteBytesFull(bytes);

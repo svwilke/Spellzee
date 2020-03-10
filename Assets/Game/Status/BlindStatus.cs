@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlindStatus : AilmentStatus {
 
 	public BlindStatus(int value) : base(StatusType.Negative, "Blind", "blind", Element.Light.GetColor(), value) {
-		
+		description = "{0} {1}: Hit Chance -50% for {1} turns.";
 	}
 
 	protected override void OnStatusAdded() {

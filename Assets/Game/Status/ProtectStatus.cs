@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProtectStatus : AilmentStatus {
 
 	public ProtectStatus(int value) : base(StatusType.Positive, "Protect", "protect", Element.Water.GetColor(), value) {
-		
+		description = "{0} {1}: When this character takes damage, the damage is reduced by {1} and {0} is removed.";
 	}
 
 	protected override void OnStatusAdded() {

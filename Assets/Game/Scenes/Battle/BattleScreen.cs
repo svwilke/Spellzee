@@ -145,7 +145,7 @@ public class BattleScreen : Screen {
 		viewPawnImages = new Image[pawnIds.Count];
 		string[] tabNames = new string[pawnIds.Count];
 		int spellCount = 0;
-		PlayerPawnCard ppc;
+		PawnCard ppc;
 		PackedSprite viewSprite = RB.PackedSpriteGet("Eye", Game.SPRITEPACK_BATTLE);
 		for(int i = 0; i < pawnIds.Count; i++) {
 			pawnIdToIndex.Add(pawnIds[i], i);
@@ -156,7 +156,7 @@ public class BattleScreen : Screen {
 			int x = pawnId / 4;
 			int off = x > 1 ? 5 : 0;
 			Vector2i pos = new Vector2i(4 + + off + 92 * x, 4 + 40 * y);
-			AddUIObj(ppc = new PlayerPawnCard(pos, new Vector2i(90, 38), pawn, battle));
+			AddUIObj(ppc = new PawnCard(pos, new Vector2i(90, 38), pawn, battle));
 			pawnCards.Add(pawn, ppc);
 			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(3, 14), viewSprite));
 			if(i > 0) viewPawnImages[i].isVisible = false;
@@ -482,7 +482,7 @@ public class BattleScreen : Screen {
 
 	public void OnPawnUpdate(Battle battle, Pawn newPawn) {
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-		PlayerPawnCard ppc = pawnCards[oldPawn] as PlayerPawnCard;
+		PawnCard ppc = pawnCards[oldPawn] as PawnCard;
 		pawnCards.Remove(oldPawn);
 		ppc.pawn = newPawn;
 		pawnCards.Add(newPawn, ppc);
