@@ -14,6 +14,9 @@ public abstract class Screen {
 
 	private MessageBox currentMsgBox = null;
 
+	private HashSet<UIObj> delayedObjAdd = new HashSet<UIObj>();
+	private HashSet<UIObj> delayedObjRemove = new HashSet<UIObj>();
+
 	public Screen(Game game, Vector2i size) {
 		this.game = game;
 		this.size = size;
@@ -23,16 +26,13 @@ public abstract class Screen {
 
 	public void AddUIObj(UIObj obj) {
 		obj.screen = this;
-		uiObjs.Add(obj);
+		delayedObjAdd.Add(obj);
 	}
 
 	public void RemoveUIObj(UIObj obj) {
 		obj.screen = null;
-		if(objUnderMouse.Contains(obj)) {
-			objUnderMouse.Remove(obj);
-			SetTooltip("");
-		}
-		uiObjs.Remove(obj);
+		delayedObjRemove.Add(obj);
+		
 	}
 
 	public void SetTooltip(string tooltip) {
@@ -40,6 +40,17 @@ public abstract class Screen {
 	}
 
 	public virtual void Render() {
+		uiObjs.AddRange(delayedObjAdd);
+		delayedObjAdd.Clear();
+		foreach(UIObj obj in delayedObjRemove) {
+			if(objUnderMouse.Contains(obj)) {
+				objUnderMouse.Remove(obj);
+				SetTooltip("");
+			}
+			uiObjs.Remove(obj);
+		}
+		delayedObjRemove.Clear();
+
 		RenderBackground();
 		foreach(UIObj uiObj in uiObjs) {
 			if(uiObj.isVisible) {
