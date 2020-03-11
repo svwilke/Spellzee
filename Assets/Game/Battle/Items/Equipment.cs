@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Equipment : RegistryEntry<Equipment> {
+public class Equipment : RegistryEntry<Equipment> {
 
 	private string name;
 	protected string description;
@@ -20,6 +20,6 @@ public abstract class Equipment : RegistryEntry<Equipment> {
 		return description;
 	}
 
-	public abstract void OnEquipped(Pawn pawn);
-	public abstract void OnUnequipped(Pawn pawn);
+	public virtual void OnEquipped(Pawn pawn) { }
+	public virtual void OnUnequipped(Pawn pawn) { }
 }

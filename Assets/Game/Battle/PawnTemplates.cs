@@ -16,8 +16,10 @@ public class PawnTemplates {
 	public static PawnTemplate SewerRat = Register("sewer_rat", new PawnTemplate("Sewer Rat").SetMaxHp(5).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Bite));
 	public static PawnTemplate FieryBat = Register("fiery_bat", new PawnTemplate("Fiery Bat").SetMaxHp(6).ZeroAffinites().SetAffinity(Element.Fire, 10).SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Ignite, Spells.Bite));
 	public static PawnTemplate Wolf = Register("wolf", new PawnTemplate("Wolf").SetMaxHp(6).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Claw));
-	public static PawnTemplate Cutpurse = Register("cutpurse", new PawnTemplate("Cutpurse").SetMaxHp(8).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Slice));
-	public static PawnTemplate Golem = Register("golem", new PawnTemplate("Golem").SetMaxHp(10).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Stomp));
+	public static PawnTemplate Cutpurse = Register("cutpurse", new PawnTemplate("Cutpursh").SetMaxHp(8).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Slice));
+	public static PawnTemplate Golem = Register("golem", new PawnTemplate("Golem").SetMaxHp(10).ZeroAffinites().SetAffinity(Element.Physical, 15).SetAffinity(Element.None, 5).AddSpells(Spells.Stomp));
+
+	public static PawnTemplate Rasputin = Register("rasputin", new PawnTemplate("Rasputin").SetMaxHp(9).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 15).SetAffinity(Element.Dark, 5).AddSpells(Spells.Cuteness, Spells.ConsumingDarkness, Spells.Claw));
 	
 	public static PawnTemplate Register(string id, PawnTemplate playerTemplate) {
 		playerTemplate.SetId(id);

@@ -49,18 +49,36 @@ public class ServerBattle : Battle
 	}
 
 	public void CastSpell(string spellId, int targetPawnId = -1) {
-		GameMsg.MsgCastSpell msg = new GameMsg.MsgCastSpell() { spellId = spellId, targetId = targetPawnId };
-
+		
 		Pawn pawn = GetCurrentPawn();
 		if(Random.value > pawn.HitChance.GetValue()) {
+			GameMsg.MsgCastSpell msg = new GameMsg.MsgCastSpell() { spellId = spellId, targetId = targetPawnId };
 			NetworkServer.SendToAll(GameMsg.Miss, msg);
 			NextTurn();
 			return;
 		}
-		
-		NetworkServer.SendToAll(GameMsg.CastSpell, msg);
-		Spells.Get(spellId).Cast(BuildContext(targetPawnId));
-		NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
+
+		DoCastSpell(spellId, targetPawnId);
+	}
+
+	public void DoCastSpell(string spellId, int targetPawnId = -1, bool sendBeginMsg = true, bool sendEndMsg = true) {
+		GameMsg.MsgCastSpell msg = new GameMsg.MsgCastSpell() { spellId = spellId, targetId = targetPawnId };
+
+		Pawn pawn = GetCurrentPawn();
+		Spell spell = Spells.Get(spellId);
+		RollContext context = BuildContext(targetPawnId);
+
+		if(sendBeginMsg) {
+			NetworkServer.SendToAll(GameMsg.CastSpell, msg);
+		}
+		pawn.OnBeforeSpellCast.Invoke(spell, context);
+
+		spell.Cast(BuildContext(targetPawnId));
+
+		if(sendEndMsg) {
+			NetworkServer.SendToAll(GameMsg.CastSpellEnd, msg);
+		}
+		pawn.OnAfterSpellCast.Invoke(spell, context);
 	}
 
 	public IEnumerator DoAITurn(Pawn aiPawn) {

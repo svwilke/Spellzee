@@ -106,8 +106,8 @@ public class Spells {
 		}, (spell, context) => "Restore to full life.")));
 	public static Spell HollowShell = Register("hollow_shell", new Spell("Hollow Shell", "Revive a dead target if it has more than 0 life.", new SimplePattern(Element.Dark, 3))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.").SetCustomTargetGroup((pawn, context) => !pawn.IsAlive() && pawn.CurrentHp > 0)));
-	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 2 Protect.", new SimplePattern(Element.Dark, 3))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new ProtectStatus(intensity), 2)));
+	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 4 Protect.", new SimplePattern(Element.Dark, 3))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new ProtectStatus(intensity), 4)));
 	public static Spell AquaticBlast = Register("aquatic_blast", new Spell("Aquatic Blast", "Deal 2-3 damage.", new SimplePattern(Element.Water, 2))
 		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 2, 3)));
 	public static Spell Submerge = Register("submerge", new Spell("Submerge", "You gain +20 Water Affinity for 1 turn.", new SimplePattern(Element.Water))
@@ -117,6 +117,23 @@ public class Spells {
 	public static Spell ConsumingDarkness = Register("consuming_darkness", new Spell("Consuming Darkness", "For 1 turn, everyone has -10 Light Affinity and +10 Dark Affinity.", new SimplePattern(Element.Dark, 2))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.All, "-10 Light Affinity for 1 turn.", () => new AffinityStatus(Status.StatusType.Negative, Element.Light, 1, AttributeModifier.Operation.SubtractBase, 10)))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.All, "+10 Dark Affinity for 1 turn.", () => new AffinityStatus(Status.StatusType.Positive, Element.Dark, 1, AttributeModifier.Operation.AddBase, 10))));
+
+	public static Spell Ravnica = Register("ravnica", new Spell("Ravnica", "Summon Rasputin.", new SimplePattern(Element.Dark, 3))
+		.AddComponent(pm => new SummonComponent(PawnTemplates.Rasputin, 1, 0, 1)));
+	public static Spell LionsRoar = Register("lions_roar", new Spell("Lion's Roar", "You gain +2 Fire Affinity until the end of battle.", new SimplePattern(Element.Fire, 2))
+		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Caster, "+2 Fire Affinity until the end of battle.",
+		() => new CustomStatus(Status.StatusType.Positive,
+		pawn => pawn.Affinities[Element.Fire.GetId()].AddModifier(new AttributeModifier("lions_roar", AttributeModifier.Operation.AddBase, 2)),
+		pawn => pawn.Affinities[Element.Fire.GetId()].RemoveModifier("lions_roar")))));
+	public static Spell ChaoticMind = Register("chaotic_mind", new Spell("Chaotic Mind", "Cast a random damage spell on the target. Requires 5 unique elements to be cast.", new UniquePattern(5))
+		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => {
+			List<Spell> validSpells = GetCastableSpells().Where(sp => sp.BuildComponentList(context).Any(sc => sc is DamageComponent && sc.GetTargetType() == SpellComponent.TargetType.Target && sc.IsValidTarget(context.GetTarget(), context))).ToList();
+			Spell toCast = REX.Choice(validSpells);
+			(context.GetBattle() as ServerBattle).DoCastSpell(toCast.GetId(), context.GetTarget().GetId(), true, false);
+		}, (spell, context) => "Cast a random damage spell.")));
+	public static Spell Reflection = Register("reflection", new Spell("Reflection", "Your next spell is cast twice.", new SimplePattern(Element.Water, 3))
+		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Caster, "The next spell is cast twice.", () => new DoubleSpellStatus())));
+
 
 	// Enemy Spells
 

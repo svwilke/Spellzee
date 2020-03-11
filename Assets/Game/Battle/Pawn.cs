@@ -21,6 +21,9 @@ public class Pawn {
 	public EventBus.EvtSpellComponent OnSpellComponentTarget = new EventBus.EvtSpellComponent();
 	public EventBus.EvtSpellComponentList OnBuildSpellComponents = new EventBus.EvtSpellComponentList();
 
+	public EventBus.EvtSpell OnBeforeSpellCast = new EventBus.EvtSpell();
+	public EventBus.EvtSpell OnAfterSpellCast = new EventBus.EvtSpell();
+
 	private int id;
 	private string name;
 
@@ -290,7 +293,7 @@ public class Pawn {
 	}
 
 	public double GetAffinity(int elemId) {
-		return Affinities[elemId].GetValue(Element.All[elemId].GetBaseAffinity());
+		return UnityEngine.Mathf.Max((int)Affinities[elemId].GetValue(Element.All[elemId].GetBaseAffinity()), 0);
 	}
 
 	public double GetAffinityTotal() {

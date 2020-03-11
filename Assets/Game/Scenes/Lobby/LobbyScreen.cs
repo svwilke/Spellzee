@@ -107,8 +107,7 @@ public class LobbyScreen : Screen {
 			prevClassButton.isVisible = true;
 			nextClassButton.isVisible = true;
 		} else {
-			RB.Print(new Rect2i(topLeftX + 1, topLeftY + 49, w - 4, 12), Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_TOP, player.charName);
-			RB.Print(new Rect2i(topLeftX, topLeftY + 48, w - 4, 12), Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_TOP, player.charName);
+			RB.Print(new Rect2i(topLeftX, topLeftY + 48, w - 4, 12), Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_TOP, player.charName);
 			RB.Print(new Vector2i(xPos - 26, topLeftY + size.height - 115), Color.black, RB.NO_INLINE_COLOR, "Ready?");
 			RB.Print(new Vector2i(xPos - 27, topLeftY + size.height - 116), Color.white, "Ready?");
 		}

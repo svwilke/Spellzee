@@ -33,6 +33,7 @@ public class VendorClientHandler : ClientHandler {
 
 	public void OnBuySpell(NetworkMessage msg) {
 		pawn.AddSpell(msg.ReadMessage<StringMessage>().value);
+		screen.BlockBuying();
 		screen.UpdateSell(new List<string>(pawn.GetKnownSpellIds()));
 	}
 

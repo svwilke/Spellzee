@@ -19,6 +19,7 @@ public class Equipments {
 	}));
 	public static Equipment IgneousRock = Register("igneous_rock", new IgniteRock("Igneous Rock", "Convert 1 damage of your Fire spells to 1 Burn."));
 	public static Equipment ChaosGift = Register("chaos_gift", new ChaosGift("Gift of Chaos"));
+	public static Equipment HeadOfTheHydra = Register("head_of_the_hydra", new Equipment("Head of the Hydra", "When you die, you are resurrected with 50% of your maximum life. Works only once."));
 
 	public static Equipment Register(string id, Equipment equipment) {
 		equipment.SetId(id);

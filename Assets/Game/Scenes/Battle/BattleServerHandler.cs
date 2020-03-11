@@ -88,6 +88,14 @@ public class BattleServerHandler : ServerHandler {
 
 
 	private void OnPawnDied(Battle b, Pawn pawn) {
+		Pawn actualPawn = battle.GetPawn(pawn.GetId());
+		if(actualPawn.HasEquipped(Equipments.HeadOfTheHydra)) {
+			actualPawn.CmdHeal(new EventBus.DamageHealEvent(pawn.MaxHp / 2 - pawn.CurrentHp));
+			actualPawn.CmdRevive();
+			actualPawn.Unequip(Equipments.HeadOfTheHydra);
+			return;
+		}
+
 		bool allAlliesDead = battle.AreAllDead(Pawn.Team.Friendly);
 		if(pawn.IsMinion()) {
 			battle.CmdRemovePawn(pawn);

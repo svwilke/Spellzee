@@ -84,6 +84,12 @@ public class VendorScreen : Screen
 		}
 	}
 
+	public void BlockBuying() {
+		foreach(VendorButton ib in buyButtons) {
+			ib.currentState = UIObj.State.Disabled;
+		}
+	}
+
 	public void UpdateBuy(List<string> buyableSpells) {
 		foreach(VendorButton ib in buyButtons) {
 			RemoveUIObj(ib);

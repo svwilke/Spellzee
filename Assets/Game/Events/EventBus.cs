@@ -33,6 +33,9 @@ public class EventBus {
 	public class EvtPawnPawnString : UnityEvent<Battle, Pawn, Pawn, string> { }
 
 	[System.Serializable]
+	public class EvtSpell : UnityEvent<Spell, RollContext> { }
+
+	[System.Serializable]
 	public class EvtSpellComponent : UnityEvent<Spell, RollContext, SpellComponent> { }
 
 	[System.Serializable]

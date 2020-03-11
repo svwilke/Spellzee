@@ -73,7 +73,7 @@ public class VendorServerHandler : ServerHandler {
 
 	public override void Open() {
 		base.Open();
-		int shopAmount = 1;
+		int shopAmount = 3;
 		for(int i = 0; i < pawns.Length; i++) {
 			List<string> buyableSpells = Spells.GetCastableSpells().Select(spell => spell.GetId()).ToList();
 			buyableSpells.RemoveAll(pawns[i].DoesKnowSpell);
