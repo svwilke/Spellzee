@@ -161,6 +161,7 @@ public class BattleScreen : Screen {
 			AddUIObj(ppc = new PawnCard(pos, new Vector2i(90, 38), pawn, battle));
 			pawnCards.Add(pawn, ppc);
 			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(3, 14), viewSprite));
+			viewPawnImages[i].SetAlpha(180);
 			if(i > 0) viewPawnImages[i].isVisible = false;
 			int spellTabId = i;
 			ppc.SetOnClick(() => {
@@ -198,7 +199,7 @@ public class BattleScreen : Screen {
 		for(int i = 0; i < battle.rolls.Length; i++) {
 			Vector2i buttonTopLeft = new Vector2i(-16 + start + step * i, y);
 			AddUIObj(dieButtons[i] = new DieButton(battle, i, buttonTopLeft));
-			lockPositions[i] = new Vector2i(buttonTopLeft.x + 8, buttonTopLeft.y + 1);
+			lockPositions[i] = new Vector2i(buttonTopLeft.x + 7, buttonTopLeft.y + 1);
 		}
 	}
 
