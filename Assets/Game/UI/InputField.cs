@@ -10,12 +10,15 @@ public class InputField : UIObj {
 
 	private System.Action<FastString> onCompleteEditAction;
 
-	public InputField(Vector2i pos, int align = RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER) {
+	private int maxWidth;
+
+	public InputField(Vector2i pos, int align = RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, int maxStringWidth = -1) {
 		size = RB.PrintMeasure(text);
 		alignment = align;
-		this.text = new FastString(32);
+		this.text = new FastString(128);
 		originalPos = pos;
 		SetPosition(pos, align);
+		maxWidth = maxStringWidth;
 	}
 
 	public void SetOnCompleteEdit(System.Action<FastString> action) {
@@ -39,7 +42,7 @@ public class InputField : UIObj {
 
 	private void Recalc() {
 		size = text.Length == 0 ? RB.PrintMeasure(" ") : RB.PrintMeasure(text);
-		size = new Vector2i(size.x + 6, size.y + 3);
+		size = new Vector2i(size.x + 6, size.y + 2);
         SetPosition(originalPos, alignment);
 	}
 
@@ -52,8 +55,8 @@ public class InputField : UIObj {
 			RB.DrawRectFill(new Rect2i(pos.x - 4, pos.y - 2, size.x + 2, size.y + 2), Color.black);
 			RB.DrawRectFill(new Rect2i(pos.x - 3, pos.y - 1, size), Color.yellow);
 		}
-		RB.Print(new Vector2i(pos.x + 1, pos.y + 1), Color.black, RB.NO_INLINE_COLOR, text);
-		RB.Print(new Vector2i(pos.x, pos.y), Color.white, text);
+		//RB.Print(new Vector2i(pos.x + 1, pos.y + 1), Color.black, RB.NO_INLINE_COLOR, text);
+		RB.Print(new Vector2i(pos.x, pos.y), Color.black, text);
 		if(append && hasFocus) {
 			text.Remove(text.Length - 1);
 		}
@@ -80,7 +83,9 @@ public class InputField : UIObj {
 					//}
 				}
 			} else {
-				AddText(RB.InputString().Trim());
+				if(maxWidth < 0 || RB.PrintMeasure(text.ToString() + RB.InputString()).width <= maxWidth) {
+					AddText(RB.InputString().Trim());
+				}
 			}
 		}
 	}

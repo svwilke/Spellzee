@@ -55,7 +55,7 @@ public class LobbyScreen : Screen {
 				Game.client.Send(GameMsg.Ready, new EmptyMessage());
 			}
 		});
-		AddUIObj(nameInput = new InputField(new Vector2i(-100, 82), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		AddUIObj(nameInput = new InputField(new Vector2i(-100, 82), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, 54));
 		nameInput.isVisible = false;
 		nameInput.SetOnCompleteEdit((name) => {
 			LobbyPlayer oldPlayer = lobby.GetLobbyPlayer(Game.peerId);
