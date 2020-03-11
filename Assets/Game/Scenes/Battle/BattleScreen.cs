@@ -96,7 +96,7 @@ public class BattleScreen : Screen {
 		passButton.isVisible = false;
 		passButton.SetKeybind(KeyCode.Return);
 		AddUIObj(bottomPane = new TabbedPane(new Vector2i(0, size.height - 72), new Vector2i(size.width / 2 + 1, 72)));
-		bottomPane.SetTabs(new string[] { "Battle Log", "Inventory", "Bestiary" });
+		bottomPane.SetTabs(new string[] { "Battle", "Inventory" });
 		AddUIObj(battleLog = new Text(new Vector2i(4, size.height - 64), new Vector2i(size.width / 3 * 2, 60), RB.ALIGN_H_LEFT | RB.ALIGN_V_BOTTOM | RB.TEXT_OVERFLOW_CLIP));
 		bottomPane.AddToTab(0, battleLog);
 
@@ -482,8 +482,13 @@ public class BattleScreen : Screen {
 
 	public void OnPawnUpdate(Battle battle, Pawn newPawn) {
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
-		PawnCard ppc = pawnCards[oldPawn] as PawnCard;
-		pawnCards.Remove(oldPawn);
+		PawnCard ppc;
+		if(oldPawn != null) {
+			ppc = pawnCards[oldPawn] as PawnCard;
+			pawnCards.Remove(oldPawn);
+		} else {
+			ppc = new PawnCard(new Vector2i(0, 0), new Vector2i(100, 50), newPawn, battle);
+		}
 		ppc.pawn = newPawn;
 		pawnCards.Add(newPawn, ppc);
 	}

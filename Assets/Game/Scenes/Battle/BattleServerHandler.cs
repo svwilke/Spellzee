@@ -89,6 +89,9 @@ public class BattleServerHandler : ServerHandler {
 
 	private void OnPawnDied(Battle b, Pawn pawn) {
 		bool allAlliesDead = battle.AreAllDead(Pawn.Team.Friendly);
+		if(pawn.IsMinion()) {
+			battle.CmdRemovePawn(pawn);
+		}
 		if(allAlliesDead) {
 			NetworkServer.SendToAll(GameMsg.EndGame, new StringMessage("You all died."));
 			return;

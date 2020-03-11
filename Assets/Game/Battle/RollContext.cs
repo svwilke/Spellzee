@@ -29,6 +29,14 @@ public class RollContext {
 		this.allies = allies;
 	}
 
+	public Battle GetBattle() {
+		return battle;
+	}
+
+	public Pawn.Team GetTeam() {
+		return caster.team;
+	}
+
 	public Pawn[] GetPawns() {
 		List<Pawn> list = new List<Pawn>(enemies);
 		list.AddRange(allies);

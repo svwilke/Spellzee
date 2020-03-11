@@ -56,6 +56,8 @@ public class Pawn {
 
 	private AIModule ai;
 
+	private bool isMinion = false;
+
 	public Pawn(string name, int maxHp, Team team) {
 		this.name = name;
 		this.MaxHp = CurrentHp = maxHp;
@@ -63,6 +65,15 @@ public class Pawn {
 			Affinities[i] = new Attribute();
 		}
 		this.team = team;
+	}
+
+	public Pawn SetMinion() {
+		isMinion = true;
+		return this;
+	}
+
+	public bool IsMinion() {
+		return isMinion;
 	}
 
 	public void SetSprite(string spriteName) {
@@ -203,6 +214,9 @@ public class Pawn {
 
 	public void Restore() {
 		int restoration = (int)EndOfBattleRestoration.GetValue(MaxHp);
+		if(restoration <= 0) {
+			restoration = 1;
+		}
 		if(isDead) {
 			CurrentHp = restoration;
 			isDead = false;
@@ -308,6 +322,7 @@ public class Pawn {
 		writer.Write(name);
 		writer.Write(spriteName);
 		writer.Write((byte)team);
+		writer.Write(isMinion);
 		writer.Write(CurrentHp);
 		writer.Write(MaxHp);
 		writer.Write(isDead);
@@ -339,6 +354,7 @@ public class Pawn {
 		name = reader.ReadString();
 		spriteName = reader.ReadString();
 		team = (Team)reader.ReadByte();
+		isMinion = reader.ReadBoolean();
 		CurrentHp = reader.ReadInt32();
 		MaxHp = reader.ReadInt32();
 		isDead = reader.ReadBoolean();
@@ -383,6 +399,7 @@ public class Pawn {
 		clone.CurrentHp = other.CurrentHp;
 		clone.id = other.id;
 		clone.isDead = other.isDead;
+		clone.isMinion = other.isMinion;
 		clone.knownSpells = new List<string>(other.knownSpells.Count);
 		foreach(string spellId in other.knownSpells) {
 			clone.knownSpells.Add(spellId);
