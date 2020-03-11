@@ -147,7 +147,8 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 	public static Spell Stomp = Register("stomp", new Spell("Stomp", "Deal 4 damage to all enemies.", new SimplePattern(Element.Physical, 4))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 4)));
-	public static Spell Bash = Register("bash", new Spell("Bash", "Apply 1 Shock to all enemies.", new SimplePattern(Element.Physical, 3))
+	public static Spell Bash = Register("bash", new Spell("Bash", "Deal 1 damage and apply 1 Shock to all enemies.", new SimplePattern(Element.Physical, 3))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 1))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));
 
 	public static Spell Register(string id, Spell spell) {

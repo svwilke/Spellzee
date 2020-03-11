@@ -24,7 +24,7 @@ public class WildMageTemplate : PawnTemplate {
 			player.AddSpell(spell);
 		}
 		for(int i = 0; i < Element.Count; i++) {
-			if(affinityCounts[i] > 0) {
+			if(affinityCounts[i] > 0 && Element.All[i] != Element.None && Element.All[i] != Element.Chaos && Element.All[i] != Element.Physical) {
 				player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityCounts[i]));
 			}
 		}

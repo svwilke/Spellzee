@@ -25,6 +25,7 @@ public class DB {
 		Equipments.HealCharm,
 		Equipments.IgneousRock,
 		Equipments.TalismanOfDisorder,
-		Equipments.ChaosGift
+		Equipments.ChaosGift,
+		Equipments.HeadOfTheHydra
 	};
 }
