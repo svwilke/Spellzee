@@ -54,6 +54,16 @@ public class Spell : RegistryEntry<Spell> {
 		return shortDesc.Trim();
 	}
 
+	public virtual bool IsCastable(RollContext context) {
+		List<SpellComponent> componentList = BuildComponentList(context);
+		foreach(SpellComponent component in componentList) {
+			if(!component.IsCastable(this, context)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public bool DoesRequireTarget(RollContext context) {
 		return BuildComponentList(context).Any(sc => sc.GetTargetType() == SpellComponent.TargetType.Target);
 	}

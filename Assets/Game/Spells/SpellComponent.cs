@@ -60,12 +60,21 @@ public abstract class SpellComponent {
 	}
 
 	public SpellComponent SetCustomTargetGroup(Func<Pawn, RollContext, bool> targetCondition) {
+		SetTargetGroup(TargetGroup.Custom);
 		this.targetCondition = targetCondition;
 		return this;
 	}
 
 	public List<Pawn> GetPossibleTargets(RollContext context) {
 		return context.GetPawns().Where(pawn => IsValidTarget(pawn, context)).ToList();
+	}
+
+	public virtual bool IsCastable(Spell spell, RollContext context) {
+		if(targetType != TargetType.None) {
+			return GetPossibleTargets(context).Count > 0;
+		} else {
+			return true;
+		}
 	}
 
 	public bool IsValidTarget(Pawn pawn, RollContext context) {
@@ -91,7 +100,7 @@ public abstract class SpellComponent {
 
 	protected void UpdateComponentForDescription(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
-		List<Pawn> targets = GetTargets(context);
+		List<Pawn> targets = GetPossibleTargets(context);
 		if(targets.Count == 1) {
 			targets[0].OnSpellComponentTarget.Invoke(spell, context, this);
 		}

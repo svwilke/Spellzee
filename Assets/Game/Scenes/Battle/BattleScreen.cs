@@ -352,6 +352,16 @@ public class BattleScreen : Screen {
 						targetPawn = null;
 						SetTooltip("");
 					}
+				} else {
+					targetPawn = null;
+					SetTooltip(targetSpell.GetShortDescription(battle.BuildContext(-1)));
+					targetPoint = mouse;
+					if(RB.ButtonPressed(RB.BTN_POINTER_ANY)) {
+						renderTargeting = false;
+						targetSpell = null;
+						targetPawn = null;
+						SetTooltip("");
+					}
 				}
 			} else {
 				targetPawn = null;
@@ -423,7 +433,7 @@ public class BattleScreen : Screen {
 		bool anyCastable = false;
 		for(int i = 0; i < spellButtons.Length; i++) {
 			SpellButton b = spellButtons[i];
-			b.castable = b.spell.Matches(context);
+			b.castable = b.spell.Matches(context) && b.spell.IsCastable(context);
 			if(!b.castable && b.currentState != UIObj.State.Disabled) {
 				b.currentState = UIObj.State.Disabled;
 			} else

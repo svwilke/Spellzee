@@ -105,7 +105,7 @@ public class Spells {
 			target.CmdHeal(evtHeal);
 		}, (spell, context) => "Restore to full life.")));
 	public static Spell HollowShell = Register("hollow_shell", new Spell("Hollow Shell", "Revive a dead target if it has more than 0 life.", new SimplePattern(Element.Dark, 3))
-		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.")));
+		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => context.GetTarget().CmdRevive(), (spell, context) => context.GetTarget() == null ? "Revive a target." : (!context.GetTarget().IsAlive() && context.GetTarget().CurrentHp > 0) ? "Revive." : "Do nothing.").SetCustomTargetGroup((pawn, context) => !pawn.IsAlive() && pawn.CurrentHp > 0)));
 	public static Spell VoidBarrier = Register("void_barrier", new Spell("Void Barrier", "Apply 2 Protect.", new SimplePattern(Element.Dark, 3))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new ProtectStatus(intensity), 2)));
 	public static Spell AquaticBlast = Register("aquatic_blast", new Spell("Aquatic Blast", "Deal 2-3 damage.", new SimplePattern(Element.Water, 2))
@@ -117,11 +117,6 @@ public class Spells {
 	public static Spell ConsumingDarkness = Register("consuming_darkness", new Spell("Consuming Darkness", "For 1 turn, everyone has -10 Light Affinity and +10 Dark Affinity.", new SimplePattern(Element.Dark, 2))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.All, "-10 Light Affinity for 1 turn.", () => new AffinityStatus(Status.StatusType.Negative, Element.Light, 1, AttributeModifier.Operation.SubtractBase, 10)))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.All, "+10 Dark Affinity for 1 turn.", () => new AffinityStatus(Status.StatusType.Positive, Element.Dark, 1, AttributeModifier.Operation.AddBase, 10))));
-	public static Spell ToAsh = Register("to_ash", new Spell("To Ash", "Apply 1 Burn to everyone.", new SimplePattern(Element.Fire, 2))
-		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.All, intensity => new BurnStatus(intensity), 1)));
-	public static Spell BloodOffering = Register("blood_offering", new Spell("Blood Offering", "Deal 2 damage to an ally and 2 damage to all enemies.", new SimplePattern(Element.Dark, 3))
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 2).SetTargetGroup(SpellComponent.TargetGroup.Ally))
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 
 	// Enemy Spells
 

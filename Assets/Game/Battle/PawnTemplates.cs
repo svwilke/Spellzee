@@ -10,7 +10,6 @@ public class PawnTemplates {
 	public static PawnTemplate Sorcerer = Register("sorcerer", new PawnTemplate("Sorcerer").SetMaxHp(16).AddSpells(Spells.Gust, Spells.Root, Spells.HolyLight, Spells.Flash));
 	public static PawnTemplate Mage = Register("mage", new WildMageTemplate("Mage").SetMaxHp(16));
 	public static PawnTemplate Druid = Register("druid", new PawnTemplate("Druid").SetMaxHp(16).AddSpells(Spells.Whirlwind, Spells.ThrowStone, Spells.MendingHerbs, Spells.Revitalize));
-	public static PawnTemplate Ailer = Register("ailer", new PawnTemplate("Ailer").SetMaxHp(16).AddSpells(Spells.Ignite, Spells.Levitate, Spells.MendingHerbs, Spells.ConsumingDarkness));
 
 	public static PawnTemplate Sloth = Register("sloth", new PawnTemplate("Sloth").SetMaxHp(4).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 90).AddSpells(Spells.Bite));
 	public static PawnTemplate Pixie = Register("pixie", new PawnTemplate("Pixie").SetMaxHp(4).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 10).AddSpells(Spells.Cuteness));
@@ -31,6 +30,6 @@ public class PawnTemplates {
 	}
 
 	public static PawnTemplate[] GetPlayableClasses() {
-		return new PawnTemplate[] { Wizard, Sorcerer, Mage, Druid, Ailer, Golem };
+		return new PawnTemplate[] { Wizard, Sorcerer, Mage, Druid };
 	}
 }

@@ -46,12 +46,13 @@ public class SpellButton : UIObj
 			return;
 		}
 		bool highlight = currentState == State.Hovered || currentState == State.Pressed;
-
-		RB.DrawRectFill(new Rect2i(pos, size), currentState == State.Pressed ? Color.yellow : castable ? Color.white : Color.cyan);
+		RollContext context = battle.BuildContext(screen.GetCurrentTargetPawnId());
+		bool actuallyCastable = spell.IsCastable(context);
+		RB.DrawRectFill(new Rect2i(pos, size), !actuallyCastable ? Color.gray : currentState == State.Pressed ? Color.yellow : castable ? Color.white : Color.cyan);
 
 		RB.Print(pos + new Vector2i(2, 2), Color.black, spell.GetName());
 
-		ElementDisplay[] displays = spell.GetElementDisplays(battle.BuildContext(screen.GetCurrentTargetPawnId()));
+		ElementDisplay[] displays = spell.GetElementDisplays(context);
 		int px = pos.x + 2;
 		int py = pos.y + size.height - 18;
 		for(int i = 0; i < displays.Length; i++) {

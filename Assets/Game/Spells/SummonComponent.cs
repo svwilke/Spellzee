@@ -58,12 +58,9 @@
 
 	public override void Execute(Spell spell, RollContext context) {
 		int count = (int)summonCount.GetValue();
-		Pawn.Team team = context.GetTeam();
-		if(!casterTeam) {
-			team = team == Pawn.Team.Friendly ? Pawn.Team.Hostile : Pawn.Team.Friendly;
-		}
 		for(int i = 0; i < count; i++) {
-			context.GetBattle().CmdAddPawn(CreateSummon(team));
+			Pawn summon = CreateSummon(GetTeam(context));
+			context.GetBattle().CmdAddPawn(summon);
 		}
 	}
 
@@ -75,6 +72,18 @@
 			pawn.SetMinion();
 		}
 		return pawn;
+	}
+
+	public Pawn.Team GetTeam(RollContext context) {
+		Pawn.Team team = context.GetTeam();
+		if(!casterTeam) {
+			team = team == Pawn.Team.Friendly ? Pawn.Team.Hostile : Pawn.Team.Friendly;
+		}
+		return team;
+	}
+
+	public override bool IsCastable(Spell spell, RollContext context) {
+		return context.GetBattle().GetSlotForTeam(GetTeam(context)) >= 0;
 	}
 
 	public override string GetDescription(Spell spell, RollContext context) {
