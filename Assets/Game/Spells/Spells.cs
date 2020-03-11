@@ -144,6 +144,6 @@ public class Spells {
 	}
 
 	public static Spell[] GetCastableSpells() {
-		return Registry.Where(spell => !(spell.GetPattern() is NullPattern)).ToArray();
+		return Registry.Where(spell => !(spell.GetPattern() is NullPattern) && !spell.IsElement(RollContext.Null, Element.Physical)).ToArray();
 	}
 }
