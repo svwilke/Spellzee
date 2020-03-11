@@ -49,13 +49,13 @@ public class AffinityEquipment : Equipment {
 	}
 
 	public override void OnEquipped(Pawn pawn) {
-		for(int i = 0; i < Element.Count; i++) {
+		for(int i = 0; i < affinityModifiers.Length; i++) {
 			pawn.Affinities[i].AddModifier(new AttributeModifier(GetName(), operation, affinityModifiers[i]));
 		}
 	}
 
 	public override void OnUnequipped(Pawn pawn) {
-		for(int i = 0; i < Element.Count; i++) {
+		for(int i = 0; i < affinityModifiers.Length; i++) {
 			pawn.Affinities[i].RemoveModifier(GetName());
 		}
 	}
