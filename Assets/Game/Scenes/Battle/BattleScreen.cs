@@ -5,7 +5,6 @@ using UnityEngine.Networking.NetworkSystem;
 
 public class BattleScreen : Screen {
 
-
 	public Battle battle;
 
 	private ImageButton rollButton;
@@ -79,14 +78,17 @@ public class BattleScreen : Screen {
 	}
 
 	public override void OnConstruct() {
-		AddUIObj(rollButton = new ImageButton(new Vector2i(size.x / 5, size.y / 2 + 32), RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		int rollsW = size.width / 5 * 3;
+		int rollsMinX = size.width - 102 - rollsW;
+		int y = size.height - 62 - 44;
+		AddUIObj(rollButton = new ImageButton(new Vector2i(rollsMinX + 1, y + 22), RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		rollButton.SetOnClick(() => {
 			if(battle.rollsLeft > 0) {
 				Game.client.Send(GameMsg.Roll, new EmptyMessage());
 			}
 		});
 		rollButton.SetKeybind(KeyCode.Space);
-		AddUIObj(passButton = new TextButton(new Vector2i(size.x / 5, size.y / 2 + 48), "Pass", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		AddUIObj(passButton = new TextButton(new Vector2i(rollsMinX - 32, y + 22), "Pass", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		passButton.SetOnClick(() => {
 			if(battle.rollsLeft == 0) {
 				Game.client.Send(GameMsg.Pass, new EmptyMessage());
@@ -177,12 +179,6 @@ public class BattleScreen : Screen {
 		for(int i = 0; i < pawnIds.Count; i++) {
 			currentSpellIndex = FillSpellPane(spellPane, pawnIds[i], i, currentSpellIndex);
 		}
-		/*
-		Spell[] knownSpells = battle.GetClientPawn().GetSpells();
-		spellButtons = new SpellButton[knownSpells.Length];
-		for(int i = 0; i < knownSpells.Length; i++) {
-			AddUIObj(spellButtons[i] = new SpellButton(battle, knownSpells[i], new Vector2i(size.width - 100, 8 + i * 36)));
-		}*/
 		ViewSpellTab(0);
 	}
 
@@ -192,18 +188,17 @@ public class BattleScreen : Screen {
 				RemoveUIObj(dieButtons[i]);
 			}
 		}
-		int rollsMinX = size.x / 5;
-		int rollsMaxX = size.x / 5 * 4;
-		int rollsW = rollsMaxX - rollsMinX;
+		int rollsW = size.width / 5 * 3;
+		int rollsMinX = size.width - 102 - rollsW; // spellPane left - width
 		int step = rollsW / (battle.rolls.Length + 1);
 		int start = rollsMinX + step;
 		dieButtons = new DieButton[battle.rolls.Length];
 		lockPositions = new Vector2i[battle.rolls.Length];
-		int y = size.y / 2 + 16;
+		int y = size.height - 62 - 44 + 3 + 3; // infoPane top - 44 (top of die pane) + 3 (border) + 6 (half of lock)
 		for(int i = 0; i < battle.rolls.Length; i++) {
 			Vector2i buttonTopLeft = new Vector2i(-16 + start + step * i, y);
 			AddUIObj(dieButtons[i] = new DieButton(battle, i, buttonTopLeft));
-			lockPositions[i] = new Vector2i(buttonTopLeft.x + 16, buttonTopLeft.y + 40);
+			lockPositions[i] = new Vector2i(buttonTopLeft.x + 8, buttonTopLeft.y + 1);
 		}
 	}
 
@@ -238,18 +233,41 @@ public class BattleScreen : Screen {
 		return buttonIndexStart + knownSpells.Length;
 	}
 
+	private Vector2i rollCircleCenter;
+	private int rollCircleRadius;
+	public override void RenderBackground() {
+		int rollsW = size.width / 5 * 3;
+		int rollsMinX = size.width - 102 - rollsW; // spellPane left - width
+		int step = rollsW / (battle.rolls.Length);
+		int start = rollsMinX + step;
+		int y = size.height - 62 - 44; // infoPane top - 44
+		Rect2i diceBackgroundRect = new Rect2i(rollsMinX, y, rollsW, 44);
+		RB.DrawRectFill(diceBackgroundRect, Color.gray);
+		RB.DrawRect(diceBackgroundRect.Expand(-1), Color.white);
+		rollCircleCenter = diceBackgroundRect.min + new Vector2i(0, diceBackgroundRect.height / 2);
+		rollCircleRadius = diceBackgroundRect.height / 2 - 8;
+		Vector2i circleRadius = new Vector2i(rollCircleRadius, rollCircleRadius);
+		RB.DrawEllipseFill(rollCircleCenter, circleRadius, Color.gray);
+		RB.DrawEllipse(rollCircleCenter, circleRadius - new Vector2i(1, 1), Color.white);
+		RB.DrawRectFill(new Rect2i(diceBackgroundRect.min + new Vector2i(1, 1), new Vector2i(circleRadius.x, diceBackgroundRect.height - 2)), Color.gray);
+		RB.DrawPixel(new Vector2i(rollCircleCenter + new Vector2i(0, circleRadius.y)), Color.white);
+		RB.DrawPixel(new Vector2i(rollCircleCenter - new Vector2i(0, circleRadius.y)), Color.white);
+	}
+
 	public override void RenderForeground() {
 
 		for(int i = 0; i < battle.rolls.Length; i++) {
 			if(battle.locks[i]) {
 				RB.DrawSprite("Lock", lockPositions[i] - new Vector2i(6, 6));
-				//RB.Print(new Rect2i(lockPositions[i] - new Vector2i(16, 8), new Vector2i(32, 16)), Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "Locked");
 			}
 		}
 
+		float step = Mathf.PI / (battle.rollsHad + 1);
+		float start = -step;
 		for(int i = 0; i < battle.rollsLeft; i++) {
-			RB.DrawEllipseFill(new Vector2i(size.x / 5 - 10 + i * 10, size.y / 2 + 44), new Vector2i(4, 4), Color.white);
-			RB.DrawEllipse(new Vector2i(size.x / 5 - 10 + i * 10, size.y / 2 + 44), new Vector2i(4, 4), Color.black);
+			Vector2i pos = rollCircleCenter + new Vector2i(Mathf.RoundToInt(Mathf.Sin(start - step * i) * rollCircleRadius), Mathf.RoundToInt(Mathf.Cos(start - step * i) * rollCircleRadius));
+			RB.DrawEllipseFill(pos, new Vector2i(4, 4), Color.white);
+			RB.DrawEllipse(pos, new Vector2i(4, 4), Color.black);
 		}
 
 		if(infoPane.GetOpenTabIndex() == 1) {

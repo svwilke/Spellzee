@@ -40,6 +40,7 @@ public abstract class Screen {
 	}
 
 	public virtual void Render() {
+		RenderBackground();
 		foreach(UIObj uiObj in uiObjs) {
 			if(uiObj.isVisible) {
 				uiObj.Render();
@@ -69,6 +70,10 @@ public abstract class Screen {
 				}
 			}
 		}
+	}
+
+	public virtual void RenderBackground() {
+
 	}
 
 	public virtual void RenderForeground() {
