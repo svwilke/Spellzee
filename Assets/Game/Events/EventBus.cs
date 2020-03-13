@@ -24,6 +24,9 @@ public class EventBus {
 	public class EvtPawn : UnityEvent<Battle, Pawn> { }
 
 	[System.Serializable]
+	public class EvtPawnOnly : UnityEvent<Pawn> { }
+
+	[System.Serializable]
 	public class EvtPawnInteger : UnityEvent<Battle, Pawn, int> { }
 
 	[System.Serializable]

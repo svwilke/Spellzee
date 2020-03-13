@@ -55,6 +55,9 @@ public class Spell : RegistryEntry<Spell> {
 	}
 
 	public virtual bool IsCastable(RollContext context) {
+		if(context.GetCaster().GetSpellData(this).GetBool(DataKey.Disabled)) {
+			return false;
+		}
 		List<SpellComponent> componentList = BuildComponentList(context);
 		foreach(SpellComponent component in componentList) {
 			if(!component.IsCastable(this, context)) {

@@ -9,6 +9,7 @@ public class Pawn {
 
 	public EventBus.EvtDamageHeal OnTakeDamage = new EventBus.EvtDamageHeal();
 	public EventBus.EvtDamageHeal OnHeal = new EventBus.EvtDamageHeal();
+	public EventBus.EvtPawnOnly OnDeath = new EventBus.EvtPawnOnly();
 	public EventBus.EvtPawn OnSetupTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnBeginTurn = new EventBus.EvtPawn();
 	public EventBus.EvtPawn OnEndTurn = new EventBus.EvtPawn();
@@ -43,6 +44,8 @@ public class Pawn {
 
 	private HashSet<string> equipped = new HashSet<string>();
 
+	private Dictionary<string, SpellData> spellData = new Dictionary<string, SpellData>();
+
 	public Attribute HitChance = new Attribute().SetBaseValue(1);
 	public Attribute SpellHealBonus = new Attribute();
 	public Attribute SpellDamageBonus = new Attribute();
@@ -60,6 +63,7 @@ public class Pawn {
 	private AIModule ai;
 
 	private bool isMinion = false;
+	private Pawn owner = null;
 
 	public Pawn(string name, int maxHp, Team team) {
 		this.name = name;
@@ -77,6 +81,15 @@ public class Pawn {
 
 	public bool IsMinion() {
 		return isMinion;
+	}
+
+	public Pawn SetOwner(Pawn owner) {
+		this.owner = owner;
+		return this;
+	}
+
+	public Pawn GetOwner() {
+		return owner;
 	}
 
 	public void SetSprite(string spriteName) {
@@ -231,6 +244,7 @@ public class Pawn {
 
 	public void Die() {
 		isDead = true;
+		OnDeath.Invoke(this);
 	}
 
 	public void Revive() {
@@ -320,6 +334,18 @@ public class Pawn {
 		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
 	}
 
+	public SpellData GetSpellData(Spell spell) {
+		return GetSpellData(spell.GetId());
+	}
+
+	public SpellData GetSpellData(string spellId) {
+		if(spellData.ContainsKey(spellId)) {
+			return spellData[spellId];
+		} else {
+			return spellData[spellId] = new SpellData(); // possibly replace with Spell.CreateSpellData()
+		}
+	}
+
 	public virtual void Serialize(NetworkWriter writer) {
 		writer.Write(id);
 		writer.Write(name);
@@ -340,6 +366,11 @@ public class Pawn {
 		writer.Write(equipped.Count);
 		foreach(string eqId in equipped) {
 			writer.Write(eqId);
+		}
+		writer.Write(spellData.Count);
+		foreach(KeyValuePair<string, SpellData> kvp in spellData) {
+			writer.Write(kvp.Key);
+			kvp.Value.Serialize(writer);
 		}
 		HitChance.Serialize(writer);
 		SpellHealBonus.Serialize(writer);
@@ -375,6 +406,11 @@ public class Pawn {
 		int eqCount = reader.ReadInt32();
 		for(int i = 0; i < eqCount; i++) {
 			Equip(reader.ReadString());
+		}
+		spellData.Clear();
+		int spellDataCount = reader.ReadInt32();
+		for(int i = 0; i < spellDataCount; i++) {
+			spellData[reader.ReadString()] = SpellData.DeserializeNew(reader);
 		}
 		HitChance.Deserialize(reader);
 		SpellHealBonus.Deserialize(reader);
