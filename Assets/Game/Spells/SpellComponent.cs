@@ -95,6 +95,10 @@ public abstract class SpellComponent {
 		return false;
 	}
 
+	public virtual bool IsValid(Spell spell, RollContext context) {
+		return true;
+	}
+
 	public abstract void Execute(Spell spell, RollContext context);
 	public abstract string GetDescription(Spell spell, RollContext context);
 

@@ -134,6 +134,38 @@ public class Spells {
 	public static Spell Reflection = Register("reflection", new Spell("Reflection", "Your next spell is cast twice.", new SimplePattern(Element.Water, 3))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Caster, "The next spell is cast twice.", () => new DoubleSpellStatus())));
 
+	public static Spell HealingHeat = Register("healing_heat", new Spell("Healing Heat", "Restore life to you equal to the Burn on the target.", new SimplePattern(Element.Fire, Element.Fire, Element.Earth))
+		.AddComponent(pm => new TargetComponent(SpellComponent.TargetType.Target, "Restore life equal to Burn."))
+		.AddComponent(pm => {
+			Pawn target = pm.GetContext().GetTarget();
+			int heal = 0;
+			if(target != null) {
+				Status s = target.GetStatuses().Find(status => status is BurnStatus);
+				if(s != null) {
+					heal = (s as BurnStatus).GetValue();
+				}
+			}
+			return new HealComponent(SpellComponent.TargetType.Caster, heal);
+		}));
+	public static Spell Engulf = Register("engulf", new Spell("Engulf", "Double the amount of Burn on the target.", new SimplePattern(Element.Fire, 3))
+		.AddComponent(pm => new TargetComponent(SpellComponent.TargetType.Target, "Double Burn."))
+		.AddComponent(pm => {
+			Pawn target = pm.GetContext().GetTarget();
+			int burn = 0;
+			if(target != null) {
+				Status s = target.GetStatuses().Find(status => status is BurnStatus);
+				if(s != null) {
+					burn = (s as BurnStatus).GetValue();
+				}
+			}
+			return new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BurnStatus(intensity), burn);
+		}));
+	public static Spell Sear = Register("sear", new Spell("Sear", "Inflict 4 Burn and restore 4 life to the target.", new SimplePattern(Element.Fire, 4))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BurnStatus(intensity), 4))
+		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 4)));
+	public static Spell Kindle = Register("kindle", new Spell("Kindle", "Deal 1-3 damage.", new SimplePattern(Element.Fire, 2))
+		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 1, 3)));
+
 
 	// Enemy Spells
 
@@ -145,8 +177,8 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 	public static Spell Slice = Register("slice", new Spell("Slice", "Deal 2 damage to all enemies.", new SimplePattern(Element.Physical, 3))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
-	public static Spell Stomp = Register("stomp", new Spell("Stomp", "Deal 4 damage to all enemies.", new SimplePattern(Element.Physical, 4))
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 4)));
+	public static Spell Stomp = Register("stomp", new Spell("Stomp", "Deal 3 damage to all enemies.", new SimplePattern(Element.Physical, 4))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 3)));
 	public static Spell Bash = Register("bash", new Spell("Bash", "Deal 1 damage and apply 1 Shock to all enemies.", new SimplePattern(Element.Physical, 3))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 1))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));

@@ -10,6 +10,10 @@
 		attribute.AddModifier(new AttributeModifier(attribute.Size.ToString(), operation, modifier));
 	}
 
+	public override bool IsValid(Spell spell, RollContext context) {
+		return GetValue() > 0;
+	}
+
 	public int GetValue() {
 		return (int)attribute.GetValue();
 	}

@@ -29,6 +29,10 @@ public class RandomDamageComponent : DamageComponent {
 		return (int)maxDamage.GetValue();
 	}
 
+	public override bool IsValid(Spell spell, RollContext context) {
+		return !(GetMinValue() <= 0 && GetMaxValue() <= 0);
+	}
+
 	public override void Execute(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
 		int dmgMin = GetMinValue();
