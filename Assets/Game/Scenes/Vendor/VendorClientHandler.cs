@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class VendorClientHandler : ClientHandler {
+public class VendorClientHandler : EncounterClientHandler {
 
 	private VendorScreen screen;
-	private Game game;
 	private Pawn pawn;
 
-	public VendorClientHandler(Game game, Pawn pawn, VendorScreen screen) {
+	public VendorClientHandler(Game game, Pawn pawn, VendorScreen screen) : base(game) {
 		this.game = game;
 		this.pawn = pawn;
 		this.screen = screen;

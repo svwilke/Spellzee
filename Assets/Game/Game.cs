@@ -17,7 +17,7 @@ public class Game : RB.IRetroBlitGame
 
 	public static NetworkClient client;
 
-	public static int enemy = -1;
+	private Dungeon currentDungeon;
 
 	private ConnectionConfig networkConfig = new ConnectionConfig();
 
@@ -179,25 +179,34 @@ public class Game : RB.IRetroBlitGame
 		client.Connect(ip, 4789);
 	}
 
-	public void StartGame(LobbyClientHandler.LobbyPlayer[] lobbyPlayers) {
-		Game.enemy = -1;
-		ServerBattle battle = new ServerBattle(this);
-		for(int i = 0; i < lobbyPlayers.Length; i++) {
-			battle.AddPawn(Pawn.CreatePlayer(lobbyPlayers[i]));
+	public void EnterDungeon(Dungeon dungeon, List<Pawn> players) {
+		if(currentDungeon == null) {
+			currentDungeon = dungeon;
+			dungeon.EnterDungeon(this, players);
 		}
-		battle.AddPawn(CreateNextEnemy());
-		GameMsg.MsgStartBattle msg = new GameMsg.MsgStartBattle() { battle = battle };
-		NetworkServer.SendToAll(GameMsg.StartBattle, msg);
-		OpenServerHandler(new BattleServerHandler(this, battle));
 	}
 
-	public Pawn CreateNextEnemy() {
-		enemy = (enemy + 1); //DB.EnemyNames.Length;
-		/*Pawn pawn = new Pawn(DB.EnemyNames[enemy], DB.EnemyHPs[enemy] * GetPlayerCount());
-		pawn.AddSpell(DB.EnemySpells[enemy]);
-		return pawn;*/
-		int level = Mathf.FloorToInt((enemy / DB.Enemies.Length));
-		return DB.Enemies[enemy % DB.Enemies.Length].Create(GetPlayerCount(), level, Pawn.Team.Hostile);
+	public Dungeon GetCurrentDungeon() {
+		return currentDungeon;
+	}
+
+	public void StartGame(LobbyClientHandler.LobbyPlayer[] lobbyPlayers) {
+		Dungeon d = new Dungeon(new Encounter[] {
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Cutpurse.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
+			}),
+			new VendorEncounter(),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile),
+				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
+			}),
+			new ChoiceEncounter()
+		});
+		List<Pawn> players = new List<Pawn>();
+		for(int i = 0; i < lobbyPlayers.Length; i++) {
+			players.Add(Pawn.CreatePlayer(lobbyPlayers[i]));
+		}
+		EnterDungeon(d, players);
 	}
 
 	public void CancelConnection() {

@@ -12,6 +12,8 @@ public class GameMsg {
 	public static short PlayerLobbyUpdate = MsgType.Highest + 5;
 	public static short ClassChange = MsgType.Highest + 6;
 
+	public static short EndEncounter = MsgType.Highest + 8;
+
 	public static short StartBattle = MsgType.Highest + 12;
 	public static short Pass = MsgType.Highest + 13;
 	public static short Roll = MsgType.Highest + 14;

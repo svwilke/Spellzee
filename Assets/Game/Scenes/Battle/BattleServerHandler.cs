@@ -4,13 +4,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class BattleServerHandler : ServerHandler {
+public class BattleServerHandler : EncounterServerHandler {
 
-	private Game game;
 	private ServerBattle battle;
 
-	public BattleServerHandler(Game game, ServerBattle battle) {
-		this.game = game;
+	public BattleServerHandler(Game game, Encounter encounter, ServerBattle battle) : base(game, encounter) {
 		this.battle = battle;
 		AddHandler(GameMsg.ToggleDieLock, OnDieLockToggle);
 		AddHandler(GameMsg.Roll, OnRoll);
@@ -112,11 +110,10 @@ public class BattleServerHandler : ServerHandler {
 			foreach(Pawn p in friendlies) {
 				p.Restore();
 			}
-			
+
+			NetworkServer.SendToAll(GameMsg.EndBattle, new StringMessage("You emerge victorious."));
+			/*
 			if(Game.enemy % DB.Enemies.Length == DB.Enemies.Length - 1) {
-				foreach(Pawn p in friendlies) {
-					p.RemoveAllStatuses();
-				}
 				int level = Mathf.FloorToInt((Game.enemy + 1) / DB.Enemies.Length);
 				if(level % 2 == 1) {
 					OpenChoice(level);
@@ -132,9 +129,7 @@ public class BattleServerHandler : ServerHandler {
 
 			Pawn enemy = game.CreateNextEnemy();
 			battle.CmdAddPawn(enemy);
-
-			/*GameMsg.MsgPawn enemyUpdate = new GameMsg.MsgPawn() { pawn = enemy };
-			NetworkServer.SendToAll(GameMsg.UpdatePawn, enemyUpdate);*/
+			*/
 			return;
 		}
 	}
@@ -142,29 +137,6 @@ public class BattleServerHandler : ServerHandler {
 	public void AfterCastSpell(Battle battle, Pawn pawn, Pawn target, string spellId) {
 		this.battle.NextTurn();
 	}
-	/*
-	public void NextTurn() {
-		int start = battle.currentTurn;
-		battle.currentTurn = (battle.currentTurn + 1) % (battle.MaxTurn + 1);
-		while(!battle.GetCurrentPawn().IsAlive() && battle.currentTurn != start) {
-			battle.currentTurn = (battle.currentTurn + 1) % (battle.MaxTurn + 1);
-		}
-
-		if(battle.GetCurrentPawn() is PlayerPawn) {
-			PlayerPawn currentPlayer = battle.GetCurrentPawn() as PlayerPawn;
-			battle.SetDieCount(Mathf.Max(1, (int)currentPlayer.DieCount.GetValue(5.0)));
-			
-		}
-		battle.ResetLocks();
-		NetworkServer.SendToAll(GameMsg.NextTurn, new IntegerMessage(battle.currentTurn));
-		if(battle.GetCurrentPawn() is EnemyPawn && !AreAllAlliesDead()) {
-			/*
-			int spell = REX.Choice(battle.enemy.GetSpells()).GetId();
-			CastSpell(spell);
-			*//*
-			game.StartCoroutine(DoAITurn(battle.GetCurrentPawn() as EnemyPawn));
-		}
-	}*/
 
 	public void OnPass(NetworkMessage msg) {
 		if(msg.conn.connectionId == battle.currentTurn) {
@@ -176,7 +148,7 @@ public class BattleServerHandler : ServerHandler {
 		}
 	}
 
-	public void OpenChoice(int level) {
+	/*public void OpenChoice(int level) {
 		Pawn[] playerFriendlies = battle.GetPawns(Pawn.Team.Friendly).Where(pawn => !pawn.HasAI()).ToArray();
 		for(int i = 0; i < playerFriendlies.Length; i++) {
 			GameMsg.MsgPawn openChoiceMsg = new GameMsg.MsgPawn() { pawn = playerFriendlies[i] };
@@ -192,7 +164,7 @@ public class BattleServerHandler : ServerHandler {
 			NetworkServer.SendToClient(playerFriendlies[i].GetId(), GameMsg.OpenVendor, openVendorMsg);
 		}
 		game.OpenServerHandler(new VendorServerHandler(game, playerFriendlies));
-	}
+	}*/
 
 	public override void Close() {
 		base.Close();

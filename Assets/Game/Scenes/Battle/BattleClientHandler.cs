@@ -4,12 +4,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class BattleClientHandler : ClientHandler {
+public class BattleClientHandler : EncounterClientHandler {
 
-	private Game game;
 	private Battle battle;
 
-	public BattleClientHandler(Game game, Battle battle) {
+	public BattleClientHandler(Game game, Battle battle) : base(game) {
 		this.game = game;
 		this.battle = battle;
 		AddHandler(GameMsg.StartBattle, OnBattleStart);
@@ -183,20 +182,10 @@ public class BattleClientHandler : ClientHandler {
 
 	public void OnEndBattle(NetworkMessage msg) {
 		MessageBox msgBox = new MessageBox(msg.ReadMessage<StringMessage>().value);
-		if(game.IsHost()) {
-			msgBox.AddButton("Continue", () => {
-				(game.GetServerHandler() as BattleServerHandler).OpenVendor();
-				game.GetOpenScreen().CloseMessageBox();
-			});
-		} else {
-			msgBox.AddButton("Continue", () => {
-				if(game.GetOpenScreen() is VendorScreen) {
-					game.GetOpenScreen().CloseMessageBox();
-				} else {
-					msgBox.SetText("Waiting on the host to continue...");
-				}
-			});
-		}
+		msgBox.AddButton("Continue", () => {
+			Game.client.Send(GameMsg.Ready, new EmptyMessage());
+			msgBox.SetText("Waiting for other players...");
+		});
 		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 

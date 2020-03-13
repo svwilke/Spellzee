@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class ChoiceClientHandler : ClientHandler {
+public class ChoiceClientHandler : EncounterClientHandler {
 
 	private ChoiceScreen screen;
-	private Game game;
 	private Pawn pawn;
 
-	public ChoiceClientHandler(Game game, Pawn pawn, ChoiceScreen screen) {
+	public ChoiceClientHandler(Game game, Pawn pawn, ChoiceScreen screen) : base(game) {
 		this.game = game;
 		this.pawn = pawn;
 		this.screen = screen;

@@ -4,22 +4,17 @@ using System.Linq;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
-public class VendorServerHandler : ServerHandler {
+public class VendorServerHandler : EncounterServerHandler {
 
-	private Game game;
 	private Pawn[] pawns;
-	private bool[] ready;
 
-	public VendorServerHandler(Game game, Pawn[] pawns) {
-		this.game = game;
+	public VendorServerHandler(Game game, Encounter encounter, Pawn[] pawns) : base(game, encounter) {
 		this.pawns = pawns;
-		this.ready = new bool[pawns.Length];
-		AddHandler(GameMsg.Ready, OnReady);
 		AddHandler(GameMsg.BuySpell, OnBuySpell);
 		AddHandler(GameMsg.DropSpell, OnDropSpell);
 		AddHandler(GameMsg.SwapSpells, OnSwapSpells);
 	}
-
+	/*
 	public void OnReady(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
 		ready[pawnId] = true;
@@ -41,7 +36,7 @@ public class VendorServerHandler : ServerHandler {
 		GameMsg.MsgStartBattle startBattleMsg = new GameMsg.MsgStartBattle() { battle = battle };
 		NetworkServer.SendToAll(GameMsg.StartBattle, startBattleMsg);
 		game.OpenServerHandler(new BattleServerHandler(game, battle));
-	}
+	}*/
 
 	public void OnBuySpell(NetworkMessage msg) {
 		int pawnId = msg.conn.connectionId;
