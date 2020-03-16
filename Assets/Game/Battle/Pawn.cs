@@ -34,7 +34,16 @@ public class Pawn {
 	public Team team { get; private set; }
 
 	public int CurrentHp { get; private set; }
-	public int MaxHp { get; private set; }
+	public Attribute MaxHp = new Attribute();
+
+	public int Level { get; private set; }
+	public int CurrentXP { get; private set; }
+	public int NextLevelXP { get { return progression.GetRequiredXP(Level + 1); } }
+	public float XPProgress { get { return (CurrentXP - progression.GetRequiredXP(Level)) / (float)(progression.GetRequiredXP(Level + 1) - progression.GetRequiredXP(Level)); } }
+
+	private int xpGain = 1;
+
+	private PawnProgression progression;
 
 	private List<string> knownSpells = new List<string>();
 	private bool isDead = false;
@@ -67,11 +76,43 @@ public class Pawn {
 
 	public Pawn(string name, int maxHp, Team team) {
 		this.name = name;
-		this.MaxHp = CurrentHp = maxHp;
+		MaxHp.SetBaseValue(maxHp);
+		CurrentHp = GetMaxHp();
 		for(int i = 0; i < Affinities.Length; i++) {
 			Affinities[i] = new Attribute();
 		}
 		this.team = team;
+	}
+
+	public void SetProgression(PawnProgression progression) {
+		this.progression = progression;
+	}
+
+	public PawnProgression GetProgression() {
+		return progression;
+	}
+
+	public void AddXP(int xp) {
+		CurrentXP += xp;
+		if(progression != null && CurrentXP >= NextLevelXP) {
+			LevelUp();
+		}
+	}
+
+	public void SetXPGain(int xp) {
+		xpGain = xp;
+	}
+
+	public int GetXPGain() {
+		return xpGain;
+	}
+
+	private void LevelUp() {
+		Level += 1;
+	}
+
+	public void SetLevel(int level) {
+		Level = level;
 	}
 
 	public Pawn SetMinion() {
@@ -186,6 +227,10 @@ public class Pawn {
 		return statusList;
 	}
 
+	public int GetMaxHp() {
+		return (int)MaxHp.GetValue();
+	}
+
 	public void Damage(int dmg) {
 		if(dmg < 0) {
 			dmg = 0;
@@ -201,8 +246,8 @@ public class Pawn {
 			heal = 0;
 		}
 		CurrentHp += heal;
-		if(CurrentHp > MaxHp) {
-			CurrentHp = MaxHp;
+		if(CurrentHp > GetMaxHp()) {
+			CurrentHp = GetMaxHp();
 		}
 	}
 
@@ -229,7 +274,7 @@ public class Pawn {
 	}
 
 	public void Restore() {
-		int restoration = (int)EndOfBattleRestoration.GetValue(MaxHp);
+		int restoration = (int)EndOfBattleRestoration.GetValue((int)MaxHp.GetValue());
 		if(restoration <= 0) {
 			restoration = 1;
 		}
@@ -240,6 +285,11 @@ public class Pawn {
 			Heal(restoration);
 		}
 		NetworkServer.SendToAll(GameMsg.UpdatePawn, new GameMsg.MsgPawn() { pawn = this });
+	}
+
+	public void FullRestore() {
+		CurrentHp = GetMaxHp();
+		RemoveAllStatuses();
 	}
 
 	public void Die() {
@@ -318,8 +368,9 @@ public class Pawn {
 		return total;
 	}
 	
-	public void SetAI(AIModule ai) {
+	public Pawn SetAI(AIModule ai) {
 		this.ai = ai;
+		return this;
 	}
 
 	public bool HasAI() {
@@ -353,7 +404,11 @@ public class Pawn {
 		writer.Write((byte)team);
 		writer.Write(isMinion);
 		writer.Write(CurrentHp);
-		writer.Write(MaxHp);
+		MaxHp.Serialize(writer);
+		writer.Write(progression.GetId());
+		writer.Write(CurrentXP);
+		writer.Write(Level);
+		writer.Write(xpGain);
 		writer.Write(isDead);
 		writer.Write(knownSpells.Count);
 		for(int i = 0; i < knownSpells.Count; i++) {
@@ -390,7 +445,11 @@ public class Pawn {
 		team = (Team)reader.ReadByte();
 		isMinion = reader.ReadBoolean();
 		CurrentHp = reader.ReadInt32();
-		MaxHp = reader.ReadInt32();
+		MaxHp.Deserialize(reader);
+		progression = PawnProgressions.Get(reader.ReadString());
+		CurrentXP = reader.ReadInt32();
+		Level = reader.ReadInt32();
+		xpGain = reader.ReadInt32();
 		isDead = reader.ReadBoolean();
 		int knownSpellCount = reader.ReadInt32();
 		knownSpells = new List<string>(knownSpellCount);
@@ -432,7 +491,7 @@ public class Pawn {
 	public static Pawn CreatePlayer(LobbyClientHandler.LobbyPlayer lobbyPlayer) {
 		return PawnTemplates.GetPlayableClasses()[lobbyPlayer.charClass].Create(lobbyPlayer);
 	}
-
+	/*
 	public static Pawn Clone(Pawn other) {
 		Pawn clone = new Pawn(other.name, other.MaxHp, other.team);
 		clone.CurrentHp = other.CurrentHp;
@@ -440,6 +499,8 @@ public class Pawn {
 		clone.isDead = other.isDead;
 		clone.isMinion = other.isMinion;
 		clone.knownSpells = new List<string>(other.knownSpells.Count);
+		clone.CurrentXP = other.CurrentXP;
+		clone.Level = other.Level;
 		foreach(string spellId in other.knownSpells) {
 			clone.knownSpells.Add(spellId);
 		}
@@ -448,4 +509,5 @@ public class Pawn {
 		clone.SpellHealBonus = Attribute.Clone(other.SpellHealBonus);
 		return clone;
 	}
+	*/
 }

@@ -70,7 +70,7 @@ public class VendorServerHandler : EncounterServerHandler {
 		base.Open();
 		int shopAmount = 3;
 		for(int i = 0; i < pawns.Length; i++) {
-			List<string> buyableSpells = Spells.GetCastableSpells().Select(spell => spell.GetId()).ToList();
+			List<string> buyableSpells = pawns[i].GetProgression().GetAccumulatedSpells(pawns[i].Level).Select(spell => spell.GetId()).ToList();
 			buyableSpells.RemoveAll(pawns[i].DoesKnowSpell);
 			string[] shop = REX.Choice(buyableSpells, shopAmount);
 			NetworkServer.SendToClient(i, GameMsg.ShopList, new GameMsg.MsgStringArray(shop));

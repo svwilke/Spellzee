@@ -21,7 +21,7 @@ public class Dungeon {
 	}
 
 	public void ExitDungeon() {
-
+		game.OpenServerHandler(new WorldServerHandler(game, players));
 	}
 
 	public void NextEncounter() {

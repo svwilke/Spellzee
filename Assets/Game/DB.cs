@@ -6,16 +6,6 @@ public class DB {
 
 	public static string[] CharNames = new string[] { "Mathil", "Corex", "Wrathion", "Tor'Shul", "Dillo", "Hinnex", "Jaenna", "Logana", "Zalapha", "Kalakarr" };
 
-	public static PawnTemplate[] Enemies = new PawnTemplate[] {
-		PawnTemplates.Sloth,
-		PawnTemplates.Pixie,
-		PawnTemplates.SewerRat,
-		PawnTemplates.FieryBat,
-		PawnTemplates.Wolf,
-		PawnTemplates.Cutpurse,
-		PawnTemplates.Golem
-	};
-
 	public static Equipment[] BuyableEquipments = new Equipment[] {
 		Equipments.CharmOfPerfection,
 		Equipments.SolarOrb,

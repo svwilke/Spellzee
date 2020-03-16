@@ -12,6 +12,7 @@ public class DungeonClientHandler : ClientHandler {
 		AddHandler(GameMsg.StartBattle, OnBattleStart);
 		AddHandler(GameMsg.OpenChoice, OnOpenChoice);
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
+		AddHandler(GameMsg.OpenWorld, OnOpenWorld);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -23,22 +24,20 @@ public class DungeonClientHandler : ClientHandler {
 	public void OnOpenChoice(NetworkMessage msg) {
 		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
 		ChoiceScreen screen = new ChoiceScreen(game, RB.DisplaySize, pawn);
-		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
+		game.OpenScreen(screen);
 		game.OpenClientHandler(new ChoiceClientHandler(game, pawn, screen));
-		msgBox.AddButton("Continue", () => {
-			game.OpenScreen(screen);
-		});
-		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}
 
 	public void OnOpenVendor(NetworkMessage msg) {
 		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
 		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
-		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
+		game.OpenScreen(screen);
 		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));
-		msgBox.AddButton("Continue", () => {
-			game.OpenScreen(screen);
-		});
-		game.GetOpenScreen().ShowMessageBox(msgBox);
+	}
+
+	public void OnOpenWorld(NetworkMessage msg) {
+		WorldScreen screen = new WorldScreen(game, RB.DisplaySize);
+		game.OpenScreen(screen);
+		game.OpenClientHandler(new WorldClientHandler(game, screen));
 	}
 }

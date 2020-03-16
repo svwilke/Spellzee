@@ -98,7 +98,7 @@ public class Spells {
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new BlindStatus(intensity), 2))
 		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.Target, (spell, context) => {
 			Pawn target = context.GetTarget();
-			HealComponent heal = new HealComponent(SpellComponent.TargetType.Target, target.MaxHp - target.CurrentHp);
+			HealComponent heal = new HealComponent(SpellComponent.TargetType.Target, target.GetMaxHp() - target.CurrentHp);
 			context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, heal);
 			target.OnSpellComponentTarget.Invoke(spell, context, heal);
 			EventBus.DamageHealEvent evtHeal = new EventBus.DamageHealEvent(Spells.Synthesis, heal, heal.GetValue());
@@ -171,8 +171,8 @@ public class Spells {
 
 	public static Spell Cuteness = Register("cuteness", new Spell("Cuteness", "Deal 1 damage.", new SimplePattern(Element.Physical, 1))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 1)));
-	public static Spell Bite = Register("bite", new Spell("Bite", "Deal 1 damage to all enemies.", new SimplePattern(Element.Physical, 2))
-		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 1)));
+	public static Spell Bite = Register("bite", new Spell("Bite", "Deal 2 damage.", new SimplePattern(Element.Physical, 2))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 2)));
 	public static Spell Claw = Register("claw", new Spell("Claw", "Deal 2 damage to all enemies.", new SimplePattern(Element.Physical, 3))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 2)));
 	public static Spell Slice = Register("slice", new Spell("Slice", "Deal 2 damage to all enemies.", new SimplePattern(Element.Physical, 3))
@@ -182,6 +182,8 @@ public class Spells {
 	public static Spell Bash = Register("bash", new Spell("Bash", "Deal 1 damage and apply 1 Shock to all enemies.", new SimplePattern(Element.Physical, 3))
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 1))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));
+	public static Spell LeadThePack = Register("lead_the_pack", new Spell("Lead the Pack", "Summon a Level 1 Sewer Rat.", new SimplePattern(Element.Physical, 2))
+		.AddComponent(pm => new SummonComponent(PawnTemplates.SewerRat, 1, 0, 1, 3)));
 
 	public static Spell Register(string id, Spell spell) {
 		spell.SetId(id);

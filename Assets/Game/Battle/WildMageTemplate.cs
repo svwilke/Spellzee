@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WildMageTemplate : PawnTemplate {
 
-	public WildMageTemplate(string name) : base(name) {
+	public WildMageTemplate(string name, int baseHp, PawnProgression progression) : base(name, baseHp, progression) {
 
 	}
 
@@ -12,6 +12,7 @@ public class WildMageTemplate : PawnTemplate {
 		Pawn player = new Pawn(lobbyPlayer.charName, maxHp, Pawn.Team.Friendly);
 		player.SetId(lobbyPlayer.id);
 		player.SetSprite(GetId());
+		player.SetProgression(progression);
 		int[] affinityCounts = new int[Element.Count];
 		Spell[] spellsToLearn = REX.Choice(Spells.GetCastableSpells(), 4);
 		for(int i = 0; i < spellsToLearn.Length; i++) {

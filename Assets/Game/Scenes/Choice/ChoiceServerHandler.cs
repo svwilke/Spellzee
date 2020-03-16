@@ -28,14 +28,6 @@ public class ChoiceServerHandler : EncounterServerHandler {
 		pawns[pawnId].SpellSlotCount.AddModifier(new AttributeModifier("Level " + level, AttributeModifier.Operation.AddBase, 1));
 		ReadyPlayer(pawnId);
 	}
-	/*
-	public void OpenVendor() {
-		for(int i = 0; i < pawns.Length; i++) {
-			GameMsg.MsgPawn openVendorMsg = new GameMsg.MsgPawn() { pawn = pawns[i] };
-			NetworkServer.SendToClient(i, GameMsg.OpenVendor, openVendorMsg);
-		}
-		game.OpenServerHandler(new VendorServerHandler(game, pawns));
-	}*/
 
 	public override void Open() {
 		base.Open();

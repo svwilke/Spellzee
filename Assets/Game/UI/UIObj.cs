@@ -12,6 +12,8 @@ public abstract class UIObj {
 		Enabled, Hovered, Pressed, Disabled
 	}
 
+    public Screen.Layer layer = Screen.Layer.Background;
+
 	public State currentState = State.Enabled;
 
 	public Vector2i pos;
@@ -25,6 +27,12 @@ public abstract class UIObj {
 
     protected UnityEvent onClick = new UnityEvent();
 	protected bool hasOnClick = false;
+
+    private bool isMuted = false;
+
+    public void Mute() {
+        isMuted = true;
+    }
 
 	public virtual bool IsInBounds(Vector2i pos) {
 		return pos.x >= this.pos.x && pos.y >= this.pos.y && pos.x <= this.pos.x + size.x && pos.y <= this.pos.y + size.y;
@@ -56,10 +64,11 @@ public abstract class UIObj {
 	}
 
 	public virtual void OnClick() {
-        if(onClick != null && hasOnClick)
-        {
+        if(onClick != null && hasOnClick) {
             onClick.Invoke();
-            Game.PlaySound(Game.AUDIO_BUTTON);
+            if(!isMuted) {
+                Game.PlaySound(Game.AUDIO_BUTTON);
+            }
         }
     }
 

@@ -39,14 +39,18 @@ public class MessageBox : UIObj {
 
 	public void AddButton(string text, System.Action onClick) {
 		int measure = RB.PrintMeasure(text).width + 8;
+
+		TextButton button = new TextButton(new Vector2i(0, 0), text);
+
 		if(totalButtonWidth > 0) {
 			totalButtonWidth += 4;
 		} else {
+			button.SetKeybind(KeyCode.Return);
 			size += new Vector2i(0, 20);
 			UpdatePos();
 		}
 		totalButtonWidth += measure;
-		TextButton button = new TextButton(new Vector2i(0, 0), text);
+		
 		buttons.Add(button);
 		button.SetOnClick(onClick);
 		int x = pos.x + size.width / 2 - totalButtonWidth / 2;

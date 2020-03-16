@@ -81,12 +81,13 @@ public class BattleScreen : Screen {
 		int rollsW = size.width / 5 * 3;
 		int rollsMinX = size.width - 102 - rollsW;
 		int y = size.height - 62 - 44;
-		AddUIObj(rollButton = new ImageButton(new Vector2i(rollsMinX + 1, y + 22), RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
+		AddUIObj(rollButton = new ImageButton(new Vector2i(rollsMinX + 1, y + 22), Game.SPRITEPACK_BATTLE, RB.PackedSpriteGet("RollButton", Game.SPRITEPACK_BATTLE), RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		rollButton.SetOnClick(() => {
 			if(battle.rollsLeft > 0) {
 				Game.client.Send(GameMsg.Roll, new EmptyMessage());
 			}
 		});
+		rollButton.Mute();
 		rollButton.SetKeybind(KeyCode.Space);
 		AddUIObj(passButton = new TextButton(new Vector2i(rollsMinX - 32, y + 22), "Pass", RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER));
 		passButton.SetOnClick(() => {
@@ -160,7 +161,7 @@ public class BattleScreen : Screen {
 			Vector2i pos = new Vector2i(4 + + off + 92 * x, 4 + 40 * y);
 			AddUIObj(ppc = new PawnCard(pos, new Vector2i(90, 38), pawn, battle));
 			pawnCards.Add(pawn, ppc);
-			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(3, 14), viewSprite));
+			AddUIObj(viewPawnImages[i] = new Image(pos + new Vector2i(3, 14), Game.SPRITEPACK_BATTLE, viewSprite));
 			viewPawnImages[i].SetAlpha(180);
 			if(i > 0) viewPawnImages[i].isVisible = false;
 			int spellTabId = i;

@@ -84,14 +84,22 @@ public class BattleServerHandler : EncounterServerHandler {
 		}
 	}
 
-
 	private void OnPawnDied(Battle b, Pawn pawn) {
 		Pawn actualPawn = battle.GetPawn(pawn.GetId());
 		if(actualPawn.HasEquipped(Equipments.HeadOfTheHydra)) {
-			actualPawn.CmdHeal(new EventBus.DamageHealEvent(pawn.MaxHp / 2 - pawn.CurrentHp));
+			actualPawn.CmdHeal(new EventBus.DamageHealEvent((int)pawn.MaxHp.GetValue() / 2 - pawn.CurrentHp));
 			actualPawn.CmdRevive();
 			actualPawn.Unequip(Equipments.HeadOfTheHydra);
 			return;
+		}
+
+		if(!actualPawn.IsMinion() && actualPawn.team == Pawn.Team.Hostile && !(actualPawn.GetAI() is PassAI)) {
+			foreach(Pawn p in battle.GetPawns(Pawn.Team.Friendly)) {
+				if(!p.IsMinion()) {
+					p.AddXP(actualPawn.GetXPGain() + actualPawn.Level);
+					p.Synchronize();
+				}
+			}
 		}
 
 		bool allAlliesDead = battle.AreAllDead(Pawn.Team.Friendly);
@@ -147,24 +155,6 @@ public class BattleServerHandler : EncounterServerHandler {
 			battle.NextTurn();
 		}
 	}
-
-	/*public void OpenChoice(int level) {
-		Pawn[] playerFriendlies = battle.GetPawns(Pawn.Team.Friendly).Where(pawn => !pawn.HasAI()).ToArray();
-		for(int i = 0; i < playerFriendlies.Length; i++) {
-			GameMsg.MsgPawn openChoiceMsg = new GameMsg.MsgPawn() { pawn = playerFriendlies[i] };
-			NetworkServer.SendToClient(playerFriendlies[i].GetId(), GameMsg.OpenChoice, openChoiceMsg);
-		}
-		game.OpenServerHandler(new ChoiceServerHandler(game, playerFriendlies, level));
-	}
-
-	public void OpenVendor() {
-		Pawn[] playerFriendlies = battle.GetPawns(Pawn.Team.Friendly).Where(pawn => !pawn.HasAI()).ToArray();
-		for(int i = 0; i < playerFriendlies.Length; i++) {
-			GameMsg.MsgPawn openVendorMsg = new GameMsg.MsgPawn() { pawn = playerFriendlies[i] };
-			NetworkServer.SendToClient(playerFriendlies[i].GetId(), GameMsg.OpenVendor, openVendorMsg);
-		}
-		game.OpenServerHandler(new VendorServerHandler(game, playerFriendlies));
-	}*/
 
 	public override void Close() {
 		base.Close();

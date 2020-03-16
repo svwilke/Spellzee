@@ -91,6 +91,8 @@ public class Attribute {
 	}
 
 	public void Serialize(NetworkWriter writer) {
+		writer.Write(hasDefaultBase);
+		writer.Write(defaultBase);
 		writer.Write(Size);
 		foreach(HashSet<AttributeModifier> mods in modifiers.Values) {
 			foreach(AttributeModifier mod in mods) {
@@ -101,6 +103,8 @@ public class Attribute {
 
 	public void Deserialize(NetworkReader reader) {
 		Clear();
+		hasDefaultBase = reader.ReadBoolean();
+		defaultBase = reader.ReadDouble();
 		int count = reader.ReadInt32();
 		for(int i = 0; i < count; i++) {
 			AttributeModifier mod = AttributeModifier.DeserializeNew(reader);

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public abstract class Screen {
 
+	public enum Layer {
+		Background, Foreground
+	}
+
 	protected Vector2i size;
 	protected Game game;
 	protected List<UIObj> uiObjs;
@@ -53,11 +57,17 @@ public abstract class Screen {
 
 		RenderBackground();
 		foreach(UIObj uiObj in uiObjs) {
-			if(uiObj.isVisible) {
+			if(uiObj.isVisible && uiObj.layer == Layer.Background) {
 				uiObj.Render();
 			}
 		}
 		RenderForeground();
+		foreach(UIObj uiObj in uiObjs) {
+			if(uiObj.isVisible && uiObj.layer == Layer.Foreground) {
+				uiObj.Render();
+			}
+		}
+		RenderTop();
 		if(currentMsgBox != null) {
 			RB.AlphaSet(120);
 			RB.DrawRectFill(new Rect2i(0, 0, size.width, size.height), Color.black);
@@ -89,6 +99,10 @@ public abstract class Screen {
 
 	public virtual void RenderForeground() {
 		
+	}
+
+	public virtual void RenderTop() {
+
 	}
 
 	private void RenderTooltip(Rect2i rect, string text) {

@@ -125,7 +125,7 @@ public class VendorScreen : Screen
 			AddUIObj(sellButtons[i]);
 			int x = i;
 			if(i > 0) {
-				ImageButton up = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 7 + i * 32), RB.PackedSpriteGet("ButtonUp", Game.SPRITEPACK_BATTLE));
+				ImageButton up = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 7 + i * 32), Game.SPRITEPACK_BATTLE, RB.PackedSpriteGet("ButtonUp", Game.SPRITEPACK_BATTLE));
 				swapButtons.Add(up);
 				AddUIObj(up);
 				up.SetOnClick(() => {
@@ -136,7 +136,7 @@ public class VendorScreen : Screen
 				});
 			}
 			if(i < sellButtons.Length - 1) {
-				ImageButton down = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 19 + i * 32), RB.PackedSpriteGet("ButtonDown", Game.SPRITEPACK_BATTLE));
+				ImageButton down = new ImageButton(new Vector2i(3 * (size.width / 4) + 50, yStart + 19 + i * 32), Game.SPRITEPACK_BATTLE, RB.PackedSpriteGet("ButtonDown", Game.SPRITEPACK_BATTLE));
 				swapButtons.Add(down);
 				AddUIObj(down);
 				down.SetOnClick(() => {

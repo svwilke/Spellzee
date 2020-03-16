@@ -222,7 +222,7 @@ public class Battle {
 		b.Deserialize(reader);
 		return b;
 	}
-
+	/*
 	public static Battle Clone(Battle other) {
 		Battle clone = new Battle();
 		clone.pawns = new Pawn[MaxPawnCount];
@@ -240,4 +240,5 @@ public class Battle {
 		}
 		return clone;
 	}
+	*/
 }

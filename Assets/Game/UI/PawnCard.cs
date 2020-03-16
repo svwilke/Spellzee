@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PawnCard : UIObj
 {
+	private static Color XPBarBackground = new Color(64F / 255F, 64F / 255F, 64F / 255F);
+	private static Color XPBarForeground = Color.cyan;
+
 	private Battle battle;
 	public Pawn pawn;
 
@@ -57,8 +60,13 @@ public class PawnCard : UIObj
 		} else {
 			RB.DrawSprite(pawn.GetSprite(), imageRect.Expand(-1));
 		}
+
+		Rect2i levelRect = new Rect2i(imageRect.x, imageRect.y + imageRect.height - 1, new Vector2i(imageRect.width, size.height - 22 - 4));
+		RB.Print(levelRect, Color.black, RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, "Lv.");
+		RB.Print(levelRect, Color.black, RB.ALIGN_H_RIGHT | RB.ALIGN_V_CENTER, (1 + pawn.Level).ToString());
+
 		int ailY = pos.y + size.height - 11;
-		int ailX = pos.x + 5;
+		int ailX = pos.x + 8 + imageRect.width;
 		List<Status> statuses = pawn.GetStatuses();
 		foreach(Status s in statuses) {
 			ailX += s.Render(ailX, ailY);
@@ -69,10 +77,15 @@ public class PawnCard : UIObj
 		Rect2i healthBar = new Rect2i(hpX + off, pos.y + 16 + off, size.x - 6 - (hpX - pos.x), hpSize.y + 2);
 		RB.Print(new Vector2i(hpX - hpSize.x + off, pos.y + 17 + off), Color.black, "HP:");
 		RB.DrawRectFill(healthBar, Color.red);
-		int fill = (int)(healthBar.width * ((float)pawn.CurrentHp / (float)pawn.MaxHp));
+		int fill = (int)(healthBar.width * (pawn.CurrentHp / (float)pawn.GetMaxHp()));
 		RB.DrawRectFill(new Rect2i(healthBar.x, healthBar.y, fill, healthBar.height), pawn.IsAlive() ? Color.green : Color.gray);
-		RB.Print(healthBar, Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, pawn.CurrentHp + "/" + pawn.MaxHp);
+		RB.Print(healthBar, Color.white, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, pawn.CurrentHp + "/" + pawn.GetMaxHp());
 		RB.DrawRect(healthBar.Expand(1), Color.black);
+
+		RB.DrawLine(new Vector2i(healthBar.x, healthBar.y + healthBar.height), new Vector2i(healthBar.x + healthBar.width - 1, healthBar.y + healthBar.height), XPBarBackground);
+		if(pawn.XPProgress > 0) {
+			RB.DrawLine(new Vector2i(healthBar.x, healthBar.y + healthBar.height), new Vector2i(healthBar.x + (healthBar.width - 1) * pawn.XPProgress, healthBar.y + healthBar.height), XPBarForeground);
+		}
 	}
 
 	private StatusBox statusDescriptionBox;
@@ -80,6 +93,7 @@ public class PawnCard : UIObj
 		List<Status> statuses = pawn.GetStatuses().Where(status => status.GetDescription() != null && status.GetDescription().Length > 0).ToList();
 		if(statuses.Count > 0) {
 			statusDescriptionBox = new StatusBox(new Vector2i(pos.x, pos.y + size.height), (size.width - 1) * 2, statuses);
+			statusDescriptionBox.layer = Screen.Layer.Foreground;
 			screen.AddUIObj(statusDescriptionBox);
 		}
 	}

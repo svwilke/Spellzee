@@ -13,7 +13,7 @@ public abstract class AIModule {
 	public abstract bool DoTurn(ServerBattle battle);
 
 	protected List<Spell> GetPossibleSpells(RollContext context) {
-		return pawn.GetKnownSpellIds().Select(Spells.Get).Where(spell => spell.Matches(context)).ToList();
+		return pawn.GetKnownSpellIds().Select(Spells.Get).Where(spell => spell.Matches(context) && spell.IsCastable(context)).ToList();
 	}
 
 	protected void CastSpell(ServerBattle battle, Spell spell, SpellComponent.TargetGroup targetGroup = SpellComponent.TargetGroup.Any) {

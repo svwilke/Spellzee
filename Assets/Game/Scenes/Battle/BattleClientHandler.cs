@@ -24,8 +24,6 @@ public class BattleClientHandler : EncounterClientHandler {
 		AddHandler(GameMsg.UpdatePawn, OnPawnUpdate);
 		AddHandler(GameMsg.UpdateAilment, OnAilmentUpdate);
 		AddHandler(GameMsg.SetupTurn, OnSetupTurn);
-		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
-		AddHandler(GameMsg.OpenChoice, OnOpenChoice);
 		AddHandler(GameMsg.EndGame, OnEndGame);
 		AddHandler(GameMsg.Miss, OnMiss);
 		AddHandler(GameMsg.ShowMessage, OnShowMessage);
@@ -44,7 +42,10 @@ public class BattleClientHandler : EncounterClientHandler {
 		GameMsg.MsgIntegerArray setup = msg.ReadMessage<GameMsg.MsgIntegerArray>();
 		battle.SetDieCount(setup.array[0]);
 		battle.SetRollCount(setup.array[1]);
-		(game.GetOpenScreen() as BattleScreen).UpdateDieButtons();
+		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		if(screen != null) {
+			screen.UpdateDieButtons();
+		}
 	}
 
 	public void OnShowMessage(NetworkMessage msg) {
@@ -55,17 +56,21 @@ public class BattleClientHandler : EncounterClientHandler {
 	}
 
 	public void OnRoll(NetworkMessage msg) {
-		BattleScreen screen = (game.GetOpenScreen() as BattleScreen);
-		Battle b = screen.battle;
 		int[] rollIds = msg.ReadMessage<GameMsg.MsgIntegerArray>().array;
 		Element[] rolls = new Element[rollIds.Length];
 		for(int i = 0; i < rollIds.Length; i++) {
 			rolls[i] = Element.All[rollIds[i]];
 		}
-		b.rollsLeft -= 1;
-		b.rolls = rolls;
-		//RB.SoundPlay(Game.AUDIO_ROLL, Game.volume);
-		screen.UpdateContext();
+		battle.rollsLeft -= 1;
+		battle.rolls = rolls;
+		for(int i = 0; i < battle.rolls.Length; i++) {
+			int rollSoundIndex = Game.AUDIO_ROLL_MIN + Random.Range(0, Game.AUDIO_ROLL_COUNT);
+			Game.PlaySound(rollSoundIndex);
+		}
+		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		if(screen != null) {
+			screen.UpdateContext();
+		}
 	}
 
 	public void OnDieLockToggle(NetworkMessage msg) {
@@ -95,15 +100,13 @@ public class BattleClientHandler : EncounterClientHandler {
 	}
 
 	public void OnCastSpell(NetworkMessage msg) {
-		BattleScreen screen = (game.GetOpenScreen() as BattleScreen);
-		Battle b = screen.battle;
-		Pawn caster = b.GetCurrentPawn();
+		Pawn caster = battle.GetCurrentPawn();
 		GameMsg.MsgCastSpell actualMsg = msg.ReadMessage<GameMsg.MsgCastSpell>();
 		Pawn target = null;
 		if(actualMsg.targetId >= 0) {
-			target = b.GetPawn(actualMsg.targetId);
+			target = battle.GetPawn(actualMsg.targetId);
 		}
-		EventBus.CastSpellPre.Invoke(b, caster, target, actualMsg.spellId);
+		EventBus.CastSpellPre.Invoke(battle, caster, target, actualMsg.spellId);
 	}
 
 	public void OnCastSpellEnd(NetworkMessage msg) {
@@ -116,9 +119,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	}
 
 	public void OnPass(NetworkMessage msg) {
-		BattleScreen screen = (game.GetOpenScreen() as BattleScreen);
-		Battle b = screen.battle;
-		b.log.Add(b.GetCurrentPawn().GetName() + " passes...");
+		battle.log.Add(battle.GetCurrentPawn().GetName() + " passes...");
 	}
 	
 	public void OnPawnUpdate(NetworkMessage msg) {
@@ -168,10 +169,10 @@ public class BattleClientHandler : EncounterClientHandler {
 			battle.locks[i] = false;
 		}
 		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
-		//if(battle.currentTurn < battle.allies.Length) {
+		if(screen != null) {
 			screen.ViewSpellTab(battle.currentTurn);
-		//}
-		screen.UpdateContext();
+			screen.UpdateContext();
+		}
 	}
 
 	public void OnMiss(NetworkMessage msg) {
@@ -184,29 +185,8 @@ public class BattleClientHandler : EncounterClientHandler {
 		MessageBox msgBox = new MessageBox(msg.ReadMessage<StringMessage>().value);
 		msgBox.AddButton("Continue", () => {
 			Game.client.Send(GameMsg.Ready, new EmptyMessage());
-			msgBox.SetText("Waiting for other players...");
-		});
-		game.GetOpenScreen().ShowMessageBox(msgBox);
-	}
-
-	public void OnOpenChoice(NetworkMessage msg) {
-		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
-		ChoiceScreen screen = new ChoiceScreen(game, RB.DisplaySize, pawn);
-		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
-		game.OpenClientHandler(new ChoiceClientHandler(game, pawn, screen));
-		msgBox.AddButton("Continue", () => {
-			game.OpenScreen(screen);
-		});
-		game.GetOpenScreen().ShowMessageBox(msgBox);
-	}
-
-	public void OnOpenVendor(NetworkMessage msg) {
-		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
-		VendorScreen screen = new VendorScreen(game, RB.DisplaySize, pawn);
-		MessageBox msgBox = new MessageBox("Congratulations! This area is cleared");
-		game.OpenClientHandler(new VendorClientHandler(game, pawn, screen));
-		msgBox.AddButton("Continue", () => {
-			game.OpenScreen(screen);
+			MessageBox waitMsgBox = new MessageBox("Waiting for other players...");
+			game.GetOpenScreen().ShowMessageBox(waitMsgBox);
 		});
 		game.GetOpenScreen().ShowMessageBox(msgBox);
 	}

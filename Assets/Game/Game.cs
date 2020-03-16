@@ -37,11 +37,13 @@ public class Game : RB.IRetroBlitGame
 
 	public const int SPRITEPACK_BATTLE = 0;
 	public const int SPRITEPACK_UI = 1;
+	public const int SPRITEPACK_ENVIRONMENT = 2;
 
 	public const int AUDIO_BUTTON = 0;
-	public const int AUDIO_ROLL = 1;
-	public const int AUDIO_HURT = 2;
-	public const int AUDIO_HEAL = 3;
+	public const int AUDIO_ROLL_MIN = 1;
+	public const int AUDIO_ROLL_COUNT = 3;
+	public const int AUDIO_HURT = 4;
+	public const int AUDIO_HEAL = 5;
 
 	private List<UIObj> uiObjs = new List<UIObj>();
 
@@ -55,10 +57,13 @@ public class Game : RB.IRetroBlitGame
 		RB.EffectSet(RB.Effect.Desaturation, 0.5F);
 		
 		RB.SpriteSheetSetup(SPRITEPACK_BATTLE, "Sprites/Battle", new Vector2i(12, 12));
+		RB.SpriteSheetSetup(SPRITEPACK_ENVIRONMENT, "Sprites/Environment", new Vector2i(212, 82));
 		RB.SpriteSheetSet(SPRITEPACK_BATTLE);
 
 		RB.SoundSetup(AUDIO_BUTTON, "Audio/Select");
-		RB.SoundSetup(AUDIO_ROLL, "Audio/Roll");
+		for(int i = 0; i < AUDIO_ROLL_COUNT; i++) {
+			RB.SoundSetup(AUDIO_ROLL_MIN + i, "Audio/Roll" + (i + 1));
+		}
 		RB.SoundSetup(AUDIO_HURT, "Audio/Hurt");
 		RB.SoundSetup(AUDIO_HEAL, "Audio/Heal");
 
@@ -92,7 +97,17 @@ public class Game : RB.IRetroBlitGame
 	public void Update() {
 		mousePos = RB.PointerPos();
 		if(currentScreen != null) {
-			currentScreen.Update(message.Length == 0);
+			bool openedSettings = false;
+			if(!(currentScreen is MainScreen || currentScreen is SettingsScreen)) {
+				if(RB.KeyPressed(KeyCode.Escape)) {
+					PlaySound(AUDIO_BUTTON);
+					OpenScreen(new SettingsScreen(this, RB.DisplaySize, currentScreen));
+					openedSettings = true;
+				}
+			}
+			if(!openedSettings) {
+				currentScreen.Update(message.Length == 0);
+			}
 		}
 		if(message.Length > 0) {
 			if(RB.ButtonPressed(RB.BTN_POINTER_A)) {
@@ -180,10 +195,8 @@ public class Game : RB.IRetroBlitGame
 	}
 
 	public void EnterDungeon(Dungeon dungeon, List<Pawn> players) {
-		if(currentDungeon == null) {
-			currentDungeon = dungeon;
-			dungeon.EnterDungeon(this, players);
-		}
+		currentDungeon = dungeon;
+		dungeon.EnterDungeon(this, players);
 	}
 
 	public Dungeon GetCurrentDungeon() {
@@ -191,22 +204,52 @@ public class Game : RB.IRetroBlitGame
 	}
 
 	public void StartGame(LobbyClientHandler.LobbyPlayer[] lobbyPlayers) {
-		Dungeon d = new Dungeon(new Encounter[] {
+		/*Dungeon d = new Dungeon(new Encounter[] {
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Wizard.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
+			}),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Pixie.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
+			}),
 			new BattleEncounter(new Pawn[] {
 				PawnTemplates.Cutpurse.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
 			}),
-			new VendorEncounter(),
 			new BattleEncounter(new Pawn[] {
 				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile),
 				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
 			}),
-			new ChoiceEncounter()
-		});
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Golem.Create(lobbyPlayers.Length, 0, Pawn.Team.Hostile)
+			}),
+			new ChoiceEncounter(),
+			new VendorEncounter(),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Pixie.Create(lobbyPlayers.Length, 1, Pawn.Team.Hostile)
+			}),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Cutpurse.Create(lobbyPlayers.Length, 1, Pawn.Team.Hostile)
+			}),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 1, Pawn.Team.Hostile),
+				PawnTemplates.FieryBat.Create(lobbyPlayers.Length, 1, Pawn.Team.Hostile)
+			}),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Golem.Create(lobbyPlayers.Length, 1, Pawn.Team.Hostile)
+			}),
+			new ChoiceEncounter(),
+			new VendorEncounter(),
+			new ChoiceEncounter(),
+			new VendorEncounter(),
+			new BattleEncounter(new Pawn[] {
+				PawnTemplates.Golem.Create(lobbyPlayers.Length, 10, Pawn.Team.Hostile)
+			})
+		});*/
 		List<Pawn> players = new List<Pawn>();
 		for(int i = 0; i < lobbyPlayers.Length; i++) {
 			players.Add(Pawn.CreatePlayer(lobbyPlayers[i]));
 		}
-		EnterDungeon(d, players);
+		OpenServerHandler(new WorldServerHandler(this, players));
+		//EnterDungeon(d, players);
 	}
 
 	public void CancelConnection() {

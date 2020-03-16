@@ -5,7 +5,7 @@ using UnityEngine;
 public class ImageButton : Image
 {
 
-	public ImageButton(Vector2i pos, PackedSprite sprite, int align = RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER) : base(pos, sprite, align) {
+	public ImageButton(Vector2i pos, int sheet, PackedSprite sprite, int align = RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER) : base(pos, sheet, sprite, align) {
 
 	}
 

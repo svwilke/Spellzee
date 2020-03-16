@@ -23,7 +23,7 @@ public class LobbyClientHandler : ClientHandler
 		AddHandler(GameMsg.PlayerLobbyList, OnLobbyList);
 		AddHandler(GameMsg.PlayerLobbyUpdate, OnLobbyPlayerUpdate);
 		AddHandler(MsgType.Disconnect, OnDisconnect);
-		AddHandler(GameMsg.StartBattle, OnBattleStart);
+		AddHandler(GameMsg.OpenWorld, OnOpenWorld);
 	}
 
 	public void OnDisconnect(NetworkMessage msg) {
@@ -72,6 +72,12 @@ public class LobbyClientHandler : ClientHandler
 		Battle battle = msg.ReadMessage<GameMsg.MsgStartBattle>().battle;
 		game.OpenScreen(new BattleScreen(game, RB.DisplaySize, battle));
 		game.OpenClientHandler(new BattleClientHandler(game, battle));
+	}
+
+	public void OnOpenWorld(NetworkMessage msg) {
+		WorldScreen screen = new WorldScreen(game, RB.DisplaySize);
+		game.OpenScreen(screen);
+		game.OpenClientHandler(new WorldClientHandler(game, screen));
 	}
 
 	public LobbyPlayer GetLobbyPlayer(int id) {
