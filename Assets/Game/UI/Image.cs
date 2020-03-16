@@ -12,6 +12,8 @@ public class Image : UIObj
 
 	protected bool hasOutline = false;
 	protected Color outlineColor;
+	protected bool hasBackground = false;
+	protected Color backgroundColor;
 
 	private Vector2i originalPos;
 
@@ -27,6 +29,11 @@ public class Image : UIObj
 	public void SetOutline(Color color) {
 		hasOutline = true;
 		outlineColor = color;
+	}
+
+	public void SetBackground(Color color) {
+		hasBackground = true;
+		backgroundColor = color;
 	}
 
 	public void SetAlpha(byte alpha) {
@@ -47,16 +54,20 @@ public class Image : UIObj
 		if(!isVisible || sprite == null) {
 			return;
 		}
+		if(hasBackground) {
+			RB.DrawRectFill(new Rect2i(pos, size), backgroundColor);
+		}
 		if(hasOutline) {
 			RB.DrawRect(new Rect2i(pos, size).Expand(1), outlineColor);
 		}
 		RB.AlphaSet(alpha);
+		Color oldTint = RB.TintColorGet();
 		RB.TintColorSet(tintColor);
-		int prev = RB.SpriteSheetGet();
+		int oldSheet = RB.SpriteSheetGet();
 		RB.SpriteSheetSet(sheet);
 		RB.DrawSprite(sprite, pos);
-		RB.SpriteSheetSet(prev);
-		RB.TintColorSet(Color.white);
+		RB.SpriteSheetSet(oldSheet);
+		RB.TintColorSet(oldTint);
 		RB.AlphaSet(255);
 	}
 }

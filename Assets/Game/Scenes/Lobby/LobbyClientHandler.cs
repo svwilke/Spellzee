@@ -68,14 +68,9 @@ public class LobbyClientHandler : ClientHandler
 		lobbyPlayers[client] = readyPlayer;
 	}
 
-	public void OnBattleStart(NetworkMessage msg) {
-		Battle battle = msg.ReadMessage<GameMsg.MsgStartBattle>().battle;
-		game.OpenScreen(new BattleScreen(game, RB.DisplaySize, battle));
-		game.OpenClientHandler(new BattleClientHandler(game, battle));
-	}
-
 	public void OnOpenWorld(NetworkMessage msg) {
-		WorldScreen screen = new WorldScreen(game, RB.DisplaySize);
+		GameMsg.MsgDungeonList dungeonListMsg = msg.ReadMessage<GameMsg.MsgDungeonList>();
+		WorldScreen screen = new WorldScreen(game, RB.DisplaySize, dungeonListMsg.dungeonPaths);
 		game.OpenScreen(screen);
 		game.OpenClientHandler(new WorldClientHandler(game, screen));
 	}

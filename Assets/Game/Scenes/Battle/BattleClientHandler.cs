@@ -7,10 +7,12 @@ using UnityEngine.Networking.NetworkSystem;
 public class BattleClientHandler : EncounterClientHandler {
 
 	private Battle battle;
+	private BattleScreen screen;
 
-	public BattleClientHandler(Game game, Battle battle) : base(game) {
+	public BattleClientHandler(Game game, Battle battle, BattleScreen screen) : base(game) {
 		this.game = game;
 		this.battle = battle;
+		this.screen = screen;
 		AddHandler(GameMsg.StartBattle, OnBattleStart);
 		AddHandler(GameMsg.Roll, OnRoll);
 		AddHandler(GameMsg.ToggleDieLock, OnDieLockToggle);
@@ -31,18 +33,27 @@ public class BattleClientHandler : EncounterClientHandler {
 		AddHandler(GameMsg.RemovePawn, OnPawnRemove);
 	}
 
+	private BattleScreen GetScreen() {
+		BattleScreen scr = screen.GetActualScreen();
+		if(scr != screen) {
+			screen = scr;
+		}
+		return screen;
+	}
+
 	public void OnBattleStart(NetworkMessage msg) {
 		Battle battle = msg.ReadMessage<GameMsg.MsgStartBattle>().battle;
 		// way to start battle on server needed TODO
-		game.OpenScreen(new BattleScreen(game, RB.DisplaySize, battle));
-		game.OpenClientHandler(new BattleClientHandler(game, battle));
+		BattleScreen screen = new BattleScreen(game, RB.DisplaySize, battle);
+		game.OpenScreen(screen);
+		game.OpenClientHandler(new BattleClientHandler(game, battle, screen));
 	}
 
 	public void OnSetupTurn(NetworkMessage msg) {
 		GameMsg.MsgIntegerArray setup = msg.ReadMessage<GameMsg.MsgIntegerArray>();
 		battle.SetDieCount(setup.array[0]);
 		battle.SetRollCount(setup.array[1]);
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			screen.UpdateDieButtons();
 		}
@@ -67,7 +78,7 @@ public class BattleClientHandler : EncounterClientHandler {
 			int rollSoundIndex = Game.AUDIO_ROLL_MIN + Random.Range(0, Game.AUDIO_ROLL_COUNT);
 			Game.PlaySound(rollSoundIndex);
 		}
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			screen.UpdateContext();
 		}
@@ -128,7 +139,7 @@ public class BattleClientHandler : EncounterClientHandler {
 		Pawn oldPawn = battle.GetPawn(newPawn.GetId());
 		EventBus.PawnUpdate.Invoke(battle, newPawn);
 		battle.SetPawn(newPawn.GetId(), newPawn);
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			if(screen.spellPane.GetOpenTabIndex() == newPawn.GetId()) {
 				screen.ViewSpellTab(newPawn.GetId());
@@ -140,7 +151,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	public void OnPawnAdd(NetworkMessage msg) {
 		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
 		battle.AddPawn(pawnMsg.pawn);
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			screen.Rebuild();
 		}
@@ -149,7 +160,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	public void OnPawnRemove(NetworkMessage msg) {
 		GameMsg.MsgPawn pawnMsg = msg.ReadMessage<GameMsg.MsgPawn>();
 		battle.RemovePawn(pawnMsg.pawn);
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			screen.Rebuild();
 		}
@@ -168,7 +179,7 @@ public class BattleClientHandler : EncounterClientHandler {
 			battle.rolls[i] = Element.None;
 			battle.locks[i] = false;
 		}
-		BattleScreen screen = game.GetOpenScreen() as BattleScreen;
+		BattleScreen screen = GetScreen();
 		if(screen != null) {
 			screen.ViewSpellTab(battle.currentTurn);
 			screen.UpdateContext();

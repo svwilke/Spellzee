@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
@@ -16,7 +16,10 @@ public class WorldClientHandler : ClientHandler {
 	}
 
 	public void OnEnterDungeon(NetworkMessage msg) {
-		game.OpenClientHandler(new DungeonClientHandler(game));
+		string[] array = msg.ReadMessage<GameMsg.MsgStringArray>().array;
+		DungeonTemplate template = DungeonTemplates.Get(array[0]);
+		string[] path = array.Skip(1).ToArray();
+		game.OpenClientHandler(new DungeonClientHandler(game, template, path, 0));
 	}
 
 	public void OnShowDungeon(NetworkMessage msg) {

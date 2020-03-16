@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +11,9 @@ public abstract class Screen {
 	protected Vector2i size;
 	protected Game game;
 	protected List<UIObj> uiObjs;
+
+	private bool isConstructed = false;
+
 	private UIObj mousePressedOn = null;
 	private UIObj focusedObj = null;
 	private HashSet<UIObj> objUnderMouse = new HashSet<UIObj>();
@@ -21,20 +24,34 @@ public abstract class Screen {
 	private HashSet<UIObj> delayedObjAdd = new HashSet<UIObj>();
 	private HashSet<UIObj> delayedObjRemove = new HashSet<UIObj>();
 
+	private Dictionary<KeyCode, Action> keybindings = new Dictionary<KeyCode, Action>();
+
 	public Screen(Game game, Vector2i size) {
-		this.game = game;
-		this.size = size;
-		uiObjs = new List<UIObj>();
-		OnConstruct();
+		if(!isConstructed) {
+			this.game = game;
+			this.size = size;
+
+			uiObjs = new List<UIObj>();
+			OnConstruct();
+			isConstructed = true;
+		}
+	}
+
+	public void AddKeybinding(KeyCode keyCode, Action action) {
+		keybindings.Add(keyCode, action);
+	}
+
+	public void RemoveKeybinding(KeyCode keyCode) {
+		keybindings.Remove(keyCode);
 	}
 
 	public void AddUIObj(UIObj obj) {
-		obj.screen = this;
+		obj.OnAddedToScreen(this);
 		delayedObjAdd.Add(obj);
 	}
 
 	public void RemoveUIObj(UIObj obj) {
-		obj.screen = null;
+		obj.OnRemovedFromScreen(this);
 		delayedObjRemove.Add(obj);
 		
 	}
@@ -75,7 +92,7 @@ public abstract class Screen {
 			currentMsgBox.Render();
 		}
 		if(tooltip.Length > 0) {
-			Vector2i tooltipSize = RB.PrintMeasure(tooltip) + new Vector2i(6, 6);
+			Vector2i tooltipSize = RB.PrintMeasure(tooltip) + new Vector2i(4, 6);
 			Vector2i topRightPos = RB.PointerPos() - new Vector2i(0, tooltipSize.y);
 			if(topRightPos.y >= 0) {
 				if(topRightPos.x + tooltipSize.width < RB.DisplaySize.width) {
@@ -112,6 +129,11 @@ public abstract class Screen {
 	}
 
 	public virtual void Update(bool hasFocus = true) {
+		foreach(KeyValuePair<KeyCode, Action> kvp in keybindings) {
+			if(RB.KeyPressed(kvp.Key)) {
+				kvp.Value.Invoke();
+			}
+		}
 		Vector2i mousePos = RB.PointerPos() + new Vector2i(0, 1); // + 0, 1 is workaround for weird hovering behaviour?!
 		UIObj on = null;
 		List<UIObj> objsNoLongerUnderMouse = new List<UIObj>();

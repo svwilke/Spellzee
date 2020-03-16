@@ -57,6 +57,7 @@ public class Game : RB.IRetroBlitGame
 		RB.EffectSet(RB.Effect.Desaturation, 0.5F);
 		
 		RB.SpriteSheetSetup(SPRITEPACK_BATTLE, "Sprites/Battle", new Vector2i(12, 12));
+		RB.SpriteSheetSetup(SPRITEPACK_UI, "Sprites/UI", new Vector2i(10, 10));
 		RB.SpriteSheetSetup(SPRITEPACK_ENVIRONMENT, "Sprites/Environment", new Vector2i(212, 82));
 		RB.SpriteSheetSet(SPRITEPACK_BATTLE);
 
@@ -97,17 +98,7 @@ public class Game : RB.IRetroBlitGame
 	public void Update() {
 		mousePos = RB.PointerPos();
 		if(currentScreen != null) {
-			bool openedSettings = false;
-			if(!(currentScreen is MainScreen || currentScreen is SettingsScreen)) {
-				if(RB.KeyPressed(KeyCode.Escape)) {
-					PlaySound(AUDIO_BUTTON);
-					OpenScreen(new SettingsScreen(this, RB.DisplaySize, currentScreen));
-					openedSettings = true;
-				}
-			}
-			if(!openedSettings) {
-				currentScreen.Update(message.Length == 0);
-			}
+			currentScreen.Update(message.Length == 0);
 		}
 		if(message.Length > 0) {
 			if(RB.ButtonPressed(RB.BTN_POINTER_A)) {

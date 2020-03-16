@@ -46,14 +46,34 @@ public class BattleScreen : Screen {
 	private Dictionary<int, int> pawnIdToIndex;
 	private Dictionary<int, int> pawnIndexToId;
 
+	private BattleScreen newScreen;
+
 	public BattleScreen(Game game, Vector2i size, Battle battle) : base(game, size) {
 		this.battle = battle;
 		CreateBattleButtons();
 		UpdateContext();
+
+		AddKeybinding(KeyCode.Escape, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new SettingsScreen(game, RB.DisplaySize, this));
+		});
+		AddKeybinding(KeyCode.I, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new DungeonInfoScreen(game, RB.DisplaySize, this));
+		});
+	}
+
+	public BattleScreen GetActualScreen() {
+		if(newScreen == null) {
+			return this;
+		} else {
+			return newScreen.GetActualScreen();
+		}
 	}
 
 	public void Rebuild() {
-		game.OpenScreen(new BattleScreen(game, size, battle));
+		newScreen = new BattleScreen(game, size, battle);
+		game.OpenScreen(newScreen);
 	}
 
 	public void OnPawnDamage(Battle battle, Pawn pawn, int damage) {

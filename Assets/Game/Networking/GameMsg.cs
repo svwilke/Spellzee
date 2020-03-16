@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Sirenix.Serialization;
 using UnityEngine.Networking;
 
 public class GameMsg {
@@ -121,5 +121,17 @@ public class GameMsg {
 	public class MsgCastSpell : MessageBase {
 		public string spellId;
 		public int targetId = -1;
+	}
+
+	public class MsgDungeonList : MessageBase {
+		public List<string[]> dungeonPaths;
+
+		public override void Serialize(NetworkWriter writer) {
+			writer.WriteBytesFull(SerializationUtility.SerializeValue(dungeonPaths, DataFormat.Binary));
+		}
+
+		public override void Deserialize(NetworkReader reader) {
+			dungeonPaths = SerializationUtility.DeserializeValue<List<string[]>>(reader.ReadBytesAndSize(), DataFormat.Binary);
+		}
 	}
 }

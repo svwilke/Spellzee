@@ -29,6 +29,11 @@ public class LobbyScreen : Screen {
 			playerCardPos[i] = desiredPlayerCardPos[i] = size.x / 2;
 		}
 		this.lobby = lobby;
+
+		AddKeybinding(KeyCode.Escape, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new SettingsScreen(game, RB.DisplaySize, this));
+		});
 	}
 
 	public override void OnConstruct() {

@@ -27,6 +27,15 @@ public class VendorScreen : Screen
 		sellButtons = new VendorButton[0];
 		UpdateSell(pawn.GetKnownSpellIds());
 		vendorText.SetText(vendorText.GetText() + "\n\nYou can currently know @FFFFFF" + pawn.SpellSlotCount.GetValue() + "@- spells.");
+
+		AddKeybinding(KeyCode.Escape, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new SettingsScreen(game, RB.DisplaySize, this));
+		});
+		AddKeybinding(KeyCode.I, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new DungeonInfoScreen(game, RB.DisplaySize, this));
+		});
 	}
 
 	public override void OnConstruct() {

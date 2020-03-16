@@ -21,6 +21,15 @@ public class ChoiceScreen : Screen {
 	public ChoiceScreen(Game game, Vector2i size, Pawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		waitForPlayersMsg = new MessageBox("Waiting for other players...");
+
+		AddKeybinding(KeyCode.Escape, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new SettingsScreen(game, RB.DisplaySize, this));
+		});
+		AddKeybinding(KeyCode.I, () => {
+			Game.PlaySound(Game.AUDIO_BUTTON);
+			game.OpenScreen(new DungeonInfoScreen(game, RB.DisplaySize, this));
+		});
 	}
 
 	public void EnableItemBuy() {

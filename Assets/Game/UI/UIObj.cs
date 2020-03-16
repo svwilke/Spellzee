@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public abstract class UIObj {
 
-	public Screen screen;
+	protected Screen screen;
     private KeyCode keyBind = KeyCode.None;
 
 	public enum State {
@@ -39,6 +39,14 @@ public abstract class UIObj {
 	}
 
 	public abstract void Render();
+
+    public virtual void OnAddedToScreen(Screen screen) {
+        this.screen = screen;
+    }
+
+    public virtual void OnRemovedFromScreen(Screen screen) {
+        this.screen = null;
+    }
 
     public void AddOnClick(System.Action action)
     {

@@ -10,6 +10,10 @@ public class BattleEncounter : Encounter {
 		this.enemies = enemies.ToList();
 	}
 
+	public List<Pawn> GetEnemies() {
+		return new List<Pawn>(enemies);
+	}
+
 	protected override void OnEncounterBegin() {
 		ServerBattle battle = new ServerBattle(game);
 		foreach(Pawn p in players) {

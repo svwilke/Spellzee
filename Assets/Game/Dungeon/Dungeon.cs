@@ -13,6 +13,10 @@ public class Dungeon {
 		this.encounters = encounters.ToList();
 	}
 
+	public List<Encounter> GetEncounters() {
+		return new List<Encounter>(encounters);
+	}
+
 	public void EnterDungeon(Game game, List<Pawn> players) {
 		this.players = players;
 		this.game = game;

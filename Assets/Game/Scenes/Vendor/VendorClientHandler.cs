@@ -13,16 +13,9 @@ public class VendorClientHandler : EncounterClientHandler {
 		this.game = game;
 		this.pawn = pawn;
 		this.screen = screen;
-		AddHandler(GameMsg.StartBattle, OnBattleStart);
 		AddHandler(GameMsg.ShopList, OnShopList);
 		AddHandler(GameMsg.BuySpell, OnBuySpell);
 		AddHandler(GameMsg.DropSpell, OnDropSpell);
-	}
-
-	public void OnBattleStart(NetworkMessage msg) {
-		Battle battle = msg.ReadMessage<GameMsg.MsgStartBattle>().battle;
-		game.OpenScreen(new BattleScreen(game, RB.DisplaySize, battle));
-		game.OpenClientHandler(new BattleClientHandler(game, battle));
 	}
 
 	public void OnShopList(NetworkMessage msg) {
