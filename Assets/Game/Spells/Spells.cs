@@ -134,8 +134,8 @@ public class Spells {
 	public static Spell Reflection = Register("reflection", new Spell("Reflection", "Your next spell is cast twice.", new SimplePattern(Element.Water, 3))
 		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Caster, "The next spell is cast twice.", () => new DoubleSpellStatus())));
 
-	public static Spell HealingHeat = Register("healing_heat", new Spell("Healing Heat", "Restore life to you equal to the Burn on the target.", new SimplePattern(Element.Fire, Element.Fire, Element.Earth))
-		.AddComponent(pm => new TargetComponent(SpellComponent.TargetType.Target, "Restore life equal to Burn."))
+	public static Spell HealingHeat = Register("healing_heat", new Spell("Healing Heat", "Restore life to you equal to Burn on the target.", new SimplePattern(Element.Fire, Element.Fire, Element.Earth))
+		.AddComponent(pm => new TargetComponent(SpellComponent.TargetType.Target, "Restore life to you equal to Burn."))
 		.AddComponent(pm => {
 			Pawn target = pm.GetContext().GetTarget();
 			int heal = 0;
@@ -183,7 +183,7 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Enemies, 1))
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));
 	public static Spell LeadThePack = Register("lead_the_pack", new Spell("Lead the Pack", "Summon a Level 1 Sewer Rat.", new SimplePattern(Element.Physical, 2))
-		.AddComponent(pm => new SummonComponent(PawnTemplates.SewerRat, 1, 0, 1, 3)));
+		.AddComponent(pm => new SummonComponent(PawnTemplates.SewerRat, 1, 0, 1)));
 
 	public static Spell Register(string id, Spell spell) {
 		spell.SetId(id);

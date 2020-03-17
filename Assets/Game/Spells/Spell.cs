@@ -41,14 +41,14 @@ public class Spell : RegistryEntry<Spell> {
 		foreach(SpellComponent component in componentList) {
 			string compDesc = component.GetDescription(this, context);
 			if(compDesc != null && compDesc.Length > 0) {
-				if(requiresTarget && component.GetTargetType() == SpellComponent.TargetType.Target) {
+				//if(requiresTarget && component.GetTargetType() == SpellComponent.TargetType.Target) {
 					shortDesc += compDesc;
-					shortDesc += " ";
-				} else
+					shortDesc += "\n";
+				/*} else
 				if(!requiresTarget) {
 					shortDesc += compDesc;
-					shortDesc += " ";
-				}
+					shortDesc += "\n";
+				}*/
 			}
 		}
 		return shortDesc.Trim();
