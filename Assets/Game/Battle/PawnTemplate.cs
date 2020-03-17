@@ -11,6 +11,10 @@ public class PawnTemplate : RegistryEntry<PawnTemplate> {
 	protected PawnProgression progression;
 	protected int xpGain = 1;
 
+	public PawnTemplate(string name, int baseHp) : this(name, baseHp, PawnProgressions.GenericEnemy) {
+
+	}
+
 	public PawnTemplate(string name, int baseHp, PawnProgression progression) {
 		maxHp = baseHp;
 		className = name;
@@ -90,7 +94,6 @@ public class PawnTemplate : RegistryEntry<PawnTemplate> {
 		for(int i = 0; i < player.Affinities.Length; i++) {
 			player.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));
 		}
-		player.Equip(Equipments.HeadOfTheHydra);
 		return player;
 	}
 }
