@@ -165,7 +165,29 @@ public class Spells {
 		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 4)));
 	public static Spell Kindle = Register("kindle", new Spell("Kindle", "Deal 1-3 damage.", new SimplePattern(Element.Fire, 2))
 		.AddComponent(pm => new RandomDamageComponent(SpellComponent.TargetType.Target, 1, 3)));
-
+	public static Spell Puncture = Register("puncture", new Spell("Puncture", "Deal 2 damage to a random enemy 2 times.", new SimplePattern(Element.Dark, 3))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Random, 2).SetTargetGroup(SpellComponent.TargetGroup.Enemy))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Random, 2).SetTargetGroup(SpellComponent.TargetGroup.Enemy)));
+	public static Spell Restore = Register("restore", new Spell("Restore", "Restore 4 life.", new SimplePattern(Element.Water, 3))
+		.AddComponent(pm => new HealComponent(SpellComponent.TargetType.Target, 4)));
+	public static Spell TrustyCompanion = Register("trusty_companion", new Spell("Trusty Companion", "Summon a Wolf with level equal to yours.", new SimplePattern(Element.Earth, 4))
+		.AddComponent(pm => new SummonComponent(PawnTemplates.Wolf, 1, pm.GetContext().GetCaster().Level, 1)));
+	public static Spell StoneWall = Register("stone_wall", new Spell("Stone Wall", "Apply 3 Protect to all allies.", new SimplePattern(Element.Earth, 4))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Allies, intensity => new ProtectStatus(intensity), 3)));
+	public static Spell RagingWinds = Register("raging_winds", new Spell("Raging Winds", "Deal 1 damage. Increase this spell's damage by 2 until the end of the dungeon.", new SimplePattern(Element.Air, 3))
+		.AddComponent(pm => new DamageComponent(SpellComponent.TargetType.Target, 1 + pm.GetContext().GetCaster().GetSpellData(Spells.RagingWinds).GetInt(DataKey.CastCount)))
+		.AddComponent(pm => new CustomComponent(SpellComponent.TargetType.None, (spell, ctx) => {
+			SpellData sd = ctx.GetCaster().GetSpellData(spell);
+			sd.SetInt(DataKey.CastCount, sd.GetInt(DataKey.CastCount) + 1);
+			ctx.GetCaster().Synchronize();
+		}, (spell, ctx) => "")));
+	public static Spell Thunderstorm = Register("thunderstorm", new Spell("Thunderstorm", "Deal 2 damage, or 2 damage to all enemies with an additional Water and Air.", new OptionalPattern(Element.Water, Element.Air).SetOptional(Element.Water, Element.Air))
+		.AddComponent(pm => new DamageComponent((pm as OptionalPattern).OptionalFulfilled() ? SpellComponent.TargetType.Enemies : SpellComponent.TargetType.Target, 2)));
+	public static Spell Enlighten = Register("enlighten", new Spell("Enlighten", "Give a target +1 Die for their next turn.", new SimplePattern(Element.Light, 3))
+		.AddComponent(pm => new StatusComponent(SpellComponent.TargetType.Target, "+1 Die for one turn.",
+		() => new CustomDurationStatus(Status.StatusType.Positive, 1,
+		pawn => pawn.DieCount.AddModifier(new AttributeModifier("enlighten", AttributeModifier.Operation.AddBase, 1)),
+		pawn => pawn.DieCount.RemoveModifier("enlighten")))));
 
 	// Enemy Spells
 
@@ -184,6 +206,10 @@ public class Spells {
 		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Enemies, intensity => new ShockStatus(intensity), 1)));
 	public static Spell LeadThePack = Register("lead_the_pack", new Spell("Lead the Pack", "Summon a Level 1 Sewer Rat.", new SimplePattern(Element.Physical, 2))
 		.AddComponent(pm => new SummonComponent(PawnTemplates.SewerRat, 1, 0, 1)));
+	public static Spell Stare = Register("stare", new Spell("Stare", "Apply 1 Shock.", new SimplePattern(Element.Dark, 3))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Target, intensity => new ShockStatus(intensity), 1)));
+	public static Spell Harden = Register("harden", new Spell("Harden", "Apply 2 Protect to yourself.", new SimplePattern(Element.Earth, Element.Physical))
+		.AddComponent(pm => new AilmentComponent(SpellComponent.TargetType.Caster, intensity => new ProtectStatus(intensity), 2)));
 
 	public static Spell Register(string id, Spell spell) {
 		spell.SetId(id);

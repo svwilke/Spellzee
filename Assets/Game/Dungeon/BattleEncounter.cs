@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 public class BattleEncounter : Encounter {
 
 	protected List<Pawn> enemies;
+	protected ServerBattle battle;
 
 	public BattleEncounter(IEnumerable<Pawn> enemies) {
 		this.enemies = enemies.ToList();
@@ -16,10 +17,14 @@ public class BattleEncounter : Encounter {
 
 	protected override void OnEncounterBegin() {
 		ServerBattle battle = new ServerBattle(game);
+		this.battle = battle;
 		foreach(Pawn p in players) {
 			battle.AddPawn(p);
 		}
 		foreach(Pawn p in enemies) {
+			battle.AddPawn(p);
+		}
+		foreach(Pawn p in allies) {
 			battle.AddPawn(p);
 		}
 		NetworkServer.SendToAll(GameMsg.StartBattle, new GameMsg.MsgStartBattle() { battle = battle });
@@ -27,6 +32,7 @@ public class BattleEncounter : Encounter {
 	}
 
 	protected override void OnEncounterEnd() {
-		
+		allies.Clear();
+		allies.AddRange(battle.GetPawns(Pawn.Team.Friendly).Where(p => p.HasAI()));
 	}
 }

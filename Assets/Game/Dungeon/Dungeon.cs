@@ -8,6 +8,7 @@ public class Dungeon {
 	private List<Encounter> encounters = new List<Encounter>();
 	private int progress = -1;
 	private List<Pawn> players;
+	private List<Pawn> allies;
 
 	public Dungeon(IEnumerable<Encounter> encounters) {
 		this.encounters = encounters.ToList();
@@ -20,6 +21,7 @@ public class Dungeon {
 	public void EnterDungeon(Game game, List<Pawn> players) {
 		this.players = players;
 		this.game = game;
+		this.allies = new List<Pawn>();
 		progress = -1;
 		NextEncounter();
 	}
@@ -33,7 +35,7 @@ public class Dungeon {
 			ExitDungeon();
 		} else {
 			progress += 1;
-			GetCurrentEncounter().Begin(game, players);
+			GetCurrentEncounter().Begin(game, players, allies);
 		}
 	}
 

@@ -10,7 +10,8 @@ public class PawnTemplates {
 	public static PawnTemplate Sorcerer = Register("sorcerer", new PawnTemplate("Sorcerer", 16, PawnProgressions.Sorcerer).AddSpells(Spells.Gust, Spells.Root, Spells.HolyLight, Spells.Flash));
 	public static PawnTemplate Mage = Register("mage", new WildMageTemplate("Mage", 16, PawnProgressions.Mage));
 	public static PawnTemplate Druid = Register("druid", new PawnTemplate("Druid", 18, PawnProgressions.Druid).AddSpells(Spells.Whirlwind, Spells.ThrowStone, Spells.MendingHerbs, Spells.Revitalize));
-	
+	public static PawnTemplate Warlock = Register("warlock", new PawnTemplate("Warlock", 16, PawnProgressions.Warlock).AddSpells(Spells.Puncture, Spells.AquaticBlast, Spells.Restore, Spells.StoneWall));
+
 	public static PawnTemplate Dummy = Register("dummy", new PawnTemplate("Dummy", 10).ZeroAffinites().SetAffinity(Element.None, 10).AddSpells(Spells.Fireball));
 	
 	public static PawnTemplate Sloth = Register("sloth", new PawnTemplate("Sloth", 4).ZeroAffinites().SetAffinity(Element.Physical, 6).SetAffinity(Element.None, 54).AddSpells(Spells.Bite));
@@ -20,11 +21,12 @@ public class PawnTemplates {
 	public static PawnTemplate Wolf = Register("wolf", new PawnTemplate("Wolf", 6).ZeroAffinites().SetAffinity(Element.Physical, 30).SetAffinity(Element.None, 30).AddSpells(Spells.Claw));
 	public static PawnTemplate Cutpurse = Register("cutpurse", new PawnTemplate("Cutpursh", 8).ZeroAffinites().SetAffinity(Element.Physical, 30).SetAffinity(Element.None, 30).AddSpells(Spells.Slice).SetXPGain(2));
 
-	public static PawnTemplate MasterThief = Register("master_thief", new PawnTemplate("Master Thief", 10).ZeroAffinites().SetAffinity(Element.Physical, 30).SetAffinity(Element.None, 30).AddSpells(Spells.Slice).SetXPGain(3));
+	public static PawnTemplate MasterThief = Register("master_thief", new PawnTemplate("Master Thief", 10).ZeroAffinites().SetAffinity(Element.Physical, 40).SetAffinity(Element.None, 20).AddSpells(Spells.Slice).SetXPGain(3));
 	public static PawnTemplate Golem = Register("golem", new PawnTemplate("Golem", 10).ZeroAffinites().SetAffinity(Element.Physical, 30).SetAffinity(Element.None, 30).AddSpells(Spells.Stomp).SetXPGain(3));
 	public static PawnTemplate RatKing = Register("rat_king", new PawnTemplate("Rat King", 14).ZeroAffinites().SetAffinity(Element.Earth, 20).SetAffinity(Element.Water, 20).SetAffinity(Element.Physical, 20).AddSpells(Spells.Root, Spells.AquaticBlast, Spells.LeadThePack).SetXPGain(3));
 
-	public static PawnTemplate ScarySpider = Register("scary_spider", new PawnTemplate("Scary Spider", 8, PawnProgressions.GenericEnemy).AddSpells(Spells.Whirlwind, Spells.Revitalize));
+	public static PawnTemplate ScarySpider = Register("scary_spider", new PawnTemplate("Scary Spider", 6).ZeroAffinites().SetAffinity(Element.Dark, 20).SetAffinity(Element.Physical, 20).SetAffinity(Element.None, 20).AddSpells(Spells.Stare, Spells.DrainLife, Spells.Bite));
+	public static PawnTemplate RockyHorror = Register("rocky_horror", new PawnTemplate("Rocky Horror", 8).ZeroAffinites().SetAffinity(Element.Earth, 24).SetAffinity(Element.Physical, 16).SetAffinity(Element.None, 20).AddSpells(Spells.ThrowStone, Spells.Earthquake, Spells.Bash, Spells.Harden));
 
 	public static PawnTemplate Rasputin = Register("rasputin", new PawnTemplate("Rasputin", 9, PawnProgressions.GenericEnemy).ZeroAffinites().SetAffinity(Element.Physical, 20).SetAffinity(Element.None, 30).SetAffinity(Element.Dark, 10).AddSpells(Spells.Cuteness, Spells.ConsumingDarkness, Spells.Claw));
 	
@@ -39,6 +41,6 @@ public class PawnTemplates {
 	}
 
 	public static PawnTemplate[] GetPlayableClasses() {
-		return new PawnTemplate[] { Wizard, Sorcerer, Mage, Druid };
+		return new PawnTemplate[] { Wizard, Sorcerer, Mage, Druid, Warlock };
 	}
 }

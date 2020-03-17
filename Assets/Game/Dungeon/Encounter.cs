@@ -7,10 +7,12 @@ public abstract class Encounter {
 
 	protected Game game;
 	protected List<Pawn> players;
+	protected List<Pawn> allies;
 
-	public void Begin(Game game, List<Pawn> players) {
+	public void Begin(Game game, List<Pawn> players, List<Pawn> allies) {
 		this.game = game;
 		this.players = players;
+		this.allies = allies;
 		OnEncounterBegin();
 	}
 

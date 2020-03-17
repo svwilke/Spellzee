@@ -118,6 +118,6 @@
 		int count = (int)summonCount.GetValue();
 		int level = (int)summonLevel.GetValue();
 		string number = count == 0 ? "no" : count == 1 ? "a" : count.ToString();
-		return "Summon " + number + " Level " + level + " " + pawnTemplate.GetName() + ".";
+		return "Summon " + number + " level " + (level + 1) + " " + pawnTemplate.GetName() + ".";
 	}
 }

@@ -290,6 +290,7 @@ public class Pawn {
 	public void FullRestore() {
 		CurrentHp = GetMaxHp();
 		RemoveAllStatuses();
+		spellData.Clear();
 	}
 
 	public void Die() {

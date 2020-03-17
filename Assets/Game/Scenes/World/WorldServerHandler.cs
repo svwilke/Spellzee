@@ -33,7 +33,7 @@ public class WorldServerHandler : ServerHandler {
 				Encounter e = encounters[i];
 				if(e is BattleEncounter) {
 					BattleEncounter battle = e as BattleEncounter;
-					bool isBoss = battle.GetEnemies().Any(pawn => pawn.GetName().Equals("Golem") || pawn.GetName().Equals("Rat King"));
+					bool isBoss = battle.GetEnemies().Any(pawn => pawn.GetName().Equals("Golem") || pawn.GetName().Equals("Rat King") || pawn.GetName().Equals("Master Thief"));
 					path[i] = isBoss ? "boss" : "battle";
 				} else
 				if(e is VendorEncounter || e is ChoiceEncounter) {

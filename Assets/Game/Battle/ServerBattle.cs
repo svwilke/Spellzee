@@ -63,6 +63,9 @@ public class ServerBattle : Battle
 	}
 
 	public void NextTurn() {
+		if(AreAllDead(Pawn.Team.Friendly) || AreAllDead(Pawn.Team.Hostile)) {
+			return;
+		}
 
 		GetCurrentPawn().OnEndTurn.Invoke(this, GetCurrentPawn());
 		
