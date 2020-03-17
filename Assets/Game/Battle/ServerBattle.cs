@@ -18,6 +18,50 @@ public class ServerBattle : Battle
 		//NetworkServer.SendToAll()
 	}
 
+	public void ToggleLock(int dieIndex, int clientIndex = -1) {
+		bool newLockState = !locks[dieIndex];
+		if(newLockState) {
+			int currentlyLocked = 0;
+			for(int i = 0; i < locks.Length; i++) {
+				if(locks[dieIndex]) {
+					currentlyLocked++;
+				}
+			}
+			int possibleLocks = (int)GetCurrentPawn().LockCount.GetValue(locks.Length);
+			if(currentlyLocked >= possibleLocks) {
+				if(clientIndex > -1) {
+					string dieText = "more than @FFFFFF" + possibleLocks + ((possibleLocks == 1) ? " die" : " dice");
+					if(possibleLocks == 0) {
+						dieText = "any dice";
+					}
+					NetworkServer.SendToClient(clientIndex, GameMsg.ShowMessage, new StringMessage("You can't lock " + dieText + " at the moment."));
+				}
+				return;
+			}
+		}
+		locks[dieIndex] = !locks[dieIndex];
+		NetworkServer.SendToAll(GameMsg.ToggleDieLock, new IntegerMessage(dieIndex));
+	}
+
+	public void Roll() {
+		Pawn pawn = GetCurrentPawn();
+		int[] rolls = new int[this.rolls.Length];
+		double[] weights = new double[pawn.Affinities.Length];
+		for(int i = 0; i < weights.Length; i++) {
+			weights[i] = pawn.GetAffinity(i);
+		}
+		for(int i = 0; i < rolls.Length; i++) {
+			if(locks[i]) {
+				rolls[i] = this.rolls[i].GetId();
+			} else {
+				rolls[i] = Element.All[REX.Weighted(weights)].GetId();
+			}
+			this.rolls[i] = Element.All[rolls[i]];
+		}
+		rollsLeft -= 1;
+		NetworkServer.SendToAll(GameMsg.Roll, new GameMsg.MsgIntegerArray() { array = rolls });
+	}
+
 	public void NextTurn() {
 
 		GetCurrentPawn().OnEndTurn.Invoke(this, GetCurrentPawn());

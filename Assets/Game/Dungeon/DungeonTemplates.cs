@@ -34,6 +34,7 @@ public class DungeonTemplates {
 		.AddEncounter((players) => new BattleEncounter(new Pawn[] { PawnTemplates.RatKing.Create(players.Count, players.Select(p => p.Level).Min(), Pawn.Team.Hostile) })));
 
 	public static DungeonTemplate Cave = Register("cave", new DungeonTemplate("Cavern", "Not many adventurers make it out alive.")
+		.AddEncounter((players) => new BattleEncounter(new Pawn[] { PawnTemplates.ScarySpider.Create(players.Count, 0, Pawn.Team.Hostile) }))
 		.AddEncounter((players) => new BattleEncounter(new Pawn[] { PawnTemplates.Golem.Create(players.Count, 2, Pawn.Team.Hostile) }))
 		.AddEncounter((players) => new VendorEncounter())
 		.AddEncounter((players) => new BattleEncounter(new Pawn[] { PawnTemplates.Golem.Create(players.Count, 2, Pawn.Team.Hostile) }))

@@ -44,7 +44,7 @@ public class OptionalPattern : SimplePattern {
 
 	private bool OptionalFulfilled(RollContext context) {
 		foreach(KeyValuePair<Element, int> elemCount in elementCountsOptional) {
-			if(context.GetElementCount(elemCount.Key, false) < elemCount.Value) {
+			if(context.GetElementCount(elemCount.Key) < elemCount.Value) {
 				return false;
 			}
 		}

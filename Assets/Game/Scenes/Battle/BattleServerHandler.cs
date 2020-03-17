@@ -26,21 +26,7 @@ public class BattleServerHandler : EncounterServerHandler {
 			if(pawn.HasAI()) {
 				return;
 			}
-			int[] rolls = new int[battle.rolls.Length];
-			double[] weights = new double[pawn.Affinities.Length];
-			for(int i = 0; i < weights.Length; i++) {
-				weights[i] = pawn.GetAffinity(i);
-			}
-			for(int i = 0; i < rolls.Length; i++) {
-				if(battle.locks[i]) {
-					rolls[i] = battle.rolls[i].GetId();
-				} else {
-					rolls[i] = Element.All[REX.Weighted(weights)].GetId();
-				}
-				battle.rolls[i] = Element.All[rolls[i]];
-			}
-			battle.rollsLeft -= 1;
-			NetworkServer.SendToAll(GameMsg.Roll, new GameMsg.MsgIntegerArray() { array = rolls });
+			battle.Roll();
 		}
 	}
 
@@ -50,27 +36,7 @@ public class BattleServerHandler : EncounterServerHandler {
 				return;
 			}
 			IntegerMessage actualMsg = msg.ReadMessage<IntegerMessage>();
-			int die = actualMsg.value;
-			bool newLockState = !battle.locks[die];
-			if(newLockState) {
-				int currentlyLocked = 0;
-				for(int i = 0; i < battle.locks.Length; i++) {
-					if(battle.locks[die]) {
-						currentlyLocked++;
-					}
-				}
-				int possibleLocks = (int)battle.GetCurrentPawn().LockCount.GetValue(battle.locks.Length);
-				if(currentlyLocked >= possibleLocks) {
-					string dieText = "more than @FFFFFF" + possibleLocks + ((possibleLocks == 1) ? " die" : " dice");
-					if(possibleLocks == 0) {
-						dieText = "any dice";
-					}
-					NetworkServer.SendToClient(msg.conn.connectionId, GameMsg.ShowMessage, new StringMessage("You can't lock " + dieText + " at the moment."));
-					return;
-				}
-			}
-			battle.locks[die] = !battle.locks[die];
-			NetworkServer.SendToAll(GameMsg.ToggleDieLock, actualMsg);
+			battle.ToggleLock(actualMsg.value, msg.conn.connectionId);
 		}
 	}
 

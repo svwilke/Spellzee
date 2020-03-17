@@ -59,11 +59,14 @@ public class RollContext {
 		return elementsRolled;
 	}
 
-	public int GetElementCount(Element elem, bool countChaos) {
+	public int GetElementCount(Element elem, HashSet<int> indices = null, bool countChaos = false) {
 		int count = 0;
 		for(int i = 0; i < elementsRolled.Length; i++) {
 			if(elementsRolled[i] == elem || (countChaos && elementsRolled[i] == Element.Chaos)) {
 				count++;
+				if(indices != null) {
+					indices.Add(i);
+				}
 			}
 		}
 		return count;

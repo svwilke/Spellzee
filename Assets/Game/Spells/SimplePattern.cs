@@ -30,14 +30,16 @@ public class SimplePattern : PatternMatcher {
 	}
 
 	public override void Match(RollContext context) {
+		Reset();
 		rollContext = context;
-		foreach(KeyValuePair<Element, int> elemCount in elementCounts) {
-			if(context.GetElementCount(elemCount.Key, false) < elemCount.Value) {
-				doesMatch = false;
-				return;
-			}
-		}
 		doesMatch = true;
+		foreach(KeyValuePair<Element, int> elemCount in elementCounts) {
+			int ctxElemCount = context.GetElementCount(elemCount.Key, matchingDice);
+			if(ctxElemCount < elemCount.Value) {
+				doesMatch = false;
+			}
+			distance += Mathf.Max(0, elemCount.Value - ctxElemCount);
+		}
 	}
 
 	public override ElementDisplay[] GetElementDisplays() {

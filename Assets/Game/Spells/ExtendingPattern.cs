@@ -29,7 +29,7 @@ public class ExtendingPattern : SimplePattern {
 		if(elementCounts.ContainsKey(extensionElement)) {
 			extensionAmount -= elementCounts[extensionElement];
 		}
-		extensionAmount += context.GetElementCount(extensionElement, false);
+		extensionAmount += context.GetElementCount(extensionElement);
 		if(extensionAmount < 0) {
 			extensionAmount = 0;
 		}

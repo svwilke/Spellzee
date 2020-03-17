@@ -76,7 +76,7 @@ public class PawnTemplate : RegistryEntry<PawnTemplate> {
 		for(int i = 0; i < pawn.Affinities.Length; i++) {
 			pawn.Affinities[i].AddModifier(new AttributeModifier(GetName(), AttributeModifier.Operation.AddBase, affinityModifiers[i]));
 		}
-		pawn.SetAI(new SimpleAI(pawn));
+		pawn.SetAI(new LockingAI(pawn));
 		return pawn;
 	}
 

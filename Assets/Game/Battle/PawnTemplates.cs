@@ -22,6 +22,8 @@ public class PawnTemplates {
 	public static PawnTemplate Golem = Register("golem", new PawnTemplate("Golem", 10, PawnProgressions.GenericEnemy).ZeroAffinites().SetAffinity(Element.Physical, 15).SetAffinity(Element.None, 5).AddSpells(Spells.Stomp).SetXPGain(3));
 	public static PawnTemplate RatKing = Register("rat_king", new PawnTemplate("Rat King", 14, PawnProgressions.GenericEnemy).ZeroAffinites().SetAffinity(Element.Earth, 20).SetAffinity(Element.Water, 20).SetAffinity(Element.Physical, 20).AddSpells(Spells.Root, Spells.AquaticBlast, Spells.LeadThePack).SetXPGain(3));
 
+	public static PawnTemplate ScarySpider = Register("scary_spider", new PawnTemplate("Scary Spider", 8, PawnProgressions.GenericEnemy).AddSpells(Spells.Whirlwind, Spells.Revitalize));
+
 	public static PawnTemplate Rasputin = Register("rasputin", new PawnTemplate("Rasputin", 9, PawnProgressions.GenericEnemy).ZeroAffinites().SetAffinity(Element.Physical, 10).SetAffinity(Element.None, 15).SetAffinity(Element.Dark, 5).AddSpells(Spells.Cuteness, Spells.ConsumingDarkness, Spells.Claw));
 	
 	public static PawnTemplate Register(string id, PawnTemplate playerTemplate) {
