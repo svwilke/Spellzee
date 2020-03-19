@@ -112,7 +112,7 @@ public class Spells {
 		.AddComponent(pm => new DamageComponent(1))
 		.AddTarget(pm => new Target(TargetType.Caster))
 		.AddComponent(pm => new HealComponent(1)));
-	public static Spell Eclipse = Register("eclipse", new Spell("Eclipse", "Deal 2 damage to all enemies and restore 2 life to all allies.", new SimplePattern(Element.Dark, Element.Dark, Element.Light, Element.Light))
+	public static Spell Eclipse = Register("eclipse", new Spell("Eclipse", "Deal 2 damage to all enemies and restore 1 life to all allies.", new SimplePattern(Element.Dark, Element.Dark, Element.Light, Element.Light))
 		.AddTarget(pm => new Target(TargetType.Enemies))
 		.AddComponent(pm => new DamageComponent(2))
 		.AddTarget(pm => new Target(TargetType.Allies))
