@@ -116,7 +116,7 @@ public class Spells {
 		.AddTarget(pm => new Target(TargetType.Enemies))
 		.AddComponent(pm => new DamageComponent(2))
 		.AddTarget(pm => new Target(TargetType.Allies))
-		.AddComponent(pm => new HealComponent(2)));
+		.AddComponent(pm => new HealComponent(1)));
 	public static Spell Synthesis = Register("synthesis", new Spell("Synthesis", "Restore a target to full life and apply 2 Blind.", new SimplePattern(Element.Earth, Element.Earth, Element.Earth, Element.Light, Element.Light))
 		.AddTarget(pm => new Target(TargetType.Target))
 		.AddComponent(pm => new AilmentComponent(intensity => new BlindStatus(intensity), 2))
@@ -151,9 +151,9 @@ public class Spells {
 
 	public static Spell Ravnica = Register("ravnica", new Spell("Ravnica", "Summon Rasputin.", new SimplePattern(Element.Dark, 3))
 		.AddComponent(pm => new SummonComponent(PawnTemplates.Rasputin, 1, 0, 1)));
-	public static Spell LionsRoar = Register("lions_roar", new Spell("Lion's Roar", "You gain +2 Fire Affinity until the end of battle.", new SimplePattern(Element.Fire, 2))
+	public static Spell LionsRoar = Register("lions_roar", new Spell("Lion's Roar", "You gain +2 Fire Affinity until the end of the dungeon.", new SimplePattern(Element.Fire, 2))
 		.AddTarget(pm => new Target(TargetType.Caster))
-		.AddComponent(pm => new StatusComponent("+2 Fire Affinity until the end of battle.",
+		.AddComponent(pm => new StatusComponent("+2 Fire Affinity until the end of the dungeon.",
 		() => new CustomStatus(Status.StatusType.Positive,
 		pawn => pawn.Affinities[Element.Fire.GetId()].AddModifier(new AttributeModifier("lions_roar", AttributeModifier.Operation.AddBase, 2)),
 		pawn => pawn.Affinities[Element.Fire.GetId()].RemoveModifier("lions_roar")))));
