@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
+using UnityEngine;
 
 public class LockingAI : AIModule {
 
@@ -52,7 +54,8 @@ public class LockingAI : AIModule {
 			}
 		} else
 		if(castable.Count > 0) {
-			CastSpell(battle, REX.Choice(castable));
+			int[] weights = castable.Select(s => (int)Mathf.Pow(s.GetPattern().GetMatchingDiceIndices().Count, 4)).ToArray();
+			CastSpell(battle, REX.Weighted(weights, castable.ToArray()));
 			chosenSpell = null;
 			return false;
 		} else {
