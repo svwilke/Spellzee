@@ -189,7 +189,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	public void OnMiss(NetworkMessage msg) {
 		StringMessage actualMsg = msg.ReadMessage<StringMessage>();
 		Spell spell = Spells.Get(actualMsg.value);
-		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to cast " + spell.GetName() + " but misses...");
+		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to " + (spell.IsElement(battle.BuildContext(), Element.Physical) ? " use " : " cast ") + spell.GetName() + " but misses...");
 	}
 
 	public void OnEndBattle(NetworkMessage msg) {

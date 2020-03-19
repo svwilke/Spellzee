@@ -208,7 +208,7 @@ public class Spells {
 	public static Spell StoneWall = Register("stone_wall", new Spell("Stone Wall", "Apply 3 Protect to all allies.", new SimplePattern(Element.Earth, 4))
 		.AddTarget(pm => new Target(TargetType.Allies))
 		.AddComponent(pm => new AilmentComponent(intensity => new ProtectStatus(intensity), 3)));
-	public static Spell RagingWinds = Register("raging_winds", new Spell("Raging Winds", "Deal 1 damage. Increase this spell's damage by 2 until the end of the dungeon.", new SimplePattern(Element.Air, 3))
+	public static Spell RagingWinds = Register("raging_winds", new Spell("Raging Winds", "Deal 1 damage. Increase this spell's damage by 1 until the end of the dungeon.", new SimplePattern(Element.Air, 3))
 		.AddTarget(pm => new Target(TargetType.Target))
 		.AddComponent(pm => new DamageComponent(1 + pm.GetContext().GetCaster().GetSpellData(Spells.RagingWinds).GetInt(DataKey.CastCount)))
 		.AddTarget(pm => new Target(TargetType.None))

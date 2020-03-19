@@ -94,7 +94,7 @@ public class BattleScreen : Screen {
 		if(target != null) {
 			end = " on " + target.GetName() + end;
 		}
-		battle.log.Add(pawn.GetName() + " casts " + spell.GetName() + end);
+		battle.log.Add(pawn.GetName() + (spell.IsElement(battle.BuildContext(), Element.Physical) ? " uses " : " casts ") + spell.GetName() + end);
 	}
 
 	public override void OnConstruct() {
