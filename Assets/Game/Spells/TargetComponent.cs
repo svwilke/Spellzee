@@ -4,7 +4,7 @@ public class TargetComponent : SpellComponent {
 
 	private string desc;
 
-	public TargetComponent(TargetType targetType, string desc = "") : base(targetType) {
+	public TargetComponent(string desc = "") : base() {
 		this.desc = desc;
 	}
 

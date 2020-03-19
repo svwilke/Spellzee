@@ -10,14 +10,31 @@ public class Spell : RegistryEntry<Spell> {
 	private PatternMatcher pattern;
 	private List<Func<PatternMatcher, SpellComponent>> componentFactories;
 
+	private List<Func<PatternMatcher, Target>> targetFactories;
+	private int activeTargetIndex = -1;
+	private Dictionary<int, int> componentTargetMapping;
+
 	public Spell(string name, string description, PatternMatcher pattern) {
 		this.name = name;
 		this.desc = description;
 		this.pattern = pattern;
 		componentFactories = new List<Func<PatternMatcher, SpellComponent>>();
+		targetFactories = new List<Func<PatternMatcher, Target>>();
+		componentTargetMapping = new Dictionary<int, int>();
+	}
+
+	public Spell AddTarget(Func<PatternMatcher, Target> targetFactory) {
+		targetFactories.Add(targetFactory);
+		activeTargetIndex++;
+		return this;
+	}
+
+	public Target[] BuildTargets() {
+		return targetFactories.Select(tf => tf.Invoke(pattern)).ToArray();
 	}
 
 	public Spell AddComponent(Func<PatternMatcher, SpellComponent> componentFactory) {
+		componentTargetMapping.Add(componentFactories.Count, activeTargetIndex);
 		componentFactories.Add(componentFactory);
 		return this;
 	}
@@ -68,16 +85,37 @@ public class Spell : RegistryEntry<Spell> {
 	}
 
 	public bool DoesRequireTarget(RollContext context) {
-		return BuildComponentList(context).Any(sc => sc.GetTargetType() == SpellComponent.TargetType.Target);
+		Target[] targets;
+		BuildComponentList(context, out targets);
+		return targets.Any(target => target.GetTargetType() == TargetType.Target);
+		//return BuildComponentList(context).Any(sc => sc.GetTargetType() == TargetType.Target);
 	}
 
 	public bool IsValidTarget(Pawn pawn, RollContext context) {
-		return BuildComponentList(context).All(sc => sc.GetTargetType() != SpellComponent.TargetType.Target || sc.IsValidTarget(pawn, context));
+		Target[] targets;
+		BuildComponentList(context, out targets);
+		return targets.All(target => target.IsValidTarget(pawn, context));
+		//return BuildComponentList(context).All(sc => sc.GetTargetType() != TargetType.Target || sc.IsValidTarget(pawn, context));
 	}
 
 	public List<SpellComponent> BuildComponentList(RollContext context) {
+		Target[] targets;
+		return BuildComponentList(context, out targets);
+	}
+
+	public List<SpellComponent> BuildComponentList(RollContext context, out Target[] targets) {
 		pattern.Match(context);
+		targets = BuildTargets();
 		List<SpellComponent> componentList = componentFactories.Select(func => func.Invoke(pattern)).ToList();
+		for(int i = 0; i < componentList.Count; i++) {
+			int targetIndex = -1;
+			Target target = new Target(TargetType.None);
+			componentTargetMapping.TryGetValue(i, out targetIndex);
+			if(targetIndex >= 0 && targetIndex < targets.Length) {
+				target = targets[targetIndex];
+			}
+			componentList[i].SetTarget(target);
+		}
 		context.GetCaster().OnBuildSpellComponents.Invoke(this, context, componentList);
 		componentList.RemoveAll(component => !component.IsValid(this, context));
 		return componentList;
@@ -89,7 +127,11 @@ public class Spell : RegistryEntry<Spell> {
 	}
 
 	public void Cast(RollContext context) {
-		List<SpellComponent> components = BuildComponentList(context);
+		Target[] targets;
+		List<SpellComponent> components = BuildComponentList(context, out targets);
+		for(int i = 0; i < targets.Length; i++) {
+			targets[i].Resolve(context);
+		}
 		foreach(SpellComponent sc in components) {
 			sc.Execute(this, context);
 		}

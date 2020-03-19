@@ -16,7 +16,7 @@ public abstract class AIModule {
 		return pawn.GetKnownSpellIds().Select(Spells.Get).Where(spell => spell.Matches(context) && spell.IsCastable(context)).ToList();
 	}
 
-	protected void CastSpell(ServerBattle battle, Spell spell, SpellComponent.TargetGroup targetGroup = SpellComponent.TargetGroup.Any) {
+	protected void CastSpell(ServerBattle battle, Spell spell, TargetGroup targetGroup = TargetGroup.Any) {
 		string spellId = spell.GetId();
 		int targetId = -1;
 		RollContext context = battle.BuildContext();

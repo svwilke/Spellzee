@@ -20,8 +20,8 @@ public class ChaosGift : Equipment {
 
 	public void MakeTargetsRandom(Spell spell, RollContext context, List<SpellComponent> spellComponents) {
 		foreach(SpellComponent sc in spellComponents) {
-			if(sc.GetTargetType() == SpellComponent.TargetType.Target) {
-				sc.SetTargetType(SpellComponent.TargetType.Random);
+			if(sc.GetTargetType() == TargetType.Target) {
+				sc.SetTargetType(TargetType.Random);
 			}
 		}
 	}	

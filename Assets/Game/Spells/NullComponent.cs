@@ -2,7 +2,7 @@
 
 public class NullComponent : SpellComponent {
 
-	public NullComponent() : base(TargetType.None) {
+	public NullComponent() : base() {
 
 	}
 

@@ -3,7 +3,7 @@ public class AilmentComponent : IntSpellComponent {
 
 	protected Func<int, AilmentStatus> ailmentFactory;
 
-	public AilmentComponent(TargetType targetType, Func<int, AilmentStatus> ailmentFactory, double baseValue) : base(targetType, baseValue) {
+	public AilmentComponent(Func<int, AilmentStatus> ailmentFactory, double baseValue) : base(baseValue) {
 		this.ailmentFactory = ailmentFactory;
 	}
 
@@ -14,8 +14,9 @@ public class AilmentComponent : IntSpellComponent {
 	public override void Execute(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
 		int val = GetValue();
-		GetTargets(context).ForEach(pawn => {
-			AilmentComponent singleTarget = new AilmentComponent(targetType, ailmentFactory, val);
+		GetTargets().ForEach(pawn => {
+			AilmentComponent singleTarget = new AilmentComponent(ailmentFactory, val);
+			singleTarget.SetTarget(GetTarget());
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
 			AilmentStatus status = singleTarget.ailmentFactory.Invoke(singleTarget.GetValue());
 			pawn.CmdAddStatus(status);
@@ -25,7 +26,7 @@ public class AilmentComponent : IntSpellComponent {
 	public override string GetDescription(Spell spell, RollContext context) {
 		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Apply {0} {1}", GetValue(), ailmentFactory.Invoke(0).GetFullName());
-		desc += DescriptionHelper.GetDescriptionSuffix(targetType, targetGroup);
+		desc += DescriptionHelper.GetDescriptionSuffix(GetTargetType(), GetTargetGroup());
 		desc += ".";
 		return desc;
 	}

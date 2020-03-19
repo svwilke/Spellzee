@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+
 public class RandomDamageComponent : DamageComponent {
 
 	protected Attribute maxDamage;
 
-	public RandomDamageComponent(TargetType targetType, double minValue, double maxValue) : base(targetType, minValue) {
+	public RandomDamageComponent(double minValue, double maxValue) : base(minValue) {
 		maxDamage = new Attribute().SetBaseValue(maxValue);
 	}
 
@@ -22,7 +24,7 @@ public class RandomDamageComponent : DamageComponent {
 	}
 	
 	public int GetMinValue() {
-		return GetValue();
+		return Mathf.Max(0, GetValue());
 	}
 
 	public int GetMaxValue() {
@@ -30,16 +32,17 @@ public class RandomDamageComponent : DamageComponent {
 	}
 
 	public override bool IsValid(Spell spell, RollContext context) {
-		return !(GetMinValue() <= 0 && GetMaxValue() <= 0);
+		return !((GetMinValue() <= 0 && GetMaxValue() <= 0) || GetMaxValue() < GetMinValue());
 	}
 
 	public override void Execute(Spell spell, RollContext context) {
 		context.GetCaster().OnSpellComponentCaster.Invoke(spell, context, this);
 		int dmgMin = GetMinValue();
 		int dmgMax = GetMaxValue();
-		GetTargets(context).ForEach(pawn => {
+		GetTargets().ForEach(pawn => {
 			int dmg = UnityEngine.Random.Range(dmgMin, dmgMax + 1);
-			DamageComponent singleTarget = new DamageComponent(targetType, dmg);
+			DamageComponent singleTarget = new DamageComponent(dmg);
+			singleTarget.SetTarget(GetTarget());
 			pawn.OnSpellComponentTarget.Invoke(spell, context, singleTarget);
 			EventBus.DamageHealEvent damageEvent = new EventBus.DamageHealEvent(spell, singleTarget, singleTarget.GetValue());
 			pawn.CmdDamage(damageEvent);
@@ -49,7 +52,7 @@ public class RandomDamageComponent : DamageComponent {
 	public override string GetDescription(Spell spell, RollContext context) {
 		UpdateComponentForDescription(spell, context);
 		string desc = string.Format("Deal {0}-{1} damage", GetMinValue(), GetMaxValue());
-		desc += DescriptionHelper.GetDescriptionSuffix(targetType, targetGroup);
+		desc += DescriptionHelper.GetDescriptionSuffix(GetTargetType(), GetTargetGroup());
 		desc += ".";
 		return desc;
 	}

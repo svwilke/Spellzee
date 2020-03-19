@@ -227,6 +227,15 @@ public class Pawn {
 		return statusList;
 	}
 
+	public int GetAilmentValue(System.Type type) {
+		int value = 0;
+		AilmentStatus s = statusList.Find(status => status.GetType().IsAssignableFrom(type)) as AilmentStatus;
+		if(s != null) {
+			value = s.GetValue();
+		}
+		return value;
+	}
+
 	public int GetMaxHp() {
 		return (int)MaxHp.GetValue();
 	}

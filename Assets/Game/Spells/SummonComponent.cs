@@ -8,7 +8,7 @@
 	protected bool casterTeam;
 	protected int maxSummonCount;
 
-	public SummonComponent(PawnTemplate pawnTemplate, int baseCount, int baseLevel, int baseHpMulti, int maxSummon = 1, bool isMinion = true, bool casterTeam = true) : base(TargetType.None) {
+	public SummonComponent(PawnTemplate pawnTemplate, int baseCount, int baseLevel, int baseHpMulti, int maxSummon = 1, bool isMinion = true, bool casterTeam = true) : base() {
 		this.pawnTemplate = pawnTemplate;
 		summonCount = new Attribute().SetBaseValue(baseCount);
 		summonLevel = new Attribute().SetBaseValue(baseLevel);

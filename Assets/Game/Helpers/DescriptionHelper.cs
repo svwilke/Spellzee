@@ -5,6 +5,22 @@ using static SpellComponent;
 
 public static class DescriptionHelper {
 
+	public static string GetDescriptionPrefix(Target target) {
+		return GetDescriptionPrefix(target.GetTargetType(), target.GetTargetGroup());
+	}
+
+	public static string GetDescriptionSuffix(Target target) {
+		return GetDescriptionSuffix(target.GetTargetType(), target.GetTargetGroup());
+	}
+
+	public static string GetDescriptionInfix(Target target) {
+		return GetDescriptionInfix(target.GetTargetType(), target.GetTargetGroup());
+	}
+
+	public static string GetDescriptionOnfix(Target target) {
+		return GetDescriptionOnfix(target.GetTargetType(), target.GetTargetGroup());
+	}
+
 	public static string GetDescriptionPrefix(TargetType targetType, TargetGroup targetGroup) {
 		string prefix = "";
 		switch(targetType) {
@@ -43,6 +59,9 @@ public static class DescriptionHelper {
 						break;
 				}
 				prefix += ":";
+				break;
+			case TargetType.None:
+				prefix = "To noone: ";
 				break;
 		}
 		return prefix;
@@ -86,25 +105,99 @@ public static class DescriptionHelper {
 						break;
 				}
 				break;
-			/*case TargetType.Target:
+			case TargetType.None:
+				suffix += " to noone";
+				break;
+		}
+		return suffix;
+	}
+
+	public static string GetDescriptionInfix(TargetType targetType, TargetGroup targetGroup) {
+		string infix = "";
+		switch(targetType) {
+			case TargetType.Caster:
+				infix += " yourself";
+				break;
+			case TargetType.Allies:
+				infix += " all allies";
+				break;
+			case TargetType.Enemies:
+				infix += " all enemies";
+				break;
+			case TargetType.All:
+				infix += " everyone";
+				break;
+			case TargetType.Random:
+				infix += " a random ";
 				switch(targetGroup) {
+					case TargetGroup.Any:
+						infix += "target";
+						break;
 					case TargetGroup.AnyOther:
-						suffix += " to someone else";
+						infix += "target other than yourself";
 						break;
 					case TargetGroup.Ally:
-						suffix += " to an ally";
+						infix += "ally";
 						break;
 					case TargetGroup.AllyOther:
-						suffix += " to an ally other than yourself";
+						infix += "ally other than yourself";
 						break;
 					case TargetGroup.Enemy:
-						suffix += " to an enemy";
+						infix += "enemy";
 						break;
 					case TargetGroup.Custom:
-						suffix += " to a valid target";
+						infix += "valid target";
 						break;
 				}
-				break;*/
+				break;
+			case TargetType.None:
+				infix += " noone";
+				break;
+		}
+		return infix;
+	}
+
+	public static string GetDescriptionOnfix(TargetType targetType, TargetGroup targetGroup) {
+		string suffix = "";
+		switch(targetType) {
+			case TargetType.Caster:
+				suffix += " on yourself";
+				break;
+			case TargetType.Allies:
+				suffix += " on all allies";
+				break;
+			case TargetType.Enemies:
+				suffix += " on all enemies";
+				break;
+			case TargetType.All:
+				suffix += " on everyone";
+				break;
+			case TargetType.Random:
+				suffix += " on a random ";
+				switch(targetGroup) {
+					case TargetGroup.Any:
+						suffix += "target";
+						break;
+					case TargetGroup.AnyOther:
+						suffix += "target other than yourself";
+						break;
+					case TargetGroup.Ally:
+						suffix += "ally";
+						break;
+					case TargetGroup.AllyOther:
+						suffix += "ally other than yourself";
+						break;
+					case TargetGroup.Enemy:
+						suffix += "enemy";
+						break;
+					case TargetGroup.Custom:
+						suffix += "valid target";
+						break;
+				}
+				break;
+			case TargetType.None:
+				suffix += " on noone";
+				break;
 		}
 		return suffix;
 	}

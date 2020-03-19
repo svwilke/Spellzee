@@ -4,64 +4,44 @@ using System.Collections.Generic;
 
 public abstract class SpellComponent {
 
-	protected TargetType targetType;
-	protected TargetGroup targetGroup;
-	protected Func<Pawn, RollContext, bool> targetCondition;
+	private Target target;
 
-	public SpellComponent(TargetType targetType, TargetGroup targetGroup = TargetGroup.Any) {
-		this.targetType = targetType;
-		this.targetGroup = targetGroup;
+	public SpellComponent() {
+
 	}
 
-	public List<Pawn> GetTargets(RollContext context) {
-		List<Pawn> targetList = new List<Pawn>();
-		switch(targetType) {
-			case TargetType.Caster:
-				targetList.Add(context.GetCaster());
-				break;
-			case TargetType.Target:
-				Pawn target = context.GetTarget();
-				if(target != null) {
-					targetList.Add(target);
-				}
-				break;
-			case TargetType.Allies:
-				targetList.AddRange(context.GetAllies());
-				break;
-			case TargetType.Enemies:
-				targetList.AddRange(context.GetEnemies());
-				break;
-			case TargetType.Random:
-				targetList.Add(REX.Choice(GetPossibleTargets(context)));
-				break;
-			case TargetType.All:
-				targetList.AddRange(context.GetPawns());
-				break;
-		}
-		return targetList;
+	public Target GetTarget() {
+		return target;
+	}
+
+	public void SetTarget(Target target) {
+		this.target = target;
+	}
+
+	public List<Pawn> GetTargets() {
+		return target.GetTargets();
 	}
 
 	public TargetType GetTargetType() {
-		return targetType;
+		return target.GetTargetType();
 	}
 
 	public SpellComponent SetTargetType(TargetType targetType) {
-		this.targetType = targetType;
+		target.SetTargetType(targetType);
 		return this;
 	}
 
 	public TargetGroup GetTargetGroup() {
-		return targetGroup;
+		return target.GetTargetGroup();
 	}
 
 	public SpellComponent SetTargetGroup(TargetGroup targetGroup) {
-		this.targetGroup = targetGroup;
+		target.SetTargetGroup(targetGroup);
 		return this;
 	}
 
 	public SpellComponent SetCustomTargetGroup(Func<Pawn, RollContext, bool> targetCondition) {
-		SetTargetGroup(TargetGroup.Custom);
-		this.targetCondition = targetCondition;
+		target.SetCustomTargetGroup(targetCondition);
 		return this;
 	}
 
@@ -70,7 +50,7 @@ public abstract class SpellComponent {
 	}
 
 	public virtual bool IsCastable(Spell spell, RollContext context) {
-		if(targetType != TargetType.None) {
+		if(GetTargetType() != TargetType.None) {
 			return GetPossibleTargets(context).Count > 0;
 		} else {
 			return true;
@@ -78,21 +58,7 @@ public abstract class SpellComponent {
 	}
 
 	public bool IsValidTarget(Pawn pawn, RollContext context) {
-		switch(targetGroup) {
-			case TargetGroup.Any:
-				return true;
-			case TargetGroup.AnyOther:
-				return pawn != context.GetCaster();
-			case TargetGroup.Ally:
-				return context.IsAlly(pawn);
-			case TargetGroup.AllyOther:
-				return context.IsAlly(pawn) && pawn != context.GetCaster();
-			case TargetGroup.Enemy:
-				return context.IsEnemy(pawn);
-			case TargetGroup.Custom:
-				return targetCondition != null && targetCondition.Invoke(pawn, context);
-		}
-		return false;
+		return target.IsValidTarget(pawn, context);
 	}
 
 	public virtual bool IsValid(Spell spell, RollContext context) {
@@ -108,13 +74,5 @@ public abstract class SpellComponent {
 		if(targets.Count == 1) {
 			targets[0].OnSpellComponentTarget.Invoke(spell, context, this);
 		}
-	}
-
-	public enum TargetType {
-		None, Caster, Target, Allies, Enemies, Random, All
-	}
-
-	public enum TargetGroup {
-		Any, AnyOther, Ally, AllyOther, Enemy, Custom
 	}
 }

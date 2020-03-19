@@ -2,7 +2,7 @@
 
 	protected Attribute attribute;
 
-	public IntSpellComponent(TargetType targetType, double baseValue) : base(targetType) {
+	public IntSpellComponent(double baseValue) : base() {
 		attribute = new Attribute().SetBaseValue(baseValue);
 	}
 
