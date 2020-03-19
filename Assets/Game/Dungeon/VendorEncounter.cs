@@ -18,6 +18,6 @@ public class VendorEncounter : Encounter {
 	}
 
 	protected override void OnEncounterEnd() {
-		
+		players.ForEach(p => p.OnSpellsChange.Invoke(null, p));
 	}
 }

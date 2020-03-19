@@ -36,12 +36,14 @@ public class LockingAI : AIModule {
 			bool hasChangedLocks = false;
 			for(int i = 0; i < battle.locks.Length; i++) {
 				if(!battle.locks[i] && matchingDice.Contains(i)) {
-					battle.ToggleLock(i);
-					hasChangedLocks = true;
+					if(battle.ToggleLock(i)) {
+						hasChangedLocks = true;
+					}
 				} else
 				if(battle.locks[i] && !matchingDice.Contains(i)) {
-					battle.ToggleLock(i);
-					hasChangedLocks = true;
+					if(battle.ToggleLock(i)) {
+						hasChangedLocks = true;
+					}
 				}
 			}
 			if(!hasChangedLocks) {

@@ -18,7 +18,7 @@ public class ServerBattle : Battle
 		//NetworkServer.SendToAll()
 	}
 
-	public void ToggleLock(int dieIndex, int clientIndex = -1) {
+	public bool ToggleLock(int dieIndex, int clientIndex = -1) {
 		bool newLockState = !locks[dieIndex];
 		if(newLockState) {
 			int currentlyLocked = 0;
@@ -36,11 +36,12 @@ public class ServerBattle : Battle
 					}
 					NetworkServer.SendToClient(clientIndex, GameMsg.ShowMessage, new StringMessage("You can't lock " + dieText + " at the moment."));
 				}
-				return;
+				return false;
 			}
 		}
 		locks[dieIndex] = !locks[dieIndex];
 		NetworkServer.SendToAll(GameMsg.ToggleDieLock, new IntegerMessage(dieIndex));
+		return true;
 	}
 
 	public void Roll() {
@@ -131,7 +132,7 @@ public class ServerBattle : Battle
 	public IEnumerator DoAITurn(Pawn aiPawn) {
 		AIModule ai = aiPawn.GetAI();
 		do {
-			yield return new WaitForSeconds(1F);
+			yield return new WaitForSeconds(0.7F);
 		} while(ai.DoTurn(this));
 	}
 
