@@ -201,4 +201,15 @@ public static class DescriptionHelper {
 		}
 		return suffix;
 	}
+
+	public static string GetMultipleDescription(string desc, int count) {
+		if(count == 1) {
+			return desc;
+		} else
+		if(count <= 0) {
+			return "";
+		} else {
+			return desc.Substring(0, desc.Length - 1) + " " + count + " times.";
+		}
+	}
 }

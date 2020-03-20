@@ -54,19 +54,21 @@ public class Spell : RegistryEntry<Spell> {
 	public virtual string GetShortDescription(RollContext context) {
 		string shortDesc = "";
 		List<SpellComponent> componentList = BuildComponentList(context);
+		Dictionary<string, int> descriptionCount = new Dictionary<string, int>();
 		bool requiresTarget = DoesRequireTarget(context);
 		foreach(SpellComponent component in componentList) {
 			string compDesc = component.GetDescription(this, context);
 			if(compDesc != null && compDesc.Length > 0) {
-				//if(requiresTarget && component.GetTargetType() == SpellComponent.TargetType.Target) {
-					shortDesc += compDesc;
-					shortDesc += "\n";
-				/*} else
-				if(!requiresTarget) {
-					shortDesc += compDesc;
-					shortDesc += "\n";
-				}*/
+				if(descriptionCount.ContainsKey(compDesc)) {
+					descriptionCount[compDesc] = descriptionCount[compDesc] + 1;
+				} else {
+					descriptionCount[compDesc] = 1;
+				}
 			}
+		}
+		foreach(KeyValuePair<string, int> descs in descriptionCount) {
+			shortDesc += DescriptionHelper.GetMultipleDescription(descs.Key, descs.Value);
+			shortDesc += "\n";
 		}
 		return shortDesc.Trim();
 	}
