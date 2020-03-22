@@ -58,7 +58,7 @@ public class PawnCard : UIObj
 		if(pawn.GetSprite() == null) {
 			RB.Print(imageRect, Color.black, RB.ALIGN_H_CENTER | RB.ALIGN_V_CENTER, "Img");
 		} else {
-			RB.DrawSprite(pawn.GetSprite(), imageRect.Expand(-1));
+			RB.DrawSprite(pawn.GetSprite(), imageRect.Expand(-1), pawn.team == Pawn.Team.Hostile ? RB.FLIP_H : 0);
 		}
 
 		Rect2i levelRect = new Rect2i(imageRect.x, imageRect.y + imageRect.height - 1, new Vector2i(imageRect.width, size.height - 22 - 4));
