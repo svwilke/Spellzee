@@ -74,13 +74,13 @@ public abstract class Screen {
 
 		RenderBackground();
 		foreach(UIObj uiObj in uiObjs) {
-			if(uiObj.isVisible && uiObj.layer == Layer.Background) {
+			if(!uiObj.manualRender && uiObj.isVisible && uiObj.layer == Layer.Background) {
 				uiObj.Render();
 			}
 		}
 		RenderForeground();
 		foreach(UIObj uiObj in uiObjs) {
-			if(uiObj.isVisible && uiObj.layer == Layer.Foreground) {
+			if(!uiObj.manualRender && uiObj.isVisible && uiObj.layer == Layer.Foreground) {
 				uiObj.Render();
 			}
 		}

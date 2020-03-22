@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class UIObjGroup : UIObj {
 
-	private List<UIObj> containedUIObjs = new List<UIObj>();
+	protected List<UIObj> containedUIObjs = new List<UIObj>();
 
-	protected void AddUIObj(UIObj obj) {
+	public virtual void AddUIObj(UIObj obj) {
 		containedUIObjs.Add(obj);
 		if(screen != null) {
 			screen.AddUIObj(obj);
 		}
 	}
 
-	protected void RemoveUIObj(UIObj obj) {
+	public virtual void RemoveUIObj(UIObj obj) {
 		containedUIObjs.Remove(obj);
 		if(screen != null) {
 			screen.RemoveUIObj(obj);

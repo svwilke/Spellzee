@@ -23,6 +23,8 @@ public abstract class UIObj {
 
 	public bool isVisible = true;
 
+    public bool manualRender = false;
+
 	public bool IsInteractable { get { return isVisible && currentState != State.Disabled; } }
 
     protected UnityEvent onClick = new UnityEvent();
@@ -37,6 +39,10 @@ public abstract class UIObj {
 	public virtual bool IsInBounds(Vector2i pos) {
 		return pos.x >= this.pos.x && pos.y >= this.pos.y && pos.x <= this.pos.x + size.x && pos.y <= this.pos.y + size.y;
 	}
+
+    public virtual Rect2i GetRect() {
+        return new Rect2i(pos, size);
+    }
 
 	public abstract void Render();
 
