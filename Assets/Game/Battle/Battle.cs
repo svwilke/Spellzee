@@ -15,7 +15,7 @@ public class Battle {
 	public int rollsHad = 3;
 	public int rollsLeft = 3;
 
-	public List<string> log;
+	//public List<string> log;
 
 	public int MaxTurn { get { return pawns.Length - 1; } }
 	public const int MaxPawnCount = 16;
@@ -26,7 +26,7 @@ public class Battle {
 	public Battle() {
 		rolls = new Element[5];
 		locks = new bool[5];
-		log = new List<string>();
+		//log = new List<string>();
 		for(int i = 0; i < rolls.Length; i++) {
 			rolls[i] = Element.None;
 		}

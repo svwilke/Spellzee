@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class ScrollArea : UIObjGroup
 {
-
-	private int currentlyOpenTab = 0;
-	private int[] tabTitleX;
-
 	private int minY, maxY;
 	private int currentY;
 	private int scrollerSize;
 	private Dictionary<UIObj, int> originalYPositions = new Dictionary<UIObj, int>();
 
-	private bool hideTabs = false;
-
-	public ScrollArea(Vector2i pos, Vector2i size, bool hideTabs = false) {
+	public ScrollArea(Vector2i pos, Vector2i size) {
 		this.pos = pos;
 		this.size = size;
-		this.hideTabs = hideTabs;
 	}
 
 	public override void AddUIObj(UIObj obj) {
@@ -43,34 +36,56 @@ public class ScrollArea : UIObjGroup
 	}
 
 	private bool isScrolling = false;
+	private int scrollStartPointer = -1;
+	private int scrollStartScroller = -1;
 
 	public override void Update() {
-		base.Update();
 		Vector2i pos = RB.PointerPos();
+		pos.y -= 1;
 		if(IsInBounds(pos)) {
 			if(RB.PointerScrollDelta() > 0) {
-				SetCurrentY(currentY - 1);
+				SetScrollPosition(GetScrollPosition() - 0.05F);
+				Debug.Log(RB.PointerScrollDelta());
 			} else
 			if(RB.PointerScrollDelta() < 0) {
-				SetCurrentY(currentY + 1);
+				SetScrollPosition(GetScrollPosition() + 0.05F);
 			}
 		}
 		UpdateSize();
 		
 		if(pos.y >= this.pos.y && pos.y < this.pos.y + size.height && pos.x >= this.pos.x + size.width - 5) {
 			if((RB.ButtonDown(RB.BTN_POINTER_A) && isScrolling) || RB.ButtonPressed(RB.BTN_POINTER_A)) {
-				float p = GetScrollbarPercentage(pos.y);
-				SetCurrentY(minY + (int)((maxY - minY) * p));
-				isScrolling = true;
+				if(!isScrolling && pos.y >= currentY && pos.y < currentY + scrollerSize) {
+					isScrolling = true;
+					scrollStartPointer = pos.y;
+					scrollStartScroller = GetScrollerPos(currentY);
+				} else {
+					if(!isScrolling) {
+						SetScrollerPos(pos.y);
+						isScrolling = true;
+						scrollStartPointer = pos.y;
+						scrollStartScroller = GetScrollerPos(currentY);
+					} else {
+						SetScrollerPos(scrollStartScroller + (pos.y - scrollStartPointer));
+					}
+				}
 			}
 		} else
 		if(RB.ButtonDown(RB.BTN_POINTER_A) && isScrolling) {
-			float p = GetScrollbarPercentage(pos.y);
-			SetCurrentY(minY + (int)((maxY - minY) * p));
+			SetScrollerPos(scrollStartScroller + (pos.y - scrollStartPointer));
 		}
 		if(RB.ButtonReleased(RB.BTN_POINTER_A)) {
 			isScrolling = false;
 		}
+	}
+
+	public float GetScrollPosition() {
+		return (currentY - minY) / (float)(maxY - minY);
+	}
+
+	public void SetScrollPosition(float percentageScrolled) {
+		UpdateSize();
+		SetCurrentY(minY + (int)((maxY - minY) * percentageScrolled));
 	}
 
 	private void SetCurrentY(int curY) {
@@ -85,17 +100,19 @@ public class ScrollArea : UIObjGroup
 	}
 
 	private void UpdateSize() {
-		minY = containedUIObjs.Select(uiObj => originalYPositions[uiObj]).Min();
-		maxY = containedUIObjs.Select(uiObj => originalYPositions[uiObj] + uiObj.size.height).Max() - size.height;
-		if(maxY < minY) {
-			maxY = minY;
+		if(containedUIObjs.Count > 0) {
+			minY = containedUIObjs.Select(uiObj => originalYPositions[uiObj]).Min();
+			maxY = containedUIObjs.Select(uiObj => originalYPositions[uiObj] + uiObj.size.height).Max() - size.height;
+			if(maxY < minY) {
+				maxY = minY;
+			}
+			SetCurrentY(currentY);
+			scrollerSize = (int)(size.height * ((float)size.height / (maxY + size.height - minY)));
+		} else {
+			minY = 0;
+			maxY = 0;
+			scrollerSize = size.height;
 		}
-		SetCurrentY(currentY);
-		int red = maxY + size.height - minY;
-		int blue = size.height;
-		int black = size.height;
-		//scrollerSize = (int)(Mathf.Clamp01((float)black / red) * blue);
-		scrollerSize = (int)(size.height * ((float)size.height / (maxY + size.height - minY)));
 	}
 
 	private float GetScrollbarPercentage(int y) {
@@ -103,7 +120,11 @@ public class ScrollArea : UIObjGroup
 	}
 
 	private int GetScrollerPos(int currentY) {
-		return pos.y + (int)((currentY - minY) / (float)(maxY - minY) * (size.height - scrollerSize));
+		return pos.y + (int)(Mathf.Clamp01((currentY - minY) / (float)(maxY - minY)) * (size.height - scrollerSize));
+	}
+
+	private void SetScrollerPos(int newY) {
+		SetCurrentY(minY + (int)(Mathf.Clamp01((newY - pos.y) / (float)(size.height - scrollerSize)) * (maxY - minY)));
 	}
 
 	public override void OnClick() {

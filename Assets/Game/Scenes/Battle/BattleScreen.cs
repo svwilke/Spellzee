@@ -17,11 +17,13 @@ public class BattleScreen : Screen {
 	public TabbedPane spellPane;
 	private TabbedPane bottomPane;
 	private TabbedPane infoPane;
-	private Text battleLog;
 
 	private Dictionary<Pawn, UIObj> pawnCards;
 
 	private List<Text> currentItemTexts = new List<Text>();
+
+	private ScrollArea battleLogScroll;
+	private List<Text> battleLogTexts = new List<Text>();
 
 	// Info Panes
 	// Player
@@ -77,15 +79,15 @@ public class BattleScreen : Screen {
 	}
 
 	public void OnPawnDamage(Battle battle, Pawn pawn, int damage) {
-		battle.log.Add(pawn.GetName() + " takes @FF0000" + damage + "@- damage.");
+		AddLog(pawn.GetName() + " takes @FF0000" + damage + "@- damage.");
 	}
 
 	public void OnPawnHeal(Battle battle, Pawn pawn, int heal) {
-		battle.log.Add(pawn.GetName() + " heals for @00FF00" + heal + "@- health.");
+		AddLog(pawn.GetName() + " heals for @00FF00" + heal + "@- health.");
 	}
 
 	public void OnPawnDied(Battle battle, Pawn pawn) {
-		battle.log.Add(pawn.GetName() + " dies.");
+		AddLog(pawn.GetName() + " dies.");
 	}
 
 	public void OnBeforeCast(Battle battle, Pawn pawn, Pawn target, string spellId) {
@@ -94,7 +96,15 @@ public class BattleScreen : Screen {
 		if(target != null) {
 			end = " on " + target.GetName() + end;
 		}
-		battle.log.Add(pawn.GetName() + (spell.IsElement(battle.BuildContext(), Element.Physical) ? " uses " : " casts ") + spell.GetName() + end);
+		AddLog(pawn.GetName() + (spell.IsElement(battle.BuildContext(), Element.Physical) ? " uses " : " casts ") + spell.GetName() + end);
+	}
+
+	public void AddLog(string logEntry) {
+		Text text = new Text(new Vector2i(4, size.height - 60 + 8 * battleLogTexts.Count), new Vector2i(size.width / 2 - 4, 10), RB.ALIGN_H_LEFT | RB.ALIGN_V_CENTER, logEntry);
+		AddUIObj(text);
+		battleLogScroll.AddUIObj(text);
+		battleLogTexts.Add(text);
+		battleLogScroll.SetScrollPosition(1F);
 	}
 
 	public override void OnConstruct() {
@@ -120,8 +130,10 @@ public class BattleScreen : Screen {
 		passButton.SetKeybind(KeyCode.Return);
 		AddUIObj(bottomPane = new TabbedPane(new Vector2i(0, size.height - 72), new Vector2i(size.width / 2 + 1, 72)));
 		bottomPane.SetTabs(new string[] { "Battle", "Inventory" });
-		AddUIObj(battleLog = new Text(new Vector2i(4, size.height - 64), new Vector2i(size.width / 3 * 2, 60), RB.ALIGN_H_LEFT | RB.ALIGN_V_BOTTOM | RB.TEXT_OVERFLOW_CLIP));
-		bottomPane.AddToTab(0, battleLog);
+
+		battleLogScroll = new ScrollArea(new Vector2i(4, size.height - 60), new Vector2i(size.width / 2 - 4, 58));
+		AddUIObj(battleLogScroll);
+		bottomPane.AddToTab(0, battleLogScroll);
 
 		// Infopane
 		int infoPaneWidth = (size.width - 102) - (size.width / 2 + 1);
@@ -499,7 +511,7 @@ public class BattleScreen : Screen {
 			rollButton.currentState = UIObj.State.Disabled;
 		}
 		*/
-
+		/*
 		if(battle.log.Count > 0) {
 			int start = Mathf.Max(0, battle.log.Count - 7);
 			int end = battle.log.Count - 1;
@@ -512,7 +524,7 @@ public class BattleScreen : Screen {
 			}
 
 			battleLog.SetText(text);
-		}
+		}*/
 	}
 
 	public void SetInformation(UIObj hovered) {

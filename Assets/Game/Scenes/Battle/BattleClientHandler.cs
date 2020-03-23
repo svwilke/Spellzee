@@ -130,7 +130,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	}
 
 	public void OnPass(NetworkMessage msg) {
-		battle.log.Add(battle.GetCurrentPawn().GetName() + " passes...");
+		GetScreen().AddLog(battle.GetCurrentPawn().GetName() + " passes...");
 	}
 	
 	public void OnPawnUpdate(NetworkMessage msg) {
@@ -189,7 +189,7 @@ public class BattleClientHandler : EncounterClientHandler {
 	public void OnMiss(NetworkMessage msg) {
 		StringMessage actualMsg = msg.ReadMessage<StringMessage>();
 		Spell spell = Spells.Get(actualMsg.value);
-		battle.log.Add(battle.GetCurrentPawn().GetName() + " tries to " + (spell.IsElement(battle.BuildContext(), Element.Physical) ? "use " : "cast ") + spell.GetName() + " but misses...");
+		GetScreen().AddLog(battle.GetCurrentPawn().GetName() + " tries to " + (spell.IsElement(battle.BuildContext(), Element.Physical) ? "use " : "cast ") + spell.GetName() + " but misses...");
 	}
 
 	public void OnEndBattle(NetworkMessage msg) {

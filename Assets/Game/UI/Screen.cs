@@ -165,7 +165,7 @@ public abstract class Screen {
 					EventBus.UIMouseEnter.Invoke(obj);
 				}
 			}
-			if(obj.IsInBounds(mousePos) && obj.IsInteractable) {// && hasFocus) {
+			if(obj.IsInBounds(mousePos) && obj.IsInteractable) {
 				if(obj.currentState != UIObj.State.Hovered) {
 					EventBus.UIHoverStart.Invoke(obj);
 				}
