@@ -36,7 +36,7 @@ public class WorldServerHandler : ServerHandler {
 					bool isBoss = battle.GetEnemies().Any(pawn => pawn.GetName().Equals("Golem") || pawn.GetName().Equals("Rat King") || pawn.GetName().Equals("Master Thief"));
 					path[i] = isBoss ? "boss" : "battle";
 				} else
-				if(e is VendorEncounter || e is ChoiceEncounter) {
+				if(e is VendorEncounter || e is ItemSlotEncounter) {
 					path[i] = "loot";
 				} else {
 					path[i] = "mystery";

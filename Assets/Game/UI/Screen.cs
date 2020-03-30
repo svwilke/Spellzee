@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Screen {
+public class Screen {
 
 	public enum Layer {
 		Background, Foreground
@@ -170,7 +170,13 @@ public abstract class Screen {
 					EventBus.UIHoverStart.Invoke(obj);
 				}
 				obj.currentState = UIObj.State.Hovered;
-				on = obj;
+				if(on != null) {
+					if(on.priority <= obj.priority) {
+						on = obj;
+					}
+				} else {
+					on = obj;
+				}
 			} else 
 			if(obj.currentState != UIObj.State.Disabled) {
 				if(obj.currentState == UIObj.State.Hovered) {

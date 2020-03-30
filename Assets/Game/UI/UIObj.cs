@@ -7,6 +7,7 @@ public abstract class UIObj {
 
 	protected Screen screen;
     private KeyCode keyBind = KeyCode.None;
+    public int priority = 50;
 
 	public enum State {
 		Enabled, Hovered, Pressed, Disabled

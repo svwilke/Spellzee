@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking.NetworkSystem;
 
-public class ChoiceScreen : Screen {
+public class ItemSlotScreen : Screen {
 
 	private TextButton itemButton;
 	private TextButton spellButton;
@@ -18,7 +18,7 @@ public class ChoiceScreen : Screen {
 	private string eq;
 	public string eqToBuy = null;
 
-	public ChoiceScreen(Game game, Vector2i size, Pawn pawn) : base(game, size) {
+	public ItemSlotScreen(Game game, Vector2i size, Pawn pawn) : base(game, size) {
 		this.pawn = pawn;
 		waitForPlayersMsg = new MessageBox("Waiting for other players...");
 

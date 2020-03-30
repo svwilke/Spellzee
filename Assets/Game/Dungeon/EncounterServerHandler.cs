@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class EncounterServerHandler : ServerHandler {
 
 	protected Game game;
-	private Encounter encounter;
+	protected Encounter encounter;
 	private bool[] ready;
 
 	public EncounterServerHandler(Game game, Encounter encounter) {

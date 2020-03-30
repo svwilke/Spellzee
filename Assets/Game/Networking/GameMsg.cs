@@ -36,12 +36,15 @@ public class GameMsg {
 	public static short AddPawn = MsgType.Highest + 28;
 	public static short RemovePawn = MsgType.Highest + 29;
 
-	public static short OpenChoice = MsgType.Highest + 30;
+	public static short OpenItemSlot = MsgType.Highest + 30;
 	public static short OpenVendor = MsgType.Highest + 31;
 	public static short ShopList = MsgType.Highest + 32;
 	public static short DropSpell = MsgType.Highest + 33;
 	public static short BuySpell = MsgType.Highest + 34;
 	public static short SwapSpells = MsgType.Highest + 35;
+
+	public static short OpenChoice = MsgType.Highest + 38;
+	public static short SelectChoice = MsgType.Highest + 39;
 
 	public class MsgPawn : MessageBase {
 		public Pawn pawn;
@@ -132,6 +135,31 @@ public class GameMsg {
 
 		public override void Deserialize(NetworkReader reader) {
 			dungeonPaths = SerializationUtility.DeserializeValue<List<string[]>>(reader.ReadBytesAndSize(), DataFormat.Binary);
+		}
+	}
+
+	public class MsgOptionList : MessageBase {
+		public List<Option> options;
+		public int currentIndex;
+		public string description;
+
+		public override void Serialize(NetworkWriter writer) {
+			writer.Write(currentIndex);
+			writer.Write(description);
+			writer.Write(options.Count);
+			foreach(Option option in options) {
+				option.Serialize(writer);
+			}
+		}
+
+		public override void Deserialize(NetworkReader reader) {
+			currentIndex = reader.ReadInt32();
+			description = reader.ReadString();
+			int optionCount = reader.ReadInt32();
+			options = new List<Option>(optionCount);
+			for(int i = 0; i < optionCount; i++) {
+				options.Add(Option.DeserializeNew(reader));
+			}
 		}
 	}
 }

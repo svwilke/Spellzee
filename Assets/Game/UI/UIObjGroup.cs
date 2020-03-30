@@ -6,6 +6,14 @@ public class UIObjGroup : UIObj {
 
 	protected List<UIObj> containedUIObjs = new List<UIObj>();
 
+	public UIObjGroup() {
+		priority = 40;
+	}
+
+	public virtual void Clear() {
+		containedUIObjs.ForEach(RemoveUIObj);
+	}
+
 	public virtual void AddUIObj(UIObj obj) {
 		containedUIObjs.Add(obj);
 		if(screen != null) {

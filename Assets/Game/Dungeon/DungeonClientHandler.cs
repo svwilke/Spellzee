@@ -16,9 +16,10 @@ public class DungeonClientHandler : ClientHandler {
 		this.path = path;
 		this.currentEncounter = currentEncounter;
 		AddHandler(GameMsg.StartBattle, OnBattleStart);
-		AddHandler(GameMsg.OpenChoice, OnOpenChoice);
+		AddHandler(GameMsg.OpenItemSlot, OnOpenItemSlot);
 		AddHandler(GameMsg.OpenVendor, OnOpenVendor);
 		AddHandler(GameMsg.OpenWorld, OnOpenWorld);
+		AddHandler(GameMsg.OpenChoice, OnOpenChoice);
 	}
 
 	public void OnBattleStart(NetworkMessage msg) {
@@ -28,11 +29,11 @@ public class DungeonClientHandler : ClientHandler {
 		game.OpenClientHandler(new BattleClientHandler(game, battle, screen).SetDungeon(template, path, currentEncounter));
 	}
 
-	public void OnOpenChoice(NetworkMessage msg) {
+	public void OnOpenItemSlot(NetworkMessage msg) {
 		Pawn pawn = msg.ReadMessage<GameMsg.MsgPawn>().pawn;
-		ChoiceScreen screen = new ChoiceScreen(game, RB.DisplaySize, pawn);
+		ItemSlotScreen screen = new ItemSlotScreen(game, RB.DisplaySize, pawn);
 		game.OpenScreen(screen);
-		game.OpenClientHandler(new ChoiceClientHandler(game, pawn, screen).SetDungeon(template, path, currentEncounter));
+		game.OpenClientHandler(new ItemSlotClientHandler(game, pawn, screen).SetDungeon(template, path, currentEncounter));
 	}
 
 	public void OnOpenVendor(NetworkMessage msg) {
@@ -47,5 +48,15 @@ public class DungeonClientHandler : ClientHandler {
 		WorldScreen screen = new WorldScreen(game, RB.DisplaySize, dungeonListMsg.dungeonPaths);
 		game.OpenScreen(screen);
 		game.OpenClientHandler(new WorldClientHandler(game, screen));
+	}
+
+	public void OnOpenChoice(NetworkMessage msg) {
+		GameMsg.MsgOptionList optionListMsg = msg.ReadMessage<GameMsg.MsgOptionList>();
+		Vector2i size = RB.DisplaySize;
+		Screen screen = new Screen(game, size);
+		ChoiceBox choiceBox = new ChoiceBox(new Vector2i(size.width / 4 + 10, 40), new Vector2i(size.width / 2 - 20, size.height - 80), optionListMsg.description, optionListMsg.options, optionListMsg.currentIndex == Game.peerId);
+		screen.AddUIObj(choiceBox);
+		game.OpenScreen(screen);
+		game.OpenClientHandler(new ChoiceClientHandler(game, choiceBox));
 	}
 }
