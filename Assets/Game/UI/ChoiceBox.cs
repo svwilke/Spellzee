@@ -23,7 +23,6 @@ public class ChoiceBox : UIObjGroup
 		//image.SetOutline(Color.black);
 		//AddUIObj(image);
 		AddUIObj(new TabbedPane(pos, size, true));
-		Debug.Log("Constructing... count: " + options.Count);
 		Text desc = new Text(pos + new Vector2i(6, 6), new Vector2i(size.width - 6, 40), RB.ALIGN_H_LEFT | RB.ALIGN_V_TOP, description);
 		AddUIObj(desc);
 
@@ -34,16 +33,14 @@ public class ChoiceBox : UIObjGroup
 			if(o.isLocked || !areOptionsUsable) {
 				oButton.currentState = State.Disabled;
 			}
-			int x = i;
 			oButton.SetOnClick(() => {
-				Game.client.Send(GameMsg.SelectChoice, new IntegerMessage(x));
+				Game.client.Send(GameMsg.SelectChoice, new IntegerMessage(o.actionId));
 			});
 			AddUIObj(oButton);
 		}
 	}
 
 	public void UpdateOptions(List<Option> options, bool usable) {
-		Debug.Log("Updating... new count: " + options.Count);
 		this.options = options;
 		this.areOptionsUsable = usable;
 		Clear();

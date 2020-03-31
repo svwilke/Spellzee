@@ -10,9 +10,10 @@ public class DungeonTemplates {
 		.AddEncounter((players) => new BattleEncounter(new Pawn[] { PawnTemplates.Pixie.Create(players.Count, players.Select(p => p.Level).Min(), Pawn.Team.Hostile) }))
 		.AddEncounter((players) => new ChoiceEncounter(
 			new Choice("Hello")
-				.AddOption(new OptionTemplate("Gain Chaotic Mind"), (pl, index) => pl[index].AddSpell(Spells.ChaoticMind))
-				.AddOption(new OptionTemplate("Gain Incinerate", "Locked: Requires Wizard", (pl, index) => pl[index].GetProgression().GetId().Equals("wizard")), (pl, index) => pl[index].AddSpell(Spells.Incinerate))
-				.AddOption(new OptionTemplate("Gain Earthquake"), (pl, index) => pl[index].AddSpell(Spells.Earthquake))
+				.AddOption(new OptionTemplate("Gain Chaotic Mind", (e) => !e.GetCurrentPlayer().GetProgression().GetId().Equals("wizard")), (e) => { e.GetCurrentPlayer().AddSpell(Spells.ChaoticMind); e.Done(); })
+				.AddOption(new OptionTemplate("Gain Incinerate", (e) => e.GetCurrentPlayer().GetProgression().GetId().Equals("wizard")), (e) => { e.GetCurrentPlayer().AddSpell(Spells.Incinerate); e.Done(); })
+				.AddOption(new OptionTemplate("Gain Earthquake"), (e) => { e.GetCurrentPlayer().AddSpell(Spells.Earthquake); e.Done(); })
+				.AddPass()
 		)));
 
 	public static DungeonTemplate Training = Register("training", new DungeonTemplate("Training Grounds", "Test your spells against this training dummy. He won't hurt you!")

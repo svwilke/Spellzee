@@ -11,7 +11,10 @@ public class UIObjGroup : UIObj {
 	}
 
 	public virtual void Clear() {
-		containedUIObjs.ForEach(RemoveUIObj);
+		if(screen != null) {
+			containedUIObjs.ForEach(screen.RemoveUIObj);
+		}
+		containedUIObjs.Clear();
 	}
 
 	public virtual void AddUIObj(UIObj obj) {
@@ -29,10 +32,12 @@ public class UIObjGroup : UIObj {
 	}
 
 	public override void OnAddedToScreen(Screen screen) {
+		base.OnAddedToScreen(screen);
 		containedUIObjs.ForEach(screen.AddUIObj);
 	}
 
 	public override void OnRemovedFromScreen(Screen screen) {
+		base.OnRemovedFromScreen(screen);
 		containedUIObjs.ForEach(screen.RemoveUIObj);
 	}
 
